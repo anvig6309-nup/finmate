@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinMate - Choose Your Persona</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        finYellow: '#facc15',
+                        finYellowDark: '#eab308',
+                        finDark: '#0f172a',
+                        finBg: '#ffffff'
+                    },
+                    fontFamily: { sans: ['Inter', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <style>
+        .yellow-glow {
+            background: radial-gradient(circle at 90% 10%, rgba(250, 204, 21, 0.22) 0%, rgba(255, 255, 255, 0) 60%),
+                        radial-gradient(circle at 10% 90%, rgba(250, 204, 21, 0.15) 0%, rgba(255, 255, 255, 0) 50%);
+        }
+        
+        .persona-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .persona-card.selected {
+            border-color: #facc15;
+            background-color: rgba(254, 252, 232, 0.4);
+            box-shadow: 0 10px 15px -3px rgba(250, 204, 21, 0.1), 0 4px 6px -4px rgba(250, 204, 21, 0.1);
+        }
+        
+        .indicator-icon {
+            transition: all 0.3s ease;
+        }
+    </style>
+<script src="api.js"></script>
+<script>FM.requireLogin();</script>
+</head>
+<body class="bg-finBg text-finDark font-sans antialiased min-h-screen flex flex-col justify-between yellow-glow selection:bg-finYellow selection:text-finDark">
+
+    <!-- Navbar -->
+    <nav class="bg-white border-b border-slate-100 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+                <div class="w-10 h-10 rounded-xl bg-finDark flex items-center justify-center text-finYellow font-bold text-xl shadow-md">
+                    F
+                </div>
+                <span class="text-2xl font-bold tracking-tight text-slate-900">Fin<span class="bg-finYellow px-1.5 py-0.5 rounded-md ml-0.5">Mate</span></span>
+            </div>
+            <div class="flex items-center space-x-3 text-sm font-medium text-slate-600">
+                <span class="hidden sm:inline bg-amber-50 border border-amber-200 px-3 py-1.5 rounded-full text-xs font-bold text-slate-800">
+                    Step 1 of 3: Persona Selection
+                </span>
+                <a href="index.html" class="hover:text-slate-900 transition"><i class="fa-solid fa-arrow-left mr-1"></i> Back</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <main class="flex-grow max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
+        
+        <!-- Header Section -->
+        <div class="max-w-3xl mx-auto text-center space-y-3 mb-12 sm:mb-16">
+            <div class="inline-flex items-center space-x-2 bg-amber-100/70 px-3.5 py-1 rounded-full text-slate-800 text-xs font-bold tracking-wide">
+                <i class="fa-solid fa-user-gear text-finYellowDark"></i>
+                <span>Initial Configuration</span>
+            </div>
+            <h1 class="text-3xl sm:text-5xl font-extrabold text-slate-900 tracking-tight leading-tight">
+                How would you <span class="bg-finYellow px-2 py-0.5 rounded-lg">describe yourself?</span>
+            </h1>
+            <p class="text-slate-600 text-base sm:text-lg font-normal max-w-2xl mx-auto">
+                Choose your profile so FinMate can create a financial plan that understands your lifestyle.
+            </p>
+        </div>
+
+        <!-- 5 Persona Cards Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 max-w-7xl mx-auto">
+
+            <!-- 1. Student -->
+            <div onclick="selectPersona(this, 'Student', 15000)" 
+                 class="persona-card group bg-white p-6 rounded-2xl border-2 border-slate-200 cursor-pointer shadow-sm hover:border-finYellow hover:shadow-lg transition flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 rounded-2xl bg-amber-100 text-slate-900 flex items-center justify-center text-2xl group-hover:bg-finYellow transition">
+                            🎓
+                        </div>
+                        <span class="text-xs font-semibold bg-slate-100 text-slate-600 px-2.5 py-1 rounded-full">₹15k Min</span>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-900 mb-1">Student</h3>
+                    <p class="text-xs text-slate-500 mb-4 font-medium leading-relaxed">Manage pocket money, education expenses, savings, and goals.</p>
+                </div>
+                <div class="indicator mt-5 flex items-center justify-between text-slate-400 group-hover:text-slate-900 transition">
+                    <span class="text-xs font-bold tracking-wider">SELECT</span>
+                    <i class="fa-solid fa-circle-check text-lg text-slate-200 indicator-icon"></i>
+                </div>
+            </div>
+
+            <!-- 2. Salaried Employee -->
+            <div onclick="selectPersona(this, 'Salaried Employee', 20000)" 
+                 class="persona-card group bg-white p-6 rounded-2xl border-2 border-slate-200 cursor-pointer shadow-sm hover:border-finYellow hover:shadow-lg transition flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 rounded-2xl bg-amber-100 text-slate-900 flex items-center justify-center text-2xl group-hover:bg-finYellow transition">
+                            💼
+                        </div>
+                        <span class="text-xs font-semibold bg-slate-100 text-slate-600 px-2.5 py-1 rounded-full">₹20k Min</span>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-900 mb-1">Salaried</h3>
+                    <p class="text-xs text-slate-500 mb-4 font-medium leading-relaxed">Manage salary, household expenses, savings, and investments.</p>
+                </div>
+                <div class="indicator mt-5 flex items-center justify-between text-slate-400 group-hover:text-slate-900 transition">
+                    <span class="text-xs font-bold tracking-wider">SELECT</span>
+                    <i class="fa-solid fa-circle-check text-lg text-slate-200 indicator-icon"></i>
+                </div>
+            </div>
+
+            <!-- 3. Freelancer -->
+            <div onclick="selectPersona(this, 'Freelancer', 20000)" 
+                 class="persona-card group bg-white p-6 rounded-2xl border-2 border-slate-200 cursor-pointer shadow-sm hover:border-finYellow hover:shadow-lg transition flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 rounded-2xl bg-amber-100 text-slate-900 flex items-center justify-center text-2xl group-hover:bg-finYellow transition">
+                            💻
+                        </div>
+                        <span class="text-xs font-semibold bg-slate-100 text-slate-600 px-2.5 py-1 rounded-full">₹20k Min</span>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-900 mb-1">Freelancer</h3>
+                    <p class="text-xs text-slate-500 mb-4 font-medium leading-relaxed">Manage irregular income, client payments, professional expenses, and savings.</p>
+                </div>
+                <div class="indicator mt-5 flex items-center justify-between text-slate-400 group-hover:text-slate-900 transition">
+                    <span class="text-xs font-bold tracking-wider">SELECT</span>
+                    <i class="fa-solid fa-circle-check text-lg text-slate-200 indicator-icon"></i>
+                </div>
+            </div>
+
+            <!-- 4. Business Owner -->
+            <div onclick="selectPersona(this, 'Business Owner', 40000)" 
+                 class="persona-card group bg-white p-6 rounded-2xl border-2 border-slate-200 cursor-pointer shadow-sm hover:border-finYellow hover:shadow-lg transition flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 rounded-2xl bg-amber-100 text-slate-900 flex items-center justify-center text-2xl group-hover:bg-finYellow transition">
+                            🏢
+                        </div>
+                        <span class="text-xs font-semibold bg-slate-100 text-slate-600 px-2.5 py-1 rounded-full">₹40k Min</span>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-900 mb-1">Business Owner</h3>
+                    <p class="text-xs text-slate-500 mb-4 font-medium leading-relaxed">Manage business income, operational costs, personal finances, and goals.</p>
+                </div>
+                <div class="indicator mt-5 flex items-center justify-between text-slate-400 group-hover:text-slate-900 transition">
+                    <span class="text-xs font-bold tracking-wider">SELECT</span>
+                    <i class="fa-solid fa-circle-check text-lg text-slate-200 indicator-icon"></i>
+                </div>
+            </div>
+
+            <!-- 5. Homemaker -->
+            <div onclick="selectPersona(this, 'Homemaker', 30000)" 
+                 class="persona-card group bg-white p-6 rounded-2xl border-2 border-slate-200 cursor-pointer shadow-sm hover:border-finYellow hover:shadow-lg transition flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 rounded-2xl bg-amber-100 text-slate-900 flex items-center justify-center text-2xl group-hover:bg-finYellow transition">
+                            🏠
+                        </div>
+                        <span class="text-xs font-semibold bg-slate-100 text-slate-600 px-2.5 py-1 rounded-full">₹30k Min</span>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-900 mb-1">Homemaker</h3>
+                    <p class="text-xs text-slate-500 mb-4 font-medium leading-relaxed">Manage household budgets, family expenses, allocated funds, and savings.</p>
+                </div>
+                <div class="indicator mt-5 flex items-center justify-between text-slate-400 group-hover:text-slate-900 transition">
+                    <span class="text-xs font-bold tracking-wider">SELECT</span>
+                    <i class="fa-solid fa-circle-check text-lg text-slate-200 indicator-icon"></i>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Sticky Bottom CTA Bar -->
+        <div class="bg-white/80 backdrop-blur-sm fixed bottom-0 left-0 right-0 border-t border-slate-100 p-4 sm:p-5 shadow-2xl z-40">
+            <div class="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div class="text-center sm:text-left">
+                    <span class="text-xs text-slate-500 font-medium block">Selected Profile:</span>
+                    <span id="selectedPersonaText" class="text-base sm:text-lg font-bold text-slate-900">None selected yet</span>
+                </div>
+                <button id="continueBtn" disabled 
+                        onclick="proceedToAvailableFunds()" 
+                        class="w-full sm:w-auto bg-slate-300 text-slate-500 font-bold px-10 py-4 rounded-xl shadow-lg transition transform cursor-not-allowed flex items-center justify-center space-x-2 text-base">
+                    <span>Continue</span>
+                    <i class="fa-solid fa-arrow-right text-xs"></i>
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Spacer to ensure content isn't covered by sticky footer -->
+    <div class="h-32 sm:h-28"></div>
+
+    <script>
+        // Global variables to store selection state
+        let selectedPersona = null;
+        let minimumFloor = null;
+
+        // Function called when a persona card is clicked
+        function selectPersona(cardElement, personaName, minFloor) {
+            // Remove 'selected' class from all cards
+            document.querySelectorAll('.persona-card').forEach(card => {
+                card.classList.remove('selected', 'bg-yellow-50/50', 'ring-2', 'ring-finYellow');
+                card.classList.add('bg-white');
+                
+                // Reset indicator icon
+                const icon = card.querySelector('.indicator-icon');
+                icon.classList.remove('text-finYellow', 'fa-solid', 'fa-circle-check');
+                icon.classList.add('fa-regular', 'fa-circle', 'text-slate-200');
+            });
+
+            // Highlight selected card
+            cardElement.classList.remove('bg-white');
+            cardElement.classList.add('selected', 'bg-yellow-50/50', 'ring-2', 'ring-finYellow');
+
+            // Set icon to solid checkmark
+            const activeIcon = cardElement.querySelector('.indicator-icon');
+            activeIcon.classList.remove('fa-regular', 'fa-circle', 'text-slate-200');
+            activeIcon.classList.add('fa-solid', 'fa-circle-check', 'text-finYellow');
+
+            // Update state
+            selectedPersona = personaName;
+            minimumFloor = minFloor;
+
+            // Update sticky footer text
+            document.getElementById('selectedPersonaText').innerHTML = `${personaName} <span class="text-xs font-medium text-amber-700 bg-amber-100 px-2.5 py-0.5 rounded-full ml-1.5">(₹${minFloor.toLocaleString('en-IN')} Mo. Min)</span>`;
+
+            // Enable Continue Button
+            const continueBtn = document.getElementById('continueBtn');
+            continueBtn.disabled = false;
+            continueBtn.classList.remove('bg-slate-300', 'text-slate-500', 'cursor-not-allowed');
+            continueBtn.classList.add('bg-finDark', 'text-finYellow', 'hover:bg-slate-800', 'active:scale-95');
+        }
+
+        // Function called when the Continue button is clicked
+       function proceedToAvailableFunds() {
+    if (!selectedPersona) return;
+
+    localStorage.setItem('finmate_persona', selectedPersona);
+    localStorage.setItem('finmate_min_floor', minimumFloor);
+
+    const pages = {
+        'Student': 'Sfunds.html',
+        'Freelancer': 'freefunds.html',
+        'Salaried Employee': 'Efunds.html',
+        'Business Owner': 'buisfunds.html',
+        'Homemaker': 'hfunds.html'
+    };
+
+    window.location.href = pages[selectedPersona];
+}
+    </script>
+</body>
+</html>

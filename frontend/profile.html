@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Profile &amp; Financial Profile – FINMATE</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="theme.css">
+<style>
+:root{--y:#f9cb1b;--ys:#fff8d6;--yl:#f0dc7a;--ink:#0f172a;--mut:#5b6475;--line:#e6e8ec;--bg:#fafaf8;--w:#fff;--lav:#ece8ff;--lavd:#5b4bc4;--bad:#b42318;--ok:#1a7f4b}
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:"Plus Jakarta Sans",system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5}
+button,a{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+header{background:var(--w);border-bottom:1px solid var(--line)}
+.bar{display:flex;align-items:center;gap:12px;height:72px;max-width:1000px;margin:0 auto;padding:0 20px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:21px}
+.logo b{display:grid;place-items:center;width:40px;height:40px;background:var(--y);border-radius:10px}
+.back{margin-left:auto;text-decoration:none;font-weight:600}
+dialog{border:0;border-radius:20px;padding:24px;width:min(420px,92vw)}dialog::backdrop{background:rgba(15,23,42,.45)}
+dialog input{width:100%;border:1px solid var(--line);border-radius:12px;padding:12px 14px;font:inherit;font-size:16px}
+main{max-width:1000px;margin:0 auto;padding:28px 20px 60px}
+h1{font-size:clamp(30px,5vw,44px);letter-spacing:-.03em;margin:0 0 6px;line-height:1.1}
+.lead{color:var(--mut);margin:0 0 22px}
+.card{background:var(--w);border:1px solid var(--line);border-radius:20px;margin-bottom:18px;overflow:hidden}
+.card.top{border-top:6px solid var(--y)}
+.sec{padding:22px 24px;border-bottom:1px solid var(--line)}.sec:last-child{border-bottom:0}
+.head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+h2{margin:0;font-size:20px;letter-spacing:-.02em}
+.btn{border:1px solid var(--line);background:var(--w);border-radius:10px;padding:8px 16px;font-weight:700;font-size:14px;cursor:pointer;text-decoration:none;display:inline-block;white-space:nowrap}
+.btn.y{background:var(--y);border-color:var(--y)}
+.btn[aria-disabled=true]{opacity:.5;pointer-events:none}
+.kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+.kv.one{grid-template-columns:1fr}
+.f{background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.f small{display:block;color:var(--mut);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.04em}
+.f strong{font-size:17px;word-break:break-word}
+.empty{color:var(--mut);font-size:14px}
+.pill{display:inline-block;border-radius:999px;padding:3px 10px;font-size:12px;font-weight:700;background:var(--lav);color:var(--lavd)}
+.pill.y{background:var(--ys);color:#8a6500;border:1px solid var(--yl)}
+.pill.g{background:#e3f6ec;color:var(--ok)}
+.sub{font-weight:700;font-size:13px;color:var(--mut);text-transform:uppercase;letter-spacing:.04em;margin:18px 0 8px}
+.inc{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin-bottom:8px}
+.cat{border:1px solid var(--line);border-radius:14px;margin-bottom:10px;background:var(--bg)}
+.cat summary{padding:14px 16px;font-weight:700;cursor:pointer;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.cat summary span.n{margin-left:auto;font-weight:600;color:var(--mut);font-size:13px}
+.exp{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:10px 16px;border-top:1px solid var(--line);background:var(--w)}
+.exp .l small{display:block;color:var(--mut);font-size:13px}
+.exp .r{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.msg{padding:16px 24px;color:var(--mut)}
+.err{color:var(--bad);font-weight:600}
+.note{background:var(--ys);border:1px solid var(--yl);border-radius:12px;padding:12px 16px;font-size:14px;margin-bottom:14px}
+.hidden{display:none!important}
+@media(max-width:560px){.sec{padding:18px 16px}.f{flex-direction:column;align-items:flex-start}.head{flex-wrap:wrap}}
+</style>
+<script src="api.js"></script>
+</head>
+<body>
+<header><div class="bar">
+  <div class="logo"><b>F</b>FINMATE</div>
+  <a class="back" id="backLink" href="dashboard.html">← Dashboard</a>
+</div></header>
+
+<main>
+  <h1>Profile &amp; Financial Profile</h1>
+  <p class="lead">Everything FinMate has saved for you, in one place. Use Edit on a section to change only that part.</p>
+
+  <div class="card" id="gate" hidden>
+    <div class="msg"><b>Please sign in to view your profile.</b><p>We couldn’t confirm your session.</p><a class="btn y" id="loginLink" href="#">Go to sign in</a></div>
+  </div>
+
+  <section class="card top" id="profile-section" aria-labelledby="ps-title">
+    <div class="sec" style="padding-bottom:4px"><h2 id="ps-title" style="font-size:24px">Your saved information</h2>
+      <p class="empty" style="margin:4px 0 0">Read from your FinMate records. Nothing here is estimated or pre-filled.</p></div>
+
+    <div class="sec" id="s-account"><div class="msg">Loading…</div></div>
+    <div class="sec" id="s-persona"><div class="msg">Loading…</div></div>
+    <div class="sec" id="s-funds"><div class="msg">Loading…</div></div>
+    <div class="sec" id="s-expenses"><div class="msg">Loading…</div></div>
+  </section>
+</main>
+
+<dialog id="dlg"><form method="dialog" id="dlgForm" novalidate>
+  <h2 id="dTitle" style="margin-bottom:14px"></h2>
+  <label for="dVal" id="dLabel" style="display:block;font-weight:600;font-size:14px;margin-bottom:6px"></label>
+  <input id="dVal" autocomplete="off" maxlength="120">
+  <div id="pwWrap" class="hidden" style="margin-top:12px"><label for="dPw" style="display:block;font-weight:600;font-size:14px;margin-bottom:6px">Current password (to confirm)</label><input id="dPw" type="password" autocomplete="current-password"></div>
+  <p class="err hidden" id="dErr" style="margin:10px 0 0"></p>
+  <div style="display:flex;gap:10px;margin-top:16px"><button class="btn y" id="dOk" type="button">Save</button><button class="btn" id="dCancel" type="button">Cancel</button></div>
+</form></dialog>
+
+<script>
+const CONFIG = {
+  API_BASES: ['', 'http://localhost:5000', 'http://127.0.0.1:5000', 'http://localhost:3000', 'http://localhost:8000'],
+  ENDPOINTS: { profile: '/api/profile', funds: '/api/funds', expenses: '/api/expenses', account: '/api/profile' },
+  ACCOUNT_METHOD: 'PATCH',
+  TOKEN_KEYS: ['token', 'authToken', 'finmate_token'],
+  LOGIN_PAGE: 'login.html',
+  RETURN_TO: 'profile',
+  MIN_REFERENCE: { student: 15000, salaried_employee: 20000, freelancer: 20000, business_owner: 40000, homemaker: 30000 },
+  PAGES: {
+    persona: 'persona.html',
+    funds: {
+      student: 'Sfunds.html',
+      salaried_employee: 'Efunds.html',
+      freelancer: 'freefunds.html',
+      business_owner: 'buisfunds.html',
+      homemaker: 'hfunds.html'
+    },
+    category: {
+      student: 'student_category.html',
+      salaried_employee: 'employee_category.html',
+      freelancer: 'freelancer_category.html',
+      business_owner: 'business_category.html',
+      homemaker: 'homemaker_category.html'
+    }
+  }
+};
+const PERSONA_LABELS = { student: 'Student', salaried_employee: 'Salaried Employee', freelancer: 'Freelancer', business_owner: 'Business Owner', homemaker: 'Homemaker / Family Lead' };
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const inr = n => '₹' + Number(n).toLocaleString('en-IN', { maximumFractionDigits: 2 });
+const has = v => v !== null && v !== undefined && v !== '';
+const pick = (o, ...keys) => { for (const k of keys) if (o && has(o[k])) return o[k]; return null; };
+const fmtDate = v => { const d = new Date(v); return isNaN(d) ? null : d.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }); };
+const normPersona = p => has(p) ? String(p).toLowerCase().replace(/[^a-z]+/g, '_').replace(/^_|_$/g, '').replace(/^students$/, 'student') : null;
+
+let apiBase = null;
+const getToken = () => {
+  for (const st of [localStorage, sessionStorage]) {
+    for (const k of CONFIG.TOKEN_KEYS) { const v = st.getItem(k); if (v) return v.replace(/^"|"$/g, ''); }
+    for (let i = 0; i < st.length; i++) { const k = st.key(i); if (/token|jwt/i.test(k)) { const v = st.getItem(k); if (v && v.length > 20) return v.replace(/^"|"$/g, ''); } }
+  }
+  return null;
+};
+class AuthError extends Error {}
+
+async function call(base, path, opts = {}) {
+  const t = getToken();
+  return fetch(base + path, { method: opts.method || 'GET', body: opts.body, credentials: 'include', headers: { Accept: 'application/json', ...(opts.body ? { 'Content-Type': 'application/json' } : {}), ...(t ? { Authorization: 'Bearer ' + t } : {}) } });
+}
+async function api(path, opts = {}) {
+  let res;
+  if (apiBase !== null) { try { res = await call(apiBase, path, opts); } catch (e) { throw new Error('Cannot reach the server'); } }
+  else {
+    for (const b of CONFIG.API_BASES) {
+      try { const r = await call(b, path, opts); if (r.status === 404 && !(r.headers.get('content-type') || '').includes('json')) continue; res = r; apiBase = b; break; } catch (e) {}
+    }
+    if (!res) throw new Error('Cannot reach the backend. Set API_BASES in the script');
+  }
+  if (res.status === 401 || res.status === 403) throw new AuthError('Not signed in');
+  if (res.status === 404 && !opts.method) return null;
+  if (!res.ok) {
+    let d = ''; try { const j = await res.clone().json(); d = j.message || j.error || ''; } catch (e) {}
+    throw new Error(d || 'Server returned ' + res.status);
+  }
+  return res.json().catch(() => null);
+}
+
+const goTo = (page) => {
+  const u = new URL(page, location.href);
+  u.searchParams.set('mode', 'edit');
+  u.searchParams.set('return_to', CONFIG.RETURN_TO);
+  return u.pathname.split('/').pop() + u.search + u.hash;
+};
+const editBtn = (page, label, disabled) => `<a class="btn y" ${disabled ? 'aria-disabled="true" tabindex="-1"' : `href="${esc(goTo(page))}"`} aria-label="${esc(label)}">Edit</a>`;
+const sectionError = (id, title, e) => { $(id).innerHTML = `<div class="head"><h2>${title}</h2></div><p class="err">Couldn’t load this section: ${esc(e.message)}.</p><button class="btn" data-retry="1">Retry</button>`; };
+
+let data = { persona: null };
+
+function renderAccount(p) {
+  const u = (p && (p.user || p)) || {};
+  const name = pick(u, 'full_name', 'name', 'username'), email = pick(u, 'email');
+  const created = pick(u, 'created_at', 'createdAt', 'date_joined', 'member_since'), status = pick(u, 'status', 'account_status');
+  const extra = [['Phone', pick(u, 'phone', 'mobile')], ['Last sign-in', fmtDate(pick(u, 'last_login', 'lastLogin')) ]].filter(x => x[1]);
+  const field = (label, v, key, aria) => `<div class="f"><div><small>${label}</small><strong>${has(v) ? esc(v) : '<span class="empty">Not provided</span>'}</strong></div>${key ? `<button type="button" class="btn y" data-edit="${key}" data-val="${esc(v ?? '')}" aria-label="${aria}">Edit</button>` : ''}</div>`;
+  $('#s-account').innerHTML = `<div class="head"><h2>Account Information</h2></div>
+    <div class="kv">
+      ${field('Full name', name, 'name', 'Edit name')}
+      ${field('Email address', email, 'email', 'Edit email')}
+      ${field('Account created', created ? fmtDate(created) || created : null)}
+      <div class="f"><div><small>Account status</small><strong>${has(status) ? `<span class="pill g">${esc(status)}</span>` : '<span class="empty">Not provided</span>'}</strong></div></div>
+      ${extra.map(x => field(x[0], x[1])).join('')}
+    </div>`;
+}
+
+function renderPersona(p) {
+  const raw = p ? pick(p.user || p, 'persona', 'selected_persona') || pick(p, 'persona', 'selected_persona') : null;
+  data.persona = normPersona(raw && typeof raw === 'object' ? raw.name || raw.type : raw);
+  const label = data.persona ? (PERSONA_LABELS[data.persona] || esc(raw)) : null;
+  $('#s-persona').innerHTML = `<div class="head"><h2>Selected Persona</h2>${editBtn(CONFIG.PAGES.persona, 'Edit persona')}</div>
+    ${label ? `<span class="pill y" style="font-size:15px;padding:6px 14px">${label}</span>
+    <p class="empty" style="margin-top:10px">Changing your persona takes you through setup for the new persona (funds, categories, goals) and then back here. Editing only funds or categories does not restart setup.</p>` : '<p class="empty">No persona selected yet. Use Edit to choose one.</p>'}`;
+  return data.persona;
+}
+
+function renderFunds(f, p) {
+  const src = f || p || {};
+  const monthly = pick(src, 'available_monthly_funds', 'monthly_funds', 'monthly'), yearly = pick(src, 'available_yearly_funds', 'yearly_funds', 'yearly');
+  let inc = pick(src, 'additional_income', 'additional_income_sources', 'income_sources') || [];
+  inc = Array.isArray(inc) ? inc : [];
+  const page = CONFIG.PAGES.funds[data.persona];
+  const field = (l, v) => `<div class="f"><div><small>${l}</small><strong>${has(v) ? inr(v) : '<span class="empty">Not set</span>'}</strong></div></div>`;
+  $('#s-funds').innerHTML = `<div class="head"><h2>Available Funds &amp; Additional Income</h2>${editBtn(page || '#', 'Edit funds and income', !page)}</div>
+    ${!page ? '<div class="note">Select a persona first so we can open the right funds page.</div>' : ''}
+    <div class="kv">${field('Available monthly funds', monthly)}${field('Available yearly funds', yearly)}</div>
+    ${CONFIG.MIN_REFERENCE[data.persona] ? `<p class="empty" style="margin:10px 0 0">Reference amount for this persona: ${inr(CONFIG.MIN_REFERENCE[data.persona])} a month. It is only a guide, and you can save any amount.</p>` : ''}
+    <div class="sub">Additional income sources</div>
+    ${inc.length ? inc.map(i => {
+      const end = pick(i, 'end_date', 'endDate', 'ends_on'), start = pick(i, 'start_date', 'startDate', 'starts_on'), temp = i.temporary || i.is_temporary || end || start;
+      const amt = pick(i, 'amount'), fr = pick(i, 'frequency', 'period');
+      return `<div class="inc"><div><b>${esc(pick(i, 'name', 'source', 'title') || 'Income source')}</b>${temp ? ' <span class="pill y">Temporary</span>' : ''}${start || end ? `<small style="display:block;color:var(--mut)">${start ? 'Starts ' + esc(fmtDate(start) || start) : ''}${start && end ? ' · ' : ''}${end ? 'Ends ' + esc(fmtDate(end) || end) : ''}</small>` : ''}</div><div>${has(amt) ? inr(amt) : 'Amount not set'}${fr ? ' · ' + esc(fr) : ''}</div></div>`;
+    }).join('') : '<p class="empty">No additional income sources added.</p>'}`;
+}
+
+function renderExpenses(list) {
+  const page = CONFIG.PAGES.category[data.persona];
+  const rows = Array.isArray(list) ? list : (list && (list.expenses || list.data)) || [];
+  const groups = new Map();
+  rows.forEach(e => { const c = pick(e, 'category') || 'Uncategorised'; if (!groups.has(c)) groups.set(c, []); groups.get(c).push(e); });
+  const body = groups.size ? [...groups].map(([cat, items]) => `<details class="cat"><summary>${esc(cat)}${items[0] && pick(items[0], 'expense_group') ? ` <span class="pill ${pick(items[0], 'expense_group') === 'business' ? 'y' : ''}">${pick(items[0], 'expense_group') === 'business' ? 'Business' : 'Personal'}</span>` : ''}<span class="n">${items.length} item${items.length === 1 ? '' : 's'}</span></summary>
+    ${items.map(e => {
+      const name = pick(e, 'expense_name', 'expenseName', 'name') || pick(e, 'subcategory') || 'Expense', sub = pick(e, 'subcategory');
+      const neg = pick(e, 'negotiability', 'type'), amt = pick(e, 'tentative_amount', 'amount'), per = pick(e, 'period');
+      const nonNeg = /non/i.test(neg || '');
+      return `<div class="exp"><div class="l"><b>${esc(name)}</b>${sub && sub !== name ? `<small>${esc(sub)}</small>` : ''}</div><div class="r">
+        ${pick(e, 'priority') ? `<span class="pill">${esc(e.priority)} priority</span>` : ''}
+        ${neg ? `<span class="pill ${nonNeg ? 'y' : ''}">${nonNeg ? 'Non-negotiable' : 'Negotiable'}</span>` : ''}
+        ${has(amt) ? `<b>${inr(amt)}</b>${per ? ' · ' + esc(per) : ''}` : '<span class="empty">No amount saved</span>'}</div></div>`;
+    }).join('')}</details>`).join('') : '<p class="empty">No expenses saved yet.</p>';
+  $('#s-expenses').innerHTML = `<div class="head"><h2>Expenses</h2>${editBtn(page || '#', 'Edit categories and expenses', !page)}</div>
+    ${!page ? '<div class="note">Select a persona first so we can open the right category page.</div>' : ''}
+    <div class="empty" style="margin-bottom:12px">${rows.length} expense${rows.length === 1 ? '' : 's'} across ${groups.size} categor${groups.size === 1 ? 'y' : 'ies'}, including your custom entries.</div>${body}`;
+}
+
+function showGate() {
+  $('#profile-section').hidden = true;
+  $('#gate').hidden = false;
+  $('#loginLink').href = CONFIG.LOGIN_PAGE;
+}
+
+async function load() {
+  $('#gate').hidden = true; $('#profile-section').hidden = false;
+  const [pr, fu, ex] = await Promise.allSettled([api(CONFIG.ENDPOINTS.profile), api(CONFIG.ENDPOINTS.funds), api(CONFIG.ENDPOINTS.expenses)]);
+  if ([pr, fu, ex].some(r => r.status === 'rejected' && r.reason instanceof AuthError)) { showGate(); return; }
+  const profile = pr.status === 'fulfilled' ? pr.value : null;
+  if (pr.status === 'rejected') { sectionError('#s-account', 'Account Information', pr.reason); sectionError('#s-persona', 'Selected Persona', pr.reason); }
+  else { renderAccount(profile); renderPersona(profile); }
+  if (fu.status === 'rejected') sectionError('#s-funds', 'Available Funds & Additional Income', fu.reason); else renderFunds(fu.value, profile);
+  if (ex.status === 'rejected') sectionError('#s-expenses', 'Expenses', ex.reason); else renderExpenses(ex.value);
+}
+
+let editKey = null;
+document.addEventListener('click', e => {
+  if (e.target.dataset.retry) load();
+  const k = e.target.dataset.edit;
+  if (!k) return;
+  editKey = k;
+  $('#dTitle').textContent = k === 'name' ? 'Edit name' : 'Edit email';
+  $('#dLabel').textContent = k === 'name' ? 'Full name' : 'Email address';
+  $('#dVal').type = k === 'email' ? 'email' : 'text';
+  $('#dVal').value = e.target.dataset.val || '';
+  $('#dPw').value = '';
+  $('#pwWrap').classList.toggle('hidden', k !== 'email');
+  $('#dErr').classList.add('hidden');
+  $('#dlg').showModal();
+});
+$('#dCancel').onclick = () => $('#dlg').close();
+$('#dOk').onclick = async () => {
+  const v = $('#dVal').value.trim(), err = $('#dErr');
+  const bad = editKey === 'name' ? (v.length < 2 ? 'Enter your full name.' : '') : (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) ? 'Enter a valid email address.' : !$('#dPw').value ? 'Enter your current password to change your email.' : '');
+  if (bad) { err.textContent = bad; err.classList.remove('hidden'); return; }
+  const body = editKey === 'name' ? { full_name: v, name: v } : { email: v, current_password: $('#dPw').value };
+  $('#dOk').disabled = true;
+  try {
+    await api(CONFIG.ENDPOINTS.account, { method: CONFIG.ACCOUNT_METHOD, body: JSON.stringify(body) });
+    $('#dlg').close();
+    load();
+  } catch (e) {
+    if (e instanceof AuthError) { $('#dlg').close(); showGate(); }
+    else { err.textContent = 'Could not save: ' + e.message + '.'; err.classList.remove('hidden'); }
+  }
+  $('#dOk').disabled = false;
+};
+window.addEventListener('pageshow', e => { if (e.persisted) load(); });
+load();
+</script>
+</body>
+</html>

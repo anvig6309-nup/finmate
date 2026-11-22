@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dashboard – FINMATE</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="theme.css">
+<style>
+:root{--y:#F9E7A1;--cream:#FFFDF6;--lav:#DCD5F5;--pur:#A99BD9;--ink:#292735;--grey:#F3F1ED;--w:#fff;--mut:#6c6879;--bad:#b4443a;--sh:0 10px 30px #29273514}
+:root[data-eff="dark"]{--y:#F9E7A1;--cream:#111318;--lav:#2d2644;--pur:#a99ceb;--ink:#f3f5fa;--grey:#252a3a;--w:#1c202c;--mut:#9ba3b8;--bad:#ef4444;--sh:0 10px 30px rgba(0,0,0,0.6);color-scheme:dark}
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:"Plus Jakarta Sans",system-ui,sans-serif;background:var(--cream);color:var(--ink);line-height:1.5;overflow-x:hidden}
+h1,h2,.serif{font-family:Fraunces,Georgia,serif;letter-spacing:-.02em}
+button,a,input{font:inherit;color:inherit}:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.shell{display:grid;grid-template-columns:250px 1fr;min-height:100vh;transition:grid-template-columns .25s}
+.shell.rail{grid-template-columns:78px 1fr}
+aside{background:var(--w);border-right:1px solid var(--grey);padding:18px 14px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:4px;z-index:9;overflow:hidden}
+.logo{display:flex;align-items:center;gap:12px;padding:4px 6px 16px;margin-bottom:6px;border-bottom:1px solid var(--grey);white-space:nowrap}
+.logo svg{width:44px;height:44px;flex:none}.logo .wm{font-weight:800;font-size:21px;letter-spacing:.04em;display:block;line-height:1.1}.logo .wm i{font-style:normal;color:var(--pur)}.logo small{color:var(--mut);font-size:11px;font-weight:600}
+aside nav a,aside .nl{position:relative;display:flex;align-items:center;gap:12px;width:100%;padding:11px 14px;border-radius:14px;text-decoration:none;font-weight:600;font-size:14px;border:0;background:none;cursor:pointer;white-space:nowrap;transition:background .2s,transform .15s}
+aside nav a:hover,aside .nl:hover{background:var(--grey)}aside nav a:active{transform:scale(.98)}
+aside nav a.on{background:var(--y)}aside nav a.on:before{content:"";position:absolute;left:-14px;top:10px;bottom:10px;width:5px;border-radius:0 5px 5px 0;background:var(--ink)}
+aside svg.ic{width:20px;height:20px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.rail .lab,.rail .logo .lt{display:none}.rail .logo{justify-content:center}.rail aside nav a,.rail aside .nl{justify-content:center;padding:11px 0}.rail aside nav a.on:before{left:-14px}
+aside .sp{flex:1}
+.wrap{min-width:0}
+.top{display:flex;gap:10px;align-items:center;padding:14px 32px}.top .r{margin-left:auto;display:flex;gap:8px}
+.btn{border:1px solid #e4e0d6;background:var(--w);border-radius:999px;padding:9px 18px;font-weight:700;font-size:14px;cursor:pointer;text-decoration:none;display:inline-block;transition:transform .15s,box-shadow .2s,background .2s}
+.btn:hover{box-shadow:var(--sh);transform:translateY(-1px)}.btn:active{transform:scale(.97)}.btn.y{background:var(--y);border-color:var(--y)}.btn.d{background:var(--ink);color:#fff;border-color:var(--ink)}.btn:disabled{opacity:.5;cursor:not-allowed}
+main{padding:0 32px 70px;max-width:1240px}
+.hero{position:relative;overflow:hidden;background:var(--y);border-radius:36px;padding:44px 44px 40px;display:grid;grid-template-columns:1.4fr 1fr;gap:24px;align-items:center;margin-bottom:28px}
+.hero h1{font-size:clamp(34px,5.4vw,60px);line-height:1.02;margin:6px 0 10px}.hero p{margin:0;max-width:440px}.hero .eyebrow{font-weight:700;font-size:13px;opacity:.75}
+.hero .fund{margin-top:22px}.hero .fund small{font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.08em;opacity:.7}.hero .fund strong{display:block;font-family:Fraunces,serif;font-size:clamp(32px,4.4vw,52px);line-height:1.1}
+.blob{position:absolute;border-radius:50%;opacity:.55;animation:fl 9s ease-in-out infinite}.b1{width:260px;height:260px;background:var(--lav);right:-60px;top:-80px}.b2{width:120px;height:120px;background:var(--w);right:30%;bottom:-40px;animation-delay:-3s}.b3{width:60px;height:60px;background:var(--pur);right:12%;top:30%;animation-delay:-5s}
+@keyframes fl{50%{transform:translateY(-14px)}}
+.hr{position:relative;display:flex;justify-content:center}
+.sec{margin-bottom:34px}.sec>h2{font-size:26px;margin:0 0 4px}.sec>.sub{color:var(--mut);margin:0 0 16px;font-size:14px}
+.g{display:grid;grid-template-columns:repeat(12,1fr);gap:22px}.s8{grid-column:span 8}.s4{grid-column:span 4}.s7{grid-column:span 7}.s5{grid-column:span 5}.s12{grid-column:span 12}
+.panel{background:var(--w);border-radius:28px;box-shadow:var(--sh);padding:22px}.panel.lav{background:var(--lav)}.panel.grey{background:var(--grey);box-shadow:none}
+.uni{width:100%;height:auto;display:block}.nd{cursor:pointer;animation:fl 7s ease-in-out infinite}.nd:hover circle,.nd:focus circle{stroke:var(--ink);stroke-width:2}.nd text{pointer-events:none;font-size:12px;font-weight:700;fill:var(--ink)}
+.pill{display:inline-block;border-radius:99px;padding:3px 12px;font-size:12px;font-weight:700;background:var(--lav)}.pill.y{background:var(--y)}.pill.g{background:var(--grey)}
+.tabs{display:inline-flex;background:var(--grey);border-radius:99px;padding:4px;gap:2px}.tabs button{border:0;background:none;border-radius:99px;padding:7px 16px;font-weight:700;font-size:13px;cursor:pointer}.tabs button.on{background:var(--ink);color:#fff}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:10px;font-size:13px}.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px}
+.rings{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}.rg{text-align:center;padding:6px}.rg svg{width:112px;height:112px}.rg b{display:block;font-size:14px}.rg small{color:var(--mut);font-size:12px}
+.rg .tr{stroke:var(--grey)}.rg .fg{stroke-linecap:round;transition:stroke-dashoffset 1.1s cubic-bezier(.2,.8,.2,1)}
+.goals{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:18px}
+.goal{background:var(--w);border-radius:26px;box-shadow:var(--sh);padding:20px;transition:transform .2s}.goal:hover{transform:translateY(-4px)}.goal:nth-child(3n+2){background:var(--lav)}.goal:nth-child(3n+3){background:var(--y)}
+.goal .ic{width:42px;height:42px;border-radius:14px;background:var(--cream);display:grid;place-items:center;font-family:Fraunces,serif;font-weight:700;font-size:20px;margin-bottom:10px}
+.pb{height:10px;background:#29273514;border-radius:99px;position:relative;margin:12px 0 4px}.pb .f{height:100%;border-radius:99px;background:var(--ink);transition:width 1s cubic-bezier(.2,.8,.2,1);width:0}.pb u{position:absolute;top:-3px;width:2px;height:16px;background:#fff8}
+.row{display:flex;justify-content:space-between;gap:10px;font-size:13px;padding:2px 0}
+.empty{border:1.5px dashed var(--pur);border-radius:22px;padding:22px;color:var(--mut);text-align:center;font-size:14px;background:#fff8}.err{color:var(--bad);font-weight:600;font-size:14px}
+.bub{background:var(--w);border-radius:18px 18px 18px 4px;padding:11px 15px;margin-top:12px;font-size:14px;white-space:pre-wrap}
+.chat{display:flex;gap:8px;margin-top:14px}input{border:1px solid #e4e0d6;border-radius:999px;padding:11px 16px;font-size:16px;background:var(--w);width:100%}
+.ins{display:grid;grid-template-columns:1fr auto;gap:4px 14px;padding:14px 0;border-bottom:1px solid var(--grey)}.ins:last-child{border:0}.ins b{font-size:15px}.ins p{grid-column:1;margin:0;color:var(--mut);font-size:14px}.ins a{grid-row:1/3;grid-column:2;align-self:center;font-weight:700;font-size:13px;color:var(--ink)}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:16px}
+.tile{border-radius:26px;padding:20px;text-decoration:none;min-height:130px;display:flex;flex-direction:column;justify-content:space-between;font-weight:700;transition:transform .2s,box-shadow .2s}.tile:hover{transform:translateY(-4px);box-shadow:var(--sh)}.tile svg{width:26px;height:26px;fill:none;stroke:var(--ink);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.plans{display:grid;gap:14px}.plan{display:grid;grid-template-columns:1.2fr 2fr;gap:18px;align-items:center;background:var(--w);border-radius:24px;padding:18px 22px;box-shadow:var(--sh)}
+.tl{position:relative;padding-left:26px}.tl:before{content:"";position:absolute;left:7px;top:6px;bottom:6px;width:2px;background:var(--lav)}.tl div{position:relative;padding:8px 0;font-size:14px;display:flex;justify-content:space-between;gap:10px}.tl div:before{content:"";position:absolute;left:-24px;top:15px;width:10px;height:10px;border-radius:50%;background:var(--pur);border:2px solid var(--cream)}
+.sk{border-radius:16px;background:linear-gradient(90deg,var(--grey) 25%,#fff 50%,var(--grey) 75%);background-size:200% 100%;animation:sh 1.4s infinite;min-height:90px}@keyframes sh{to{background-position:-200% 0}}
+#tip{position:fixed;pointer-events:none;background:var(--ink);color:#fff;border-radius:10px;padding:6px 10px;font-size:12px;display:none;z-index:20}
+.rev{animation:up .6s both}@keyframes up{from{opacity:0;transform:translateY(14px)}}
+.field{display:flex;gap:8px;flex-wrap:wrap}.field input{flex:1;min-width:120px}
+#burger{display:none}
+@media(max-width:960px){.shell,.shell.rail{grid-template-columns:1fr}aside{position:fixed;inset:0 22% 0 0;transform:translateX(-102%);transition:transform .25s;box-shadow:6px 0 30px #0003}aside.open{transform:none}.rail .lab,.rail .logo .lt{display:inline}.rail aside nav a,.rail aside .nl{justify-content:flex-start;padding:11px 14px}#burger{display:inline-block}#collapse{display:none}.s8,.s4,.s7,.s5{grid-column:span 12}.hero{grid-template-columns:1fr;padding:30px 24px}main,.top{padding-left:16px;padding-right:16px}.plan{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+<script src="api.js"></script>
+</head>
+<body>
+<div class="shell" id="shell">
+<aside id="side" aria-label="Main navigation">
+  <div class="logo" role="img" aria-label="FinMate"><svg viewBox="0 0 46 46" aria-hidden="true"><rect width="46" height="46" rx="14" fill="#F9E7A1"/><path d="M15 33V13h15M15 22h10" fill="none" stroke="#292735" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="33" cy="32" r="8" fill="#A99BD9" stroke="#fff" stroke-width="2"/><path d="M29.5 34.5l2.5-3 1.8 1.4 2.7-3.4" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="lt"><span class="wm">FIN<i>MATE</i></span><small>Smart money, simply</small></span></div>
+  <nav id="nav"></nav><div class="sp"></div>
+  <button class="nl" id="logout"><svg class="ic" viewBox="0 0 24 24"><path d="M9 4H5v16h4M16 8l4 4-4 4M20 12H9"/></svg><span class="lab">Log Out</span></button>
+</aside>
+<div class="wrap">
+  <div class="top"><button class="btn" id="burger" aria-label="Open menu">Menu</button><button class="btn" id="collapse" aria-label="Collapse sidebar">Collapse</button><div class="r"><a class="btn" data-p="profile">Profile</a><a class="btn" data-p="settings">Settings</a></div></div>
+  <main>
+    <section class="hero rev"><i class="blob b1"></i><i class="blob b2"></i><i class="blob b3"></i>
+      <div style="position:relative"><div class="eyebrow" id="date"></div><h1>Your money.<br>Your rhythm.</h1><p id="greet">Here’s how your financial world is looking today.</p>
+        <div class="fund"><small>Total available funds</small><strong id="heroFund">—</strong></div></div>
+      <div class="hr" id="heroRing"><div class="sk" style="width:150px;height:150px;border-radius:50%"></div></div></section>
+
+    <section class="sec g"><div class="s8"><h2>Your financial universe</h2><p class="sub">Tap a node to see what’s behind it. Planned values are never shown as money you already have.</p><div class="panel" id="uni"><div class="sk" style="height:320px"></div></div></div>
+      <div class="s4" style="align-self:end"><div class="panel lav" id="uPanel" aria-live="polite"><b class="serif" style="font-size:20px">Select a node</b><p style="margin:6px 0 0">Details appear here.</p></div></div></section>
+
+    <section class="sec"><div style="display:flex;justify-content:space-between;align-items:end;gap:10px;flex-wrap:wrap"><div><h2>Where your money flows</h2><p class="sub">Income → expenses → savings → remaining. Hover a flow for amounts.</p></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap"><div class="tabs" id="perTabs"><button class="on" data-per="monthly">Monthly</button><button data-per="yearly">Yearly</button></div><div class="tabs"><button id="catT">Show categories</button></div></div></div>
+      <div class="panel grey" id="flow"><div class="sk" style="height:260px"></div></div></section>
+
+    <section class="sec"><h2>Financial health</h2><p class="sub">Each ring is a plain percentage of your saved figures. No hidden score.</p><div class="rings" id="rings"><div class="sk" style="height:120px"></div></div></section>
+
+    <section class="sec"><div style="display:flex;justify-content:space-between;align-items:end;gap:10px;flex-wrap:wrap"><div><h2>Your journey</h2><p class="sub">Actual amounts saved toward your goals.</p></div><span><a class="btn" data-p="goals">Open Goals</a> <a class="btn y" data-p="goals" data-q="new=1">+ New goal</a></span></div><div id="goals" class="goals"><div class="sk"></div></div></section>
+
+    <section class="sec g"><div class="s5"><div class="panel lav"><h2 style="font-size:24px;margin:0">Pocket CA, the AI corner</h2><p style="margin:6px 0 0;font-size:14px">Hi, I’m your financial companion. I already know your saved budget, so just ask.</p>
+      <form class="chat" id="chatF"><input id="chatI" maxlength="1000" placeholder="Ask me anything about your money…" aria-label="Message Pocket CA"><button class="btn d" id="chatB">Send</button></form><div id="chatOut" aria-live="polite"></div><p style="margin:14px 0 0"><a class="btn" data-p="pocketca">Open Pocket CA</a></p></div></div>
+      <div class="s7"><h2 style="font-size:24px;margin:6px 0 4px">Little things worth knowing</h2><div id="ins"><div class="sk"></div></div></div></section>
+
+    <section class="sec"><h2>Quick access studio</h2><div class="tiles" id="tiles"></div></section>
+
+    <section class="sec"><h2>Purchase &amp; saving journey</h2><p class="sub">Saved so far is actual. Monthly targets are plans.</p><div class="plans" id="plans"><div class="sk"></div></div>
+      <div class="panel" style="margin-top:18px"><b class="serif" style="font-size:18px">Can I afford this?</b><form class="field" id="affF" novalidate style="margin-top:10px"><input id="aN" maxlength="80" placeholder="What do you want to buy?" aria-label="Purchase"><input id="aP" type="number" min="1" step="any" placeholder="Price" aria-label="Price"><input id="aM" type="number" min="0" max="120" placeholder="In months (0 = now)" aria-label="Months"><button class="btn y">Check</button></form><p class="err" id="aE"></p></div></section>
+
+    <section class="sec"><div style="display:flex;justify-content:space-between;align-items:end;gap:10px;flex-wrap:wrap"><div><h2>Financial future</h2><p class="sub">Predictions, not money in your account. The two views never mix.</p></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap"><div class="tabs" id="fTabs"><button class="on" data-f="actual">My financial future</button><button data-f="whatif">What-if future</button></div><a class="btn" data-p="predictions">Open Predictions</a></div></div><div class="panel" id="fut"><div class="sk"></div></div></section>
+
+    <section class="sec g"><div class="s5"><h2 style="font-size:24px;margin:0 0 8px">Recent activity</h2><div id="act"><div class="sk"></div></div></div>
+      <div class="s7"><h2 style="font-size:24px;margin:0 0 8px">Recent what-if scenarios</h2><div id="scen"><div class="sk"></div></div><p><a class="btn" data-p="whatif">Open What-If Simulator</a></p></div></section>
+  </main>
+</div></div>
+<div id="tip"></div>
+<script>
+/* Same Flask contract as before, plus: GET /api/insights, GET /api/purchase-plans, summary ?period=monthly|yearly (see bottom). */
+const CONFIG = {
+  API_BASES: ['', 'http://localhost:5000', 'http://127.0.0.1:5000'],
+  E: { profile: '/api/profile', summary: '/api/dashboard/summary', goals: '/api/goals', scenarios: '/api/scenarios?limit=3', activity: '/api/activity?limit=8', insights: '/api/insights', plans: '/api/purchase-plans', chat: '/api/pocket-ca/chat', logout: '/api/auth/logout' },
+  PAGES: { dashboard: 'dashboard.html', planner: 'budget_planner.html', goals: 'goals.html', pocketca: 'pocket_ca.html', afford: 'afford.html', whatif: 'whatif.html', predictions: 'predictions.html', profile: 'profile.html', settings: 'settings.html', onboarding: 'persona.html' },
+  TOKEN_KEYS: ['token', 'authToken', 'finmate_token'], LOGIN_PAGE: 'login.html'
+};
+const IC = { dashboard: 'M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z', planner: 'M5 4h14v16H5zM9 9h6M9 13h6', goals: 'M12 3a9 9 0 100 18 9 9 0 000-18zM12 8a4 4 0 100 8 4 4 0 000-8z', pocketca: 'M4 5h16v11H9l-5 4z', afford: 'M12 3v18M16 7h-6a3 3 0 000 6h4a3 3 0 010 6H8', whatif: 'M4 7h10M18 7h2M4 17h2M10 17h10M14 5v4M8 15v4', predictions: 'M3 17l6-6 4 4 8-8M15 7h6v6', profile: 'M12 12a4 4 0 100-8 4 4 0 000 8zM4 21a8 8 0 0116 0', settings: 'M12 9a3 3 0 100 6 3 3 0 000-6zM12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2' };
+const NAV = [['dashboard', 'Dashboard'], ['planner', 'Smart Budget Planner'], ['goals', 'Financial Goals'], ['pocketca', 'Pocket CA'], ['afford', 'Can I Afford This?'], ['whatif', 'What-If Simulator'], ['predictions', 'Financial Predictions'], ['profile', 'Profile & Financial Profile'], ['settings', 'Settings']];
+const $ = s => document.querySelector(s), $$ = s => document.querySelectorAll(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const num = v => (v !== null && v !== undefined && v !== '' && isFinite(v)) ? Number(v) : null;
+let cur = 'INR';
+const money = v => num(v) === null ? '—' : new Intl.NumberFormat('en-IN', { style: 'currency', currency: cur, maximumFractionDigits: 2 }).format(v);
+const pc = (a, b) => (num(a) !== null && num(b) > 0) ? Math.round(a / b * 100) : null;
+const dt = v => { const d = new Date(v); return isNaN(d) ? '' : d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }); };
+let apiBase = null;
+const getToken = () => { for (const st of [localStorage, sessionStorage]) for (const k of CONFIG.TOKEN_KEYS) { const v = st.getItem(k); if (v) return v.replace(/^"|"$/g, ''); } return null; };
+const toLogin = () => { location.href = CONFIG.LOGIN_PAGE; };
+const call = (b, p, o = {}) => { const t = getToken(); return fetch(b + p, { method: o.method || 'GET', body: o.body, credentials: 'include', headers: { Accept: 'application/json', ...(o.body ? { 'Content-Type': 'application/json' } : {}), ...(t ? { Authorization: 'Bearer ' + t } : {}) } }); };
+async function api(path, o = {}) {
+  let res;
+  if (apiBase !== null) res = await call(apiBase, path, o).catch(() => { throw new Error('Cannot reach the server'); });
+  else { for (const b of CONFIG.API_BASES) { try { const r = await call(b, path, o); if (r.status === 404 && !(r.headers.get('content-type') || '').includes('json')) continue; res = r; apiBase = b; break; } catch (e) {} } if (!res) throw new Error('Cannot reach the backend'); }
+  if (res.status === 401) { toLogin(); throw new Error('Signed out'); }
+  if (res.status === 404 && !o.method) return null;
+  if (!res.ok) { let j = {}; try { j = await res.clone().json(); } catch (e) {} const er = new Error(j.message || j.error || 'Server returned ' + res.status); er.code = j.code; throw er; }
+  return res.json().catch(() => null);
+}
+const NA = '<div class="empty">Not available yet. The backend route for this section wasn’t found.</div>';
+const bad = e => `<p class="err">Couldn’t load: ${esc(e.message)}.</p><button class="btn" onclick="location.reload()">Retry</button>`;
+const list = d => Array.isArray(d) ? d : (d && (d.items || d.goals || d.plans || d.scenarios || d.activity || d.insights)) || [];
+const S = { s: null, goals: [], per: 'monthly', fut: 'actual', open: false };
+
+function ring(p, label, sub, col) { const C = 2 * Math.PI * 38; return `<div class="rg"><svg viewBox="0 0 100 100" role="img" aria-label="${esc(label)} ${p ?? 'no data'}"><circle class="tr" cx="50" cy="50" r="38" fill="none" stroke-width="10"/><circle class="fg" data-p="${p === null ? 0 : Math.min(p, 100)}" cx="50" cy="50" r="38" fill="none" stroke="${col}" stroke-width="10" stroke-dasharray="${C}" stroke-dashoffset="${C}" transform="rotate(-90 50 50)"/><text x="50" y="56" text-anchor="middle" font-size="19" font-weight="800" fill="#292735">${p === null ? '—' : p + '%'}</text></svg><b>${label}</b><small>${sub}</small></div>`; }
+function animRings() { requestAnimationFrame(() => $$('.fg').forEach(c => { const C = 2 * Math.PI * 38; c.style.strokeDashoffset = C * (1 - Number(c.dataset.p) / 100); })); }
+
+function hasData(s) { return s && s.has_data; }
+function renderHero(s) {
+  if (s.currency) cur = s.currency;
+  $('#heroFund').textContent = hasData(s) ? money(s.funds_total) : 'Add your funds to begin';
+  const u = pc(s.planned_expenses, s.funds_total);
+  $('#heroRing').innerHTML = hasData(s) ? ring(u, 'Budget used', 'of available funds', '#292735') : '';
+  animRings();
+}
+function nodesOf(s) {
+  const gs = S.goals, saved = gs.reduce((a, g) => a + (num(g.saved_amount) || 0), 0), b = s.buffer || {};
+  return [
+    { k: 'exp', n: 'Expenses', v: s.planned_expenses, tag: 'Planned', d: `Non-negotiable ${money(s.non_negotiable)}, negotiable ${money(s.negotiable)}. Planned, not yet spent.`, p: 'planner', c: '#A99BD9' },
+    { k: 'sav', n: 'Savings', v: s.expected_savings, tag: 'Planned', d: 'What your budget plans to save. It is not money you have saved yet.', p: 'planner', c: '#F9E7A1' },
+    { k: 'goal', n: 'Goals', v: gs.length ? saved : null, tag: 'Actual', d: gs.length ? `${gs.length} goal${gs.length > 1 ? 's' : ''}. This is the amount actually saved toward them.` : 'No goals yet. They’re optional.', p: 'goals', c: '#DCD5F5' },
+    { k: 'rem', n: 'Remaining', v: s.remaining, tag: 'Planned', d: 'Available funds minus planned expenses and planned savings.', p: 'planner', c: '#F9E7A1' },
+    { k: 'inc', n: 'Extra income', v: s.additional_income, tag: 'Actual', d: 'Additional income you’ve saved, counted once and included in your funds.', p: 'profile', c: '#A99BD9' },
+    { k: 'buf', n: 'Buffer', v: b.actual, tag: 'Actual', d: num(b.target) !== null ? `Target ${money(b.target)}. ${num(b.actual) === null ? 'No buffer contributions are recorded yet.' : 'Remaining to target: ' + money(b.remaining ?? Math.max(0, b.target - b.actual))}.` : 'No buffer target set. It’s optional.', p: 'planner', c: '#DCD5F5' }];
+}
+function renderUniverse(s) {
+  if (!hasData(s)) { $('#uni').innerHTML = `<svg class="uni" viewBox="0 0 640 300" aria-hidden="true"><circle cx="320" cy="150" r="64" fill="#F9E7A1"/><circle cx="170" cy="90" r="30" fill="#DCD5F5"/><circle cx="480" cy="210" r="38" fill="#A99BD9" opacity=".6"/><circle cx="500" cy="80" r="22" fill="#F3F1ED"/></svg><div class="empty" style="margin-top:6px"><b>Your financial universe will appear here once you add your funds.</b><p>It takes a couple of minutes.</p><a class="btn y" data-p="onboarding">Get started</a></div>`; linkify(); return; }
+  const F = num(s.funds_total) || 1, N = nodesOf(s), ang = [-90, -30, 30, 90, 150, 210];
+  let h = '<svg class="uni" viewBox="0 0 640 440" role="group" aria-label="Financial universe">';
+  const pos = N.map((n, i) => { const a = ang[i] * Math.PI / 180, x = 320 + 235 * Math.cos(a), y = 220 + 160 * Math.sin(a), r = num(n.v) === null ? 26 : 28 + 24 * Math.sqrt(Math.min(Math.max(n.v / F, 0), 1)); return { x, y, r }; });
+  pos.forEach(p => h += `<line x1="320" y1="220" x2="${p.x}" y2="${p.y}" stroke="#A99BD9" stroke-width="1.5" stroke-dasharray="4 5"/>`);
+  h += `<circle cx="320" cy="220" r="74" fill="#F9E7A1"/><text x="320" y="210" text-anchor="middle" font-size="12" font-weight="700" fill="#292735">Available funds</text><text x="320" y="238" text-anchor="middle" font-family="Fraunces,serif" font-size="22" font-weight="700" fill="#292735">${esc(money(s.funds_total))}</text>`;
+  N.forEach((n, i) => { const p = pos[i]; h += `<g class="nd" tabindex="0" role="button" data-k="${n.k}" aria-label="${n.n}" style="animation-delay:${-i * 1.2}s"><circle cx="${p.x}" cy="${p.y}" r="${p.r}" fill="${n.c}" opacity="${num(n.v) === null ? .45 : 1}"/><text x="${p.x}" y="${p.y - 2}" text-anchor="middle">${n.n}</text><text x="${p.x}" y="${p.y + 13}" text-anchor="middle" style="font-weight:500;font-size:11px">${num(n.v) === null ? 'not set' : esc(money(n.v))}</text></g>`; });
+  $('#uni').innerHTML = h + '</svg>';
+  const show = k => { const n = N.find(x => x.k === k); $('#uPanel').innerHTML = `<span class="pill ${n.tag === 'Actual' ? 'y' : ''}">${n.tag}</span><b class="serif" style="display:block;font-size:22px;margin-top:8px">${n.n}</b><div class="serif" style="font-size:30px">${num(n.v) === null ? '—' : money(n.v)}</div><p style="margin:6px 0 12px;font-size:14px">${n.d}</p><a class="btn" href="${CONFIG.PAGES[n.p]}">Open</a>`; };
+  $$('.nd').forEach(g => { g.onclick = () => show(g.dataset.k); g.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); show(g.dataset.k); } }; });
+}
+function renderFlow(s) {
+  if (!hasData(s)) { $('#flow').innerHTML = '<div class="empty">Your money flow will appear here once you add funds and expenses.</div>'; $('#catT').disabled = true; return; }
+  $('#catT').disabled = false;
+  const F = num(s.funds_total) || 0, E = +s.planned_expenses || 0, Sv = +s.expected_savings || 0, R = Math.max(+s.remaining || 0, 0), T = Math.max(F, E + Sv + R) || 1, H = 300, k = H / T, G = 14;
+  const mid = [['Expenses', E, '#A99BD9'], ['Savings (planned)', Sv, '#F9E7A1'], ['Remaining', R, '#DCD5F5']];
+  let h = `<svg viewBox="0 0 760 ${H + 2 * G + 6}" style="width:100%;height:auto"><rect x="6" y="0" width="14" height="${F * k}" rx="7" fill="#292735" data-tip="Available funds: ${esc(money(F))}"/>`, ly = 0, my = 0, ey = 0;
+  const rib = (x1, y1, x2, y2, hh, c, tip) => `<path d="M${x1} ${y1}C${(x1 + x2) / 2} ${y1} ${(x1 + x2) / 2} ${y2} ${x2} ${y2}v${hh}C${(x1 + x2) / 2} ${y2 + hh} ${(x1 + x2) / 2} ${y1 + hh} ${x1} ${y1 + hh}z" fill="${c}" opacity=".75" data-tip="${esc(tip)}"/>`;
+  mid.forEach(([n, v, c], i) => { const hh = v * k; if (i === 0) ey = my; h += rib(20, ly, 250, my, hh, c, `${n}: ${money(v)} (${Math.round(v / T * 100)}%)`) + `<rect x="250" y="${my}" width="14" height="${hh}" rx="7" fill="${c}" data-tip="${esc(n + ': ' + money(v))}"/>`; ly += hh; my += hh + G; });
+  if (S.open) { let cy = ey, oy = ey; const cats = (s.categories || []).filter(c => c.amount > 0), tot = cats.reduce((a, c) => a + c.amount, 0) || 1, cols = ['#A99BD9', '#DCD5F5', '#F9E7A1', '#cfc6ee'];
+    cats.forEach((c, i) => { const hh = c.amount / T * H; h += rib(264, oy, 490, cy, hh, cols[i % 4], `${c.name}: ${money(c.amount)} (${Math.round(c.amount / tot * 100)}% of expenses)`) + `<rect x="490" y="${cy}" width="14" height="${hh}" rx="7" fill="${cols[i % 4]}" data-tip="${esc(c.name)}"/>`; oy += hh; cy += hh + 6; }); }
+  const lg = [['#292735', 'Funds', F], ...mid.map(m => [m[2], m[0], m[1]])].map(x => `<span><i style="background:${x[0]}"></i>${x[1]} ${money(x[2])}${T ? ' · ' + Math.round(x[2] / T * 100) + '%' : ''}</span>`).join('');
+  const cl = S.open ? (s.categories || []).filter(c => c.amount > 0).map(c => `<span>${esc(c.name)} ${money(c.amount)}</span>`).join('') : '';
+  $('#flow').innerHTML = h + `</svg><div class="legend">${lg}</div>${cl ? `<div class="legend" style="color:var(--mut)">${cl}</div>` : ''}${+s.remaining < 0 ? `<p class="err">Planned spending is ${money(-s.remaining)} above your funds.</p>` : ''}`;
+}
+function renderHealth(s) {
+  if (!hasData(s)) { $('#rings').innerHTML = '<div class="empty" style="grid-column:1/-1">Your health summary will appear once you add your funds.</div>'; return; }
+  const gs = S.goals, tg = gs.reduce((a, g) => a + (num(g.target_amount) || 0), 0), sv = gs.reduce((a, g) => a + (num(g.saved_amount) || 0), 0), cats = s.categories || [], top = cats.slice().sort((a, b) => b.amount - a.amount)[0], b = s.buffer || {};
+  $('#rings').innerHTML = ring(pc(s.planned_expenses, s.funds_total), 'Budget utilization', 'planned expenses ÷ funds', '#292735') + ring(tg ? pc(sv, tg) : null, 'Goal progress', 'actual saved ÷ targets', '#A99BD9') + ring(top ? pc(top.amount, s.planned_expenses) : null, 'Top category', top ? esc(top.name) + ' share of expenses' : 'no expenses', '#DCD5F5') + ring(pc(Math.max(+s.remaining || 0, 0), s.funds_total), 'Remaining', 'of available funds', '#F9E7A1') + ring(num(b.target) ? pc(b.actual || 0, b.target) : null, 'Buffer', num(b.target) ? 'actual ÷ target' : 'no target set', '#A99BD9');
+  animRings();
+}
+function renderGoals(l) {
+  if (!l.length) return $('#goals').innerHTML = '<div class="empty" style="grid-column:1/-1">You haven’t created any goals yet. Goals are optional, so add one whenever you like.</div>';
+  $('#goals').innerHTML = l.slice(0, 6).map(g => { const t = num(g.target_amount), sv = num(g.saved_amount) ?? 0, p = t ? Math.min(100, Math.round(sv / t * 100)) : 0, rem = num(g.remaining_amount) ?? (t !== null ? Math.max(0, t - sv) : null);
+    return `<div class="goal"><div class="ic">${esc((g.name || '?')[0].toUpperCase())}</div><b class="serif" style="font-size:19px">${esc(g.name)}</b><div class="row"><span>${money(sv)} / ${money(t)}</span><b>${p}% done</b></div><div class="pb"><div class="f" data-w="${p}"></div><u style="left:25%"></u><u style="left:50%"></u><u style="left:75%"></u></div>
+    <div class="row"><span>Remaining</span><b>${money(rem)}</b></div><div class="row"><span>${g.deadline ? 'Target date' : 'Estimated'}</span><b>${dt(g.deadline || g.estimated_completion) || '—'}</b></div></div>`; }).join('');
+  requestAnimationFrame(() => $$('.pb .f').forEach(f => f.style.width = f.dataset.w + '%'));
+}
+function renderFuture() {
+  const s = S.s, p = s && s.predictions && s.predictions[S.fut];
+  if (!p) return $('#fut').innerHTML = `<div class="empty">${S.fut === 'actual' ? 'Your financial future appears once you’ve saved funds and expenses.' : 'Save a What-If scenario to see its predicted future here.'}</div>`;
+  const tl = Array.isArray(p.timeline) ? p.timeline.filter(x => num(x.value) !== null) : [];
+  let svg = '';
+  if (tl.length > 1) { const mx = Math.max(...tl.map(x => x.value)), mn = Math.min(0, ...tl.map(x => x.value)), X = i => 20 + i * 560 / (tl.length - 1), Y = v => 120 - (v - mn) / ((mx - mn) || 1) * 100, pts = tl.map((x, i) => X(i) + ',' + Y(x.value)).join(' ');
+    svg = `<svg viewBox="0 0 600 150" style="width:100%;height:auto"><polygon points="20,120 ${pts} 580,120" fill="${S.fut === 'actual' ? '#F9E7A1' : '#DCD5F5'}" opacity=".7"/><polyline points="${pts}" fill="none" stroke="#292735" stroke-width="2.5" stroke-linejoin="round"/>${tl.map((x, i) => `<circle cx="${X(i)}" cy="${Y(x.value)}" r="5" fill="#292735" data-tip="${esc(x.label)}: ${esc(money(x.value))} (predicted)"/>`).join('')}</svg>`; }
+  $('#fut').innerHTML = `<span class="pill ${S.fut === 'actual' ? 'y' : ''}">${S.fut === 'actual' ? 'Based on your saved data' : 'Based on a hypothetical scenario'}</span>${svg}<div class="rings" style="margin-top:12px">${[['Estimated savings', p.estimated_savings], ['Projected balance', p.projected_balance], ['Expected expenses', p.expected_expenses], ['Surplus / deficit', p.surplus_deficit]].map(r => `<div class="rg"><b class="serif" style="font-size:20px">${money(r[1])}</b><small>${r[0]}</small></div>`).join('')}</div>`;
+}
+const linkify = () => $$('[data-p]').forEach(a => { a.href = CONFIG.PAGES[a.dataset.p] + (a.dataset.q ? '?' + a.dataset.q : ''); });
+async function sect(sel, path, fn) { const el = $(sel); try { const d = await api(path); el.innerHTML = d === null ? NA : fn(list(d)); } catch (e) { el.innerHTML = bad(e); } linkify(); }
+async function loadSummary() {
+  try { const s = await api(CONFIG.E.summary + '?period=' + S.per); S.s = s; if (s === null) { ['#uni', '#flow', '#rings', '#fut'].forEach(i => $(i).innerHTML = NA); return; } renderHero(s); renderUniverse(s); renderFlow(s); renderHealth(s); renderFuture(); }
+  catch (e) { ['#uni', '#flow', '#rings', '#fut'].forEach(i => $(i).innerHTML = bad(e)); }
+  linkify();
+}
+async function init() {
+  $('#nav').innerHTML = NAV.map(n => `<a data-p="${n[0]}" class="${n[0] === 'dashboard' ? 'on' : ''}"><svg class="ic" viewBox="0 0 24 24"><path d="${IC[n[0]]}"/></svg><span class="lab">${n[1]}</span></a>`).join('');
+  $('#tiles').innerHTML = [['afford', 'Check if I can afford something', '#F9E7A1', IC.afford], ['whatif', 'Create a financial scenario', '#DCD5F5', IC.whatif], ['planner', 'Review my budget', '#F3F1ED', IC.planner], ['pocketca', 'Ask Pocket CA', '#A99BD9', IC.pocketca], ['predictions', 'View my financial future', '#F9E7A1', IC.predictions]].map(t => `<a class="tile" data-p="${t[0]}" style="background:${t[2]}"><svg viewBox="0 0 24 24"><path d="${t[3]}"/></svg>${t[1]}</a>`).join('');
+  linkify();
+  $('#date').textContent = new Date().toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  api(CONFIG.E.profile).then(p => { const u = (p && (p.user || p)) || {}, n = u.full_name || u.name, h = new Date().getHours(); $('#greet').textContent = `${h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening'}${n ? ', ' + String(n).split(' ')[0] : ''}. Here’s how your financial world is looking today.`; }).catch(() => {});
+  try { const g = await api(CONFIG.E.goals); S.goals = list(g); if (g === null) $('#goals').innerHTML = NA; else renderGoals(S.goals); } catch (e) { $('#goals').innerHTML = bad(e); }
+  await loadSummary();
+  sect('#ins', CONFIG.E.insights, l => l.length ? l.map(i => `<div class="ins"><b>${esc(i.title)}</b><p>${esc(i.text)}${num(i.amount) !== null ? ' · ' + money(i.amount) : ''}${i.date ? ' · ' + dt(i.date) : ''}</p><a data-p="${esc(i.page in CONFIG.PAGES ? i.page : 'planner')}">Open →</a></div>`).join('') : '<div class="empty">Insights appear as you add more of your finances.</div>');
+  sect('#plans', CONFIG.E.plans, l => l.length ? l.map(p => { const t = num(p.target_price), sv = num(p.saved_amount) ?? 0, pr = t ? Math.min(100, Math.round(sv / t * 100)) : 0; return `<div class="plan"><div><b class="serif" style="font-size:20px">${esc(p.name)}</b><div class="row"><span>Target price</span><b>${money(t)}</b></div></div><div><div class="row"><span>Actual saved ${money(sv)}</span><b>${pr}%</b></div><div class="pb"><div class="f" data-w="${pr}" style="width:${pr}%"></div></div><div class="row"><span>Remaining ${money(p.remaining_amount ?? (t !== null ? Math.max(0, t - sv) : null))}</span><span>Plan: ${money(p.monthly_target)}/mo · ${dt(p.estimated_completion) || '—'}</span></div></div></div>`; }).join('') : '<div class="empty">No purchase plans started yet. Use “Can I afford this?” below to begin.</div>');
+  sect('#act', CONFIG.E.activity, l => l.length ? `<div class="tl">${l.map(a => `<div><span>${esc(a.description || a.type)}</span><small style="color:var(--mut)">${dt(a.created_at)}</small></div>`).join('')}</div>` : '<div class="empty">Your recent activity will appear here.</div>');
+  sect('#scen', CONFIG.E.scenarios, l => l.length ? `<div class="tl">${l.map(x => `<div><span>${esc(x.name)}</span><small style="color:var(--mut)">${dt(x.updated_at || x.created_at)}</small></div>`).join('')}</div>` : '<div class="empty">No saved scenarios yet.</div>');
+}
+$$('#perTabs button').forEach(b => b.onclick = () => { $$('#perTabs button').forEach(x => x.classList.toggle('on', x === b)); S.per = b.dataset.per; loadSummary(); });
+$('#catT').onclick = function () { S.open = !S.open; this.classList.toggle('on', S.open); this.textContent = S.open ? 'Hide categories' : 'Show categories'; if (S.s) renderFlow(S.s); };
+$$('#fTabs button').forEach(b => b.onclick = () => { $$('#fTabs button').forEach(x => x.classList.toggle('on', x === b)); S.fut = b.dataset.f; renderFuture(); });
+const tip = $('#tip');
+document.addEventListener('mousemove', e => { const t = e.target.closest && e.target.closest('[data-tip]'); if (t) { tip.textContent = t.getAttribute('data-tip'); tip.style.display = 'block'; tip.style.left = e.clientX + 12 + 'px'; tip.style.top = e.clientY + 12 + 'px'; } else tip.style.display = 'none'; });
+$('#chatF').onsubmit = async e => {
+  e.preventDefault(); const m = $('#chatI').value.trim(), out = $('#chatOut'); if (!m || $('#chatB').disabled) return;
+  $('#chatB').disabled = true; out.innerHTML = '<div class="bub">Pocket CA is thinking…</div>';
+  try { const r = await api(CONFIG.E.chat, { method: 'POST', body: JSON.stringify({ conversation_id: null, message: m }) }); $('#chatI').value = ''; out.innerHTML = `<div class="bub">${esc(r && r.message && r.message.content)}</div><p style="font-size:13px;margin:8px 0 0">Continue in <a href="${CONFIG.PAGES.pocketca}">Pocket CA</a>.</p>`; }
+  catch (er) { out.innerHTML = `<p class="err">${er.code === 'AI_NOT_CONFIGURED' ? 'Pocket CA’s AI service isn’t configured on the server yet.' : 'Couldn’t reach Pocket CA: ' + esc(er.message) + '.'}</p>`; }
+  $('#chatB').disabled = false;
+};
+$('#affF').onsubmit = e => { e.preventDefault(); const n = $('#aN').value.trim(), p = Number($('#aP').value), m = Number($('#aM').value || 0), er = $('#aE');
+  if (!n) return er.textContent = 'Enter what you want to buy.'; if (!(p > 0)) return er.textContent = 'Enter a price above zero.'; if (!(m >= 0 && m <= 120)) return er.textContent = 'Timeline must be 0–120 months.';
+  location.href = CONFIG.PAGES.afford + '?' + new URLSearchParams({ name: n, price: p, months: m }); };
+$('#burger').onclick = () => $('#side').classList.toggle('open');
+$('#collapse').onclick = () => { const r = $('#shell').classList.toggle('rail'); try { localStorage.setItem('fm-rail', r ? '1' : ''); } catch (e) {} };
+try { if (localStorage.getItem('fm-rail')) $('#shell').classList.add('rail'); } catch (e) {}
+$('#logout').onclick = async function () { this.disabled = true; try { await api(CONFIG.E.logout, { method: 'POST', body: '{}' }); } catch (e) {} CONFIG.TOKEN_KEYS.forEach(k => { localStorage.removeItem(k); sessionStorage.removeItem(k); }); toLogin(); };
+init();
+/* Backend contract: GET /api/dashboard/summary?period=monthly|yearly -> {currency, has_data, funds_total, additional_income, planned_expenses, non_negotiable, negotiable, expected_savings, remaining,
+ categories:[{name,amount}], buffer:{target,actual|null,remaining}, predictions:{actual:{estimated_savings,projected_balance,expected_expenses,surplus_deficit,timeline:[{label,value}]}|null, whatif:{...}|null}}
+ GET /api/insights -> [{title,text,amount?,date?,page}] computed by the backend from real data; GET /api/purchase-plans -> [{name,target_price,saved_amount,remaining_amount,monthly_target,estimated_completion}]
+ Goals, scenarios, activity, chat and logout are unchanged from the previous version. */
+</script>
+</body>
+</html>

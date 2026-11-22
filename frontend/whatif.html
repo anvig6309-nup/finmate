@@ -1,0 +1,760 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FinMate · What-If Simulator</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="theme.css">
+<style>
+:root{--bg:#FAFAF7;--surf:#FBF8EA;--ink:#0F172A;--mut:#4B5563;--line:#E7E4D8;--y:#F9C80E;--yd:#D9A400;--lav:#B9AEE8;--vio:#6F5BD0;--bad:#C4473A;--ok:#2E8B57;--card:#fff}
+:root[data-eff="dark"]{--bg:#111318;--surf:#181b24;--ink:#f3f5fa;--mut:#9ba3b8;--line:#2b3246;--y:#F9C80E;--yd:#D9A400;--lav:#2d2644;--vio:#a99ceb;--bad:#ef4444;--ok:#22c55e;--card:#1c202c;color-scheme:dark}
+*{box-sizing:border-box}html,body{margin:0}
+body{font:15px/1.5 'Inter',system-ui,sans-serif;background:var(--bg);color:var(--ink);display:flex;min-height:100vh;overflow-x:hidden}
+aside{width:240px;background:var(--card);padding:20px 14px;position:sticky;top:0;height:100vh;flex:none;border-right:1px solid var(--line);display:flex;flex-direction:column}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:20px;letter-spacing:.04em;padding:4px 10px 18px;color:var(--ink);text-decoration:none}.logo .mk{width:36px;height:36px;flex:none;background:var(--y);color:#111;border-radius:10px;display:grid;place-items:center;font-size:20px;font-weight:800;letter-spacing:0}.logo.sm{padding:0;font-size:17px}.logo.sm .mk{width:30px;height:30px;font-size:17px;border-radius:9px}
+nav button,nav a{display:flex;align-items:center;gap:8px;width:100%;text-align:left;border:1px solid transparent;background:none;color:var(--ink);font:inherit;font-weight:600;padding:10px 12px;border-radius:12px;cursor:pointer;margin-bottom:3px;text-decoration:none}
+nav button.on{background:var(--surf);border-color:var(--y);font-weight:700}nav button:hover:not(.on),nav a:hover{background:var(--surf);border-color:var(--line)}
+main{flex:1;min-width:0;padding:24px clamp(14px,3vw,36px) 60px;max-width:1180px;margin:0 auto}
+.top{display:none}
+h1{font-size:clamp(28px,4vw,40px);font-weight:800;letter-spacing:-.03em;line-height:1.1;margin:0 0 8px}h2{font-size:18px;font-weight:700;margin:0 0 10px}h3{font-size:15px;margin:14px 0 6px}
+p.sub{color:var(--mut);font-size:16px;margin:0 0 16px;max-width:64ch}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:22px;margin-bottom:16px}
+.grid{display:grid;gap:16px}.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}.g5{grid-template-columns:repeat(auto-fit,minmax(190px,1fr))}.split{grid-template-columns:minmax(0,1.7fr) minmax(0,1fr);align-items:start}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.sp{flex:1}
+input,select,textarea{font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:12px;padding:9px 12px;max-width:100%;min-width:0}
+input[type=number]{width:110px}input[type=range]{width:100%;padding:0;accent-color:var(--yd);border:0;height:24px}textarea{width:100%}
+input:focus,select:focus,button:focus-visible,summary:focus-visible,textarea:focus{outline:2px solid var(--vio);outline-offset:1px}
+label.f{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--mut)}label.f input,label.f select{width:100%}
+.btn{border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit;font-weight:600;padding:9px 16px;border-radius:999px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+.btn:hover:not(.p):not(.v):not(.res){background:var(--surf)}.btn.p{background:var(--y);color:#111;border-color:var(--y);font-weight:700}.btn.p:hover{background:#EDBC00}.btn.v{background:var(--vio);border-color:var(--vio);color:#fff}.btn.s{padding:4px 11px;font-size:13px}.btn.d{color:var(--bad)}.btn.big{padding:13px 22px;border-radius:14px;font-size:16px}
+.btn.res{background:linear-gradient(135deg, #f7c514, #d9a400);color:#111;font-weight:700;border:0}
+.btn.res:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(217,164,0,0.3)}
+table{width:100%;border-collapse:collapse}th{text-align:left;font-size:13px;color:var(--mut);font-weight:500;padding:8px 6px}td{padding:8px 6px;border-top:1px solid var(--line);vertical-align:middle}
+.pos{color:var(--ok)}.neg{color:var(--bad)}.mut{color:var(--mut)}.note{font-size:13px;color:var(--mut)}
+.big2{font-size:22px;font-weight:700}.stat{background:var(--surf);border:1px solid var(--line);border-radius:14px;padding:12px}.stat small{color:var(--mut);display:block}
+.tag{display:inline-block;background:var(--surf);border:1px solid var(--y);border-radius:999px;padding:2px 12px;font-size:13px;font-weight:600}.tag.l{background:var(--lav);border-color:var(--lav);color:var(--ink)}.tag.r{background:rgba(196,71,58,0.15);border-color:var(--bad);color:var(--bad)}
+.warn{background:rgba(249,200,14,0.15);border:1px solid var(--y);color:var(--ink);border-radius:12px;padding:10px 14px;margin:8px 0}.bad{background:rgba(196,71,58,0.15);color:var(--bad);border:1px solid rgba(196,71,58,0.3);border-radius:12px;padding:10px 14px;margin:8px 0}.good{background:rgba(46,139,87,0.15);color:var(--ok);border:1px solid rgba(46,139,87,0.3);border-radius:12px;padding:10px 14px;margin:8px 0}
+.preset-card{border:1.5px solid var(--line);border-radius:16px;padding:14px 16px;background:var(--surf);display:flex;flex-direction:column;justify-content:space-between;gap:8px;cursor:pointer;transition:transform .15s, border-color .15s}
+.preset-card:hover{transform:translateY(-2px);border-color:var(--yd)}
+.preset-card b{font-size:15px;display:flex;align-items:center;gap:6px}
+.preset-card p{margin:0;font-size:13px;color:var(--mut)}
+.nudge-box{background:linear-gradient(135deg, rgba(249,200,14,0.12), rgba(185,174,232,0.15));border:1.5px solid var(--y);border-radius:16px;padding:16px;margin:14px 0}
+.sum{position:sticky;top:12px}.leg span{display:inline-flex;align-items:center;gap:5px;margin-right:12px;font-size:13px}.leg i{width:10px;height:10px;border-radius:3px}
+svg{width:100%;height:auto;display:block}ul.cl{margin:6px 0;padding-left:18px}ul.cl li{margin:3px 0}
+.hb{display:grid;grid-template-columns:104px 1fr 66px;gap:8px;align-items:center;font-size:13px;margin:7px 0}.hb div i{display:block;height:7px;border-radius:9px;margin:2px 0;transition:width .3s}.hb b{text-align:right}
+.subs{background:var(--surf);border-radius:14px;padding:10px;margin:2px 0 6px}.subs .row{margin:4px 0}
+details summary{cursor:pointer}.fade{animation:f .25s ease}@keyframes f{from{opacity:0;transform:translateY(4px)}}
+dialog{border:1px solid var(--line);border-radius:20px;max-width:min(720px,94vw);width:100%;background:var(--card);color:var(--ink);max-height:90vh;padding:24px}dialog::backdrop{background:rgba(0,0,0,.6)}
+#toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;display:none;z-index:99;max-width:90vw}
+.hid{display:none}
+@media(max-width:960px){.g3,.g4{grid-template-columns:1fr 1fr}.g2,.split{grid-template-columns:1fr}.sum{position:static}}
+@media(max-width:760px){
+ body{display:block}aside{position:fixed;z-index:80;left:0;top:0;transform:translateX(-100%);transition:transform .2s;box-shadow:4px 0 20px rgba(0,0,0,.3)}aside.open{transform:none}
+ .top{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:70}
+ .g3,.g4{grid-template-columns:1fr}.card{padding:16px}.btn.big{width:100%}
+ table.rt thead{display:none}table.rt tr{display:block;border:1px solid var(--line);border-radius:12px;padding:6px 10px;margin:8px 0}
+ table.rt td{display:flex;justify-content:space-between;align-items:center;gap:8px;border:0;padding:4px 0}table.rt td::before{content:attr(data-l);color:var(--mut);font-size:13px;flex:none}
+ table.rt td[colspan]{display:block}table.rt td[colspan]::before{content:none}.hb{grid-template-columns:84px 1fr 58px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style><script src="api.js"></script>
+</head><body>
+<aside id="side">
+  <a href="dashboard.html" class="logo" title="Back to Dashboard"><span class="mk" aria-hidden="true">F</span>FINMATE</a>
+  <nav>
+    <button data-v="build" class="on">Scenario Builder</button>
+    <button data-v="insights">Analysis & Action Plan</button>
+    <button data-v="future">Predict My Future</button>
+    <button data-v="goals">Goal Analysis</button>
+    <button data-v="saved">My Saved Scenarios</button>
+    <hr style="width:100%;border:0;border-top:1px solid var(--line);margin:10px 0">
+    <a href="dashboard.html">📊 Dashboard</a>
+    <a href="predictions.html">🔮 Predictions</a>
+    <a href="budget_planner.html">📝 Budget Planner</a>
+    <a href="goals.html">🎯 Goals</a>
+    <a href="pocket_ca.html">💬 Pocket CA</a>
+    <a href="settings.html">⚙️ Settings</a>
+  </nav>
+  <div style="margin-top:auto;padding-top:10px">
+    <button class="btn s" onclick="openResearchModal()" style="width:100%;justify-content:center">📄 Research Paper</button>
+    <p class="note" style="padding:8px 6px;margin:0;font-size:12px">Frontend simulation. Real data stays safe.</p>
+  </div>
+</aside>
+<div style="flex:1;min-width:0"><div class="top"><button class="btn s" id="burger">☰ Menu</button><a href="dashboard.html" class="logo sm"><span class="mk">F</span>FINMATE</a><div style="margin-left:auto"><a href="dashboard.html" class="btn s">← Dashboard</a></div></div>
+<main>
+<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap">
+  <div>
+    <h1>What-If Simulator</h1>
+    <p class="sub">Explore financial choices, model loans and vacations, examine behavioral biases, and test future cash-flow scenarios without affecting your actual records.</p>
+  </div>
+  <div class="row">
+    <a href="dashboard.html" class="btn"><span>←</span> Dashboard</a>
+    <button class="btn res" onclick="openResearchModal()">📄 FinMate Paper Insights</button>
+  </div>
+</div>
+
+<div class="row" style="margin-bottom:16px"><span class="tag" id="bl"></span><span class="tag l" id="cur"></span><span class="sp"></span>
+<button class="btn p" onclick="newScen()">+ New Scenario</button><button class="btn" onclick="saveScen()">Save Scenario</button><button class="btn" onclick="show('saved')">Saved Scenarios</button><button class="btn d" onclick="resetSim()">Reset</button></div>
+
+<section id="v-build"></section><section id="v-insights" class="hid"></section><section id="v-future" class="hid"></section><section id="v-goals" class="hid"></section><section id="v-saved" class="hid"></section>
+</main></div><dialog id="dlg"></dialog><div id="toast" role="status"></div>
+<script>
+/* ---------- helpers ---------- */
+const $=s=>document.querySelector(s),clone=o=>JSON.parse(JSON.stringify(o)),uid=()=>Math.random().toString(36).slice(2,9),esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmt=n=>(n<-.5?'-':'')+'₹'+Math.round(Math.abs(n)).toLocaleString('en-IN');
+const kf=v=>(v<0?'-':'')+'₹'+(Math.abs(v)>=1e5?(Math.abs(v)/1e5).toFixed(1)+'L':Math.round(Math.abs(v)/1e3)+'k');
+const store={get(k,d){try{return JSON.parse(localStorage.getItem(k))??d}catch{return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch{toast('Could not save in this browser')}}};
+const toast=t=>{const e=$('#toast');e.textContent=t;e.style.display='block';clearTimeout(toast.t);toast.t=setTimeout(()=>e.style.display='none',2800)};
+const modal=h=>{$('#dlg').innerHTML=h+'<div class="row" style="margin-top:14px"><span class="sp"></span><button class="btn" onclick="$(\'#dlg\').close()">Close</button></div>';$('#dlg').showModal()};
+const addM=(d,m)=>{const x=new Date(d);x.setMonth(x.getMonth()+m);return x},dstr=d=>d.toLocaleDateString('en-IN',{month:'short',year:'numeric'});
+const F={Monthly:1,Weekly:52/12,Yearly:1/12},fsel=(v,fn)=>`<select onchange="${fn}" aria-label="Frequency">${Object.keys(F).map(k=>`<option ${k==v?'selected':''}>${k}</option>`).join('')}</select>`;
+const dcls=(d,g)=>Math.abs(d)<1?'mut':(d*g>0?'pos':'neg'),sg=d=>(d>0.5?'+':'')+fmt(d);
+
+/* ---------- baseline (never modified, never stored) ---------- */
+const S=(name,amt,ends)=>({name,amt,ends:ends||0}),C=(id,name,pri,neg,subs)=>({id,name,pri,neg,freq:'Monthly',amt:0,subs,open:false,ack:false});
+let BASE={
+  persona:'Default Profile',
+  src:'Primary Salary',
+  income:40000,
+  incFreq:'Monthly',
+  incEnd:0,
+  existing:25000,
+  savings:4000,
+  extra:[],
+  cats:[
+    {id:'c1',name:'Rent & Accommodation',pri:'High',neg:false,freq:'Monthly',amt:12000,subs:[S('Rent',12000)],open:false,ack:false},
+    {id:'c2',name:'Food & Groceries',pri:'High',neg:false,freq:'Monthly',amt:8000,subs:[S('Groceries',8000)],open:false,ack:false},
+    {id:'c3',name:'Utilities & Bills',pri:'Medium',neg:false,freq:'Monthly',amt:3000,subs:[S('Electricity & WiFi',3000)],open:false,ack:false},
+    {id:'c4',name:'Lifestyle & Leisure',pri:'Low',neg:true,freq:'Monthly',amt:5000,subs:[S('Dining & Outings',5000)],open:false,ack:false},
+    {id:'c5',name:'Shopping & Discretionary',pri:'Low',neg:true,freq:'Monthly',amt:4000,subs:[S('Shopping',4000)],open:false,ack:false}
+  ]
+};
+
+let GOALS=store.get('fm_whatif_goals',[
+  {id:'g1',name:'Emergency Fund (3 Months)',target:70000,saved:25000,months:12},
+  {id:'g2',name:'Skill Certification / Laptop',target:50000,saved:10000,months:8}
+]);
+
+const amt1=(c,m=1)=>c.subs.length?c.subs.filter(x=>!x.ends||m<=x.ends).reduce((a,x)=>a+(+x.amt||0),0):(+c.amt||0),mo=(c,m=1)=>amt1(c,m)*F[c.freq];
+function refreshBaseLookup(){
+  BASE.cats.forEach(c=>{c.orig=amt1(c)});
+  window.ORIG={};window.BM={};
+  BASE.cats.forEach(c=>{ORIG[c.id]=c.orig;BM[c.id]=c});
+}
+refreshBaseLookup();
+const PAL=['#F9C80E','#B9AEE8','#D9A400','#8E7CE0','#F3E08A','#6F5BD0','#E8D9FF','#C9B037','#A59AD9'];
+
+/* ---------- deterministic calculations ---------- */
+const mainInc=(s,m)=>(!s.incEnd||m<=s.incEnd)?(+s.income||0)*F[s.incFreq]:0,fm=(e,m)=>(m>=e.from&&(!e.months||m<e.from+e.months))?(+e.amt||0)*F[e.freq]:0;
+const funds=(s,m=1)=>mainInc(s,m)+s.extra.reduce((a,e)=>a+fm(e,m),0);
+function T(s,m=1){const f=funds(s,m),exp=s.cats.reduce((a,c)=>a+mo(c,m),0),non=s.cats.filter(c=>!c.neg).reduce((a,c)=>a+mo(c,m),0);return{f,exp,non,neg:exp-non,sav:+s.savings||0,rem:f-exp-(+s.savings||0),extra:f-mainInc(s,m)}}
+const worst=s=>Math.min(...Array.from({length:12},(_,i)=>T(s,i+1).rem));
+const steady=s=>{let h=1;s.extra.forEach(e=>{h=Math.max(h,e.from,e.months?e.from+e.months:0)});s.cats.forEach(c=>c.subs.forEach(x=>{if(x.ends)h=Math.max(h,x.ends+1)}));if(s.incEnd)h=Math.max(h,s.incEnd+1);return Math.min(h,12)};
+function proj(s,n){let bal=0,exp=0;const net=[s.existing],sur=[],sv=+s.savings||0;for(let m=1;m<=n;m++){const t=T(s,m);bal+=t.rem;exp+=t.exp;sur.push(t.rem);net.push(s.existing+sv*m+bal)}
+ return{add:sv*n,acc:s.existing+sv*n,bal,sur,exp,net,last:sur[n-1]}}
+function gcalc(s,g,months,alloc){const rem=Math.max(0,g.target-g.saved),req=rem/months,al=alloc==null?(+s.savings||0):alloc,done=rem===0?0:al>0?Math.ceil(rem/al):Infinity,cap=(+s.savings||0)+Math.max(0,worst(s));
+ return{rem,req,al,done,cap,ok:cap>=req,meets:al>=req,prog:n=>Math.min(100,Math.round((g.saved+al*n)/g.target*100))}}
+
+/* ---------- Behavioral Finance & Risk Analysis (From Research Paper) ---------- */
+function risks(s){
+  const o=[],t=T(s),w=worst(s),f=funds(s)||1;
+  s.cats.forEach(c=>{const x=ORIG[c.id];if(x!=null&&!c.neg&&mo(c)<x-.5)o.push({k:'non',c,txt:`${c.name} is non-negotiable and was reduced from ${fmt(x)} to ${fmt(mo(c))}.`});
+   if(x!=null&&c.neg&&c.pri==='High'&&mo(c)<x*.6)o.push({k:'ess',txt:`${c.name} is high priority and was cut by more than 40%.`})});
+  if(w<0)o.push({k:'def',txt:`Worst month shows a ${fmt(-w)} deficit.`});
+  if(w>=0&&t.rem<f*.05)o.push({k:'buf',txt:`Only ${fmt(t.rem)} is left after savings. That is a thin emergency buffer.`});
+  if(s.extra.some(e=>e.months)||s.incEnd)o.push({k:'tmp',txt:'Part of your income is temporary. The budget must still work after it ends.'});
+  if(t.sav>f*.35)o.push({k:'sav',txt:`Saving ${Math.round(t.sav/f*100)}% of funds is hard to sustain.`});
+  return o;
+}
+
+function behavioralAnalysis(s){
+  const t=T(s),b=T(BASE),f=funds(s)||1;
+  const nonMonthly=t.non;
+  const runwayMonths=nonMonthly>0?(s.existing/(nonMonthly)).toFixed(1):'—';
+  const wants=s.cats.filter(c=>c.neg).reduce((a,c)=>a+mo(c),0);
+  const wantsPct=Math.round((wants/f)*100);
+  const needsPct=Math.round((t.non/f)*100);
+  const savPct=Math.round((t.sav/f)*100);
+
+  // Present Bias assessment (Paper II: Overvaluing immediate gratification)
+  let presentBiasRisk='Low';
+  let presentBiasMsg='Your current allocation maintains a balanced forward-looking trajectory without sacrificing security.';
+  if(wantsPct>35 && savPct<10){
+    presentBiasRisk='High';
+    presentBiasMsg='Discretionary / lifestyle spending exceeds 35% while savings is below 10%. This reflects Present Bias—valuing immediate enjoyment over future security (Thaler & Sunstein, 2008).';
+  } else if(wantsPct>30 || savPct<10){
+    presentBiasRisk='Moderate';
+    presentBiasMsg='Slight tilt toward immediate consumption. Consider protecting your savings set-aside before discretionary expenses.';
+  }
+
+  // Debt / EMI assessment
+  const emiCat=s.cats.find(c=>/emi|loan|borrow|debt/i.test(c.name));
+  const emiAmt=emiCat?mo(emiCat):0;
+  const dtiRatio=Math.round((emiAmt/f)*100);
+
+  // Nudge recommendation (Paper V: Nudge Theory)
+  let nudge='';
+  if(t.rem<0){
+    nudge='⚠️ Deficit Nudge: Delay non-essential purchases or spread costs across 3 months to avoid depleting your buffer.';
+  } else if(dtiRatio>35){
+    nudge='💳 Debt Warning: Your debt obligations take '+dtiRatio+'% of your income. The recommended CA guideline is under 30%.';
+  } else if(t.rem>f*0.15 && t.sav<f*0.15){
+    const extraSav=Math.round(t.rem*0.5);
+    nudge=`💡 Pocket CA Nudge: You have ${fmt(t.rem)} unallocated cash. Directing ${fmt(extraSav)} into a compounding SIP would build wealth faster without pinching lifestyle.`;
+  } else {
+    nudge='✅ Disciplined Scenario: Your hypothetical cash flow preserves baseline emergency stability and supports ongoing goals.';
+  }
+
+  return { runwayMonths, needsPct, wantsPct, savPct, presentBiasRisk, presentBiasMsg, emiAmt, dtiRatio, nudge };
+}
+
+function feas(s){if(funds(s)<=0)return['Not enough data','Add income and expenses to get an assessment.'];const w=worst(s),f=funds(s),r=risks(s),non=r.some(x=>x.k=='non'),hard=r.filter(x=>x.k!='tmp').length;
+ if(w<-.1*f)return['Not currently feasible',`Even in its worst month the budget is ${fmt(-w)} short, more than 10% of your funds.`];
+ if(w<0)return['Challenging',`The budget runs a deficit of up to ${fmt(-w)}/month.`];
+ if(non)return['Challenging','It relies on cutting a non-negotiable commitment, which is risky.'];
+ if(hard)return['Realistic with adjustments','The numbers balance, but a risk (thin buffer, cut priority or heavy savings) needs attention.'];
+ return['Realistic','The budget balances in every month of the next year and no commitment is cut.']}
+const fcls=l=>l=='Realistic'?'good':l=='Realistic with adjustments'||l=='Not enough data'?'warn':'bad';
+
+/* ---------- charts ---------- */
+function lineChart(series,labels){const W=600,H=240,l=46,r=14,t=12,b=28,all=series.flatMap(s=>s.v),mn=Math.min(0,...all),mx=Math.max(...all,1),n=labels.length-1,st=Math.ceil(n/8);
+ const X=i=>l+i*(W-l-r)/n,Y=v=>t+(mx-v)/(mx-mn||1)*(H-t-b);let g='';
+ for(let i=0;i<=4;i++){const v=mn+(mx-mn)*i/4;g+=`<line x1="${l}" x2="${W-r}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--line)"/><text x="${l-6}" y="${Y(v)+4}" text-anchor="end" font-size="11" fill="var(--mut)">${kf(v)}</text>`}
+ labels.forEach((q,i)=>{if(i%st==0||i==n)g+=`<text x="${X(i)}" y="${H-8}" text-anchor="middle" font-size="11" fill="var(--mut)">${q}</text>`});
+ series.forEach(s=>{g+=`<polyline fill="none" stroke="${s.c}" stroke-width="2.5" ${s.d?'stroke-dasharray="6 4"':''} points="${s.v.map((v,i)=>X(i)+','+Y(v)).join(' ')}"/>`+(n<=12?s.v.map((v,i)=>`<circle cx="${X(i)}" cy="${Y(v)}" r="3" fill="${s.c}"/>`).join(''):'')});
+ return`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Projection chart">${g}</svg>`}
+function pie(items){const tot=items.reduce((a,x)=>a+x.v,0)||1;let a0=-Math.PI/2,g='';const P=a=>[100+80*Math.cos(a),100+80*Math.sin(a)];
+ items.forEach(x=>{if(x.v<=0)return;const a1=a0+x.v/tot*2*Math.PI;g+=x.v/tot>.999?`<circle cx="100" cy="100" r="80" fill="${x.c}"/>`:`<path d="M100 100L${P(a0)}A80 80 0 ${a1-a0>Math.PI?1:0} 1 ${P(a1)}Z" fill="${x.c}" stroke="var(--card)" stroke-width="2"/>`;a0=a1});
+ return`<svg viewBox="0 0 200 200" style="max-width:210px;margin:0 auto" role="img" aria-label="Expense distribution">${g}<circle cx="100" cy="100" r="42" fill="var(--card)"/></svg>`}
+const hbars=rows=>{const mx=Math.max(...rows.flatMap(r=>[r[1],r[2]]),1);return rows.map(r=>`<div class="hb"><span>${esc(r[0])}</span><div><i style="width:${r[1]/mx*100}%;background:var(--lav)"></i><i style="width:${r[2]/mx*100}%;background:var(--yd)"></i></div><b>${fmt(r[2])}</b></div>`).join('')};
+const legend=a=>`<div class="leg">${a.map(x=>`<span><i style="background:${x[1]}"></i>${esc(x[0])}</span>`).join('')}</div>`;
+
+/* ---------- state ---------- */
+let sim=clone(BASE),curId=null,curName='',ver=0,AN=null,PLAN=null,pr={n:6,custom:18},G={id:null,months:null,alloc:null},pick=[];const curGoal=()=>GOALS.find(x=>x.id==G.id)||GOALS[0]||null;
+
+/* Research Paper Sample Presets (Section IV & VII) */
+const SAMPLES=[
+  {
+    id:'sample-vacation',
+    sample:true,
+    name:'🌴 Planned Vacation & Trip Expense',
+    pr:12,
+    created:new Date().toISOString(),
+    sim:{
+      persona:'Vacation Planning',
+      src:'Salary',
+      income:45000,
+      incFreq:'Monthly',
+      incEnd:0,
+      existing:30000,
+      savings:5000,
+      extra:[],
+      cats:[
+        {id:'v1',name:'Rent & Essentials',pri:'High',neg:false,freq:'Monthly',amt:14000,subs:[S('Rent',14000)],open:false,ack:false},
+        {id:'v2',name:'Food & Groceries',pri:'High',neg:false,freq:'Monthly',amt:8000,subs:[S('Groceries',8000)],open:false,ack:false},
+        {id:'v3',name:'Utilities',pri:'Medium',neg:false,freq:'Monthly',amt:3000,subs:[S('Bills',3000)],open:false,ack:false},
+        {id:'v4',name:'Vacation Trip Budget (Month 3)',pri:'Medium',neg:true,freq:'Monthly',amt:0,subs:[S('Flight & Stay',30000,3)],open:false,ack:false},
+        {id:'v5',name:'Lifestyle & Leisure',pri:'Low',neg:true,freq:'Monthly',amt:4000,subs:[S('Outings',4000)],open:false,ack:false}
+      ]
+    }
+  },
+  {
+    id:'sample-loan',
+    sample:true,
+    name:'💳 Borrowing Money & Loan EMI',
+    pr:12,
+    created:new Date().toISOString(),
+    sim:{
+      persona:'Loan Commitment',
+      src:'Salary',
+      income:50000,
+      incFreq:'Monthly',
+      incEnd:0,
+      existing:40000,
+      savings:4000,
+      extra:[],
+      cats:[
+        {id:'l1',name:'Rent & Accommodation',pri:'High',neg:false,freq:'Monthly',amt:15000,subs:[S('Rent',15000)],open:false,ack:false},
+        {id:'l2',name:'Loan EMI (₹1L @ 12% 1 yr)',pri:'High',neg:false,freq:'Monthly',amt:8885,subs:[S('Bank EMI',8885)],open:false,ack:false},
+        {id:'l3',name:'Food & Essentials',pri:'High',neg:false,freq:'Monthly',amt:9000,subs:[S('Food',9000)],open:false,ack:false},
+        {id:'l4',name:'Utilities',pri:'Medium',neg:false,freq:'Monthly',amt:3500,subs:[S('Bills',3500)],open:false,ack:false},
+        {id:'l5',name:'Discretionary Spending',pri:'Low',neg:true,freq:'Monthly',amt:4000,subs:[S('Entertainment',4000)],open:false,ack:false}
+      ]
+    }
+  },
+  {
+    id:'sample-sip',
+    sample:true,
+    name:'📈 Mutual Fund SIP Wealth Builder',
+    pr:12,
+    created:new Date().toISOString(),
+    sim:{
+      persona:'Investment Growth',
+      src:'Salary',
+      income:45000,
+      incFreq:'Monthly',
+      incEnd:0,
+      existing:35000,
+      savings:3000,
+      extra:[],
+      cats:[
+        {id:'s1',name:'Rent & Living',pri:'High',neg:false,freq:'Monthly',amt:13000,subs:[S('Rent',13000)],open:false,ack:false},
+        {id:'s2',name:'Food & Groceries',pri:'High',neg:false,freq:'Monthly',amt:8000,subs:[S('Food',8000)],open:false,ack:false},
+        {id:'s3',name:'Equity Mutual Fund SIP',pri:'High',neg:false,freq:'Monthly',amt:6000,subs:[S('Monthly SIP',6000)],open:false,ack:false},
+        {id:'s4',name:'Utilities',pri:'Medium',neg:false,freq:'Monthly',amt:3000,subs:[S('Utilities',3000)],open:false,ack:false},
+        {id:'s5',name:'Optimized Leisure',pri:'Low',neg:true,freq:'Monthly',amt:4000,subs:[S('Leisure',4000)],open:false,ack:false}
+      ]
+    }
+  },
+  {
+    id:'sample-festive',
+    sample:true,
+    name:'🪔 Festive & Seasonal Surge (Diwali/Weddings)',
+    pr:12,
+    created:new Date().toISOString(),
+    sim:{
+      persona:'Seasonal Spending',
+      src:'Salary',
+      income:42000,
+      incFreq:'Monthly',
+      incEnd:0,
+      existing:25000,
+      savings:4000,
+      extra:[],
+      cats:[
+        {id:'f1',name:'Fixed Living Expenses',pri:'High',neg:false,freq:'Monthly',amt:14000,subs:[S('Living',14000)],open:false,ack:false},
+        {id:'f2',name:'Food & Daily Needs',pri:'High',neg:false,freq:'Monthly',amt:7500,subs:[S('Food',7500)],open:false,ack:false},
+        {id:'f3',name:'Festive Shopping & Gifts (Month 2)',pri:'Medium',neg:true,freq:'Monthly',amt:0,subs:[S('Diwali & Wedding Gifting',18000,2)],open:false,ack:false},
+        {id:'f4',name:'Discretionary',pri:'Low',neg:true,freq:'Monthly',amt:3500,subs:[S('Personal',3500)],open:false,ack:false}
+      ]
+    }
+  }
+];
+
+const userScen=()=>store.get('fm_whatif_scenarios_v2',[]),allScen=()=>[...SAMPLES,...userScen()],getScen=id=>allScen().find(x=>x.id===id);
+function setAmt(c,v){v=Math.max(0,+v||0);if(!c.subs.length){c.amt=v;return}const old=amt1(c);if(old<=0){c.subs=[S('General',v)];return}
+ c.subs.forEach(x=>x.amt=Math.round(x.amt*v/old));const d=v-amt1(c);if(c.subs[0])c.subs[0].amt+=d}
+
+/* ---------- navigation ---------- */
+const R={build:()=>renderBuild(),insights:()=>renderInsights(),future:()=>renderFuture(),goals:()=>renderGoals(),saved:()=>renderSaved()};
+function show(v){document.querySelectorAll('main>section').forEach(s=>s.classList.toggle('hid',s.id!=='v-'+v));document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));R[v]();$('#side').classList.remove('open');scrollTo(0,0)}
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>show(b.dataset.v));$('#burger').onclick=()=>$('#side').classList.toggle('open');
+const curLabel=()=>{const bl=$('#bl');if(bl)bl.textContent=BASE.income||BASE.cats.length?`Baseline: ${BASE.persona||'Your profile'} · ${fmt(funds(BASE))}/mo`:'No baseline connected yet';$('#cur').textContent='Working on: '+(curName||'unsaved scenario')};
+
+/* ================= 1-CLICK RESEARCH PRESET LOADERS ================= */
+function applyPreset(type){
+  if(type==='vacation'){
+    const amt=prompt('Enter total estimated vacation budget (₹):','35000');
+    if(!amt||isNaN(amt))return;
+    const mth=prompt('Which month is the trip planned for (1-12)?','3');
+    const m=Math.max(1,Math.min(12,parseInt(mth)||3));
+    sim=clone(BASE);
+    sim.cats.push({
+      id:uid(),name:'Vacation & Travel (Trip)',pri:'Medium',neg:true,freq:'Monthly',amt:0,
+      subs:[S('Trip Travel & Stay',Number(amt),m)],open:false,ack:true
+    });
+    curName=`🌴 Vacation in M${m} (${fmt(amt)})`;
+    toast('Vacation scenario created! See month ' + m + ' impact.');
+  } else if(type==='loan'){
+    const principal=prompt('Loan amount to borrow (₹):','100000');
+    if(!principal||isNaN(principal))return;
+    const tenureM=prompt('Loan tenure in months (e.g. 12, 24, 36):','12');
+    const n=parseInt(tenureM)||12;
+    const rateAnnual=12; // 12% p.a. typical
+    const r=rateAnnual/(12*100);
+    const P=Number(principal);
+    const emi=Math.round((P*r*Math.pow(1+r,n))/(Math.pow(1+r,n)-1));
+    sim=clone(BASE);
+    sim.cats.push({
+      id:uid(),name:`Loan EMI (₹${P/1000}k @ ${rateAnnual}%)`,pri:'High',neg:false,freq:'Monthly',amt:emi,
+      subs:[S('Bank EMI',emi,n)],open:false,ack:true
+    });
+    curName=`💳 Borrowed ${fmt(P)} (EMI: ${fmt(emi)}/mo)`;
+    toast(`Loan EMI of ${fmt(emi)}/mo added to scenario.`);
+  } else if(type==='festive'){
+    const festiveCost=prompt('Enter estimated festive & wedding surge spend (₹):','20000');
+    if(!festiveCost||isNaN(festiveCost))return;
+    sim=clone(BASE);
+    sim.cats.push({
+      id:uid(),name:'Festive & Seasonal Surge',pri:'Medium',neg:true,freq:'Monthly',amt:0,
+      subs:[S('Diwali / Wedding Expenses',Number(festiveCost),2)],open:false,ack:true
+    });
+    curName=`🪔 Festive Surge (${fmt(festiveCost)})`;
+    toast('Festive surge scenario loaded for month 2!');
+  } else if(type==='sip'){
+    const sipAmt=prompt('Enter monthly Mutual Fund SIP contribution (₹):','5000');
+    if(!sipAmt||isNaN(sipAmt))return;
+    sim=clone(BASE);
+    const s=Number(sipAmt);
+    // Trim negotiable lifestyle by half of SIP if possible
+    sim.cats.forEach(c=>{
+      if(c.neg&&mo(c)>=1000){
+        c.amt=Math.max(500,Math.round(c.amt*0.8));
+      }
+    });
+    sim.cats.push({
+      id:uid(),name:'Disciplined Mutual Fund SIP',pri:'High',neg:false,freq:'Monthly',amt:s,
+      subs:[S('Equity / Hybrid SIP',s)],open:false,ack:true
+    });
+    curName=`📈 ${fmt(s)}/mo SIP Wealth Plan`;
+    toast('SIP scenario activated with optimized discretionary spending!');
+  } else if(type==='gap'){
+    sim=clone(BASE);
+    sim.income=Math.round(BASE.income*0.5);
+    curName='💼 50% Income Shock / Transition';
+    toast('Income shock scenario loaded (50% income drop)!');
+  }
+  curId=null;ver++;renderBuild();show('build');
+}
+
+/* ================= RESEARCH MODAL ================= */
+function openResearchModal(){
+  modal(`
+    <div style="max-height:75vh;overflow-y:auto;padding-right:8px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+        <span style="background:var(--y);padding:4px 10px;border-radius:8px;font-weight:800;font-size:13px">IEEE Format</span>
+        <h2 style="margin:0">FinMate: The "Pocket CA" Research Insights</h2>
+      </div>
+      <p style="color:var(--mut);font-size:14px;margin-bottom:14px">
+        <b>Authors:</b> Ms. Meenakshi Jalandra, Anvi Gupta, Bhoomi Agrawal, Anvi Singh Chauhan.<br>
+        <i>An Intelligent Personal Financial Manager with Forward-Looking Predictive Analytics.</i>
+      </p>
+
+      <div class="card" style="background:var(--surf);border-color:var(--y);margin-bottom:12px">
+        <h3 style="margin-top:0">Key Paradigm: Moving Beyond Backward-Looking Expense Trackers</h3>
+        <p style="font-size:14px;margin:0">
+          Traditional personal finance applications (e.g. Moneyview, Axio, Goodbudget) focus almost exclusively on answering <b>"Where did my money go?"</b>—acting as reactive historians. FinMate shifts the paradigm to <b>"How should I use my money next?"</b>, acting as a proactive <i>Pocket CA</i> through interactive scenario simulations and behavioral nudges before decisions occur.
+        </p>
+      </div>
+
+      <h3>Core Behavioral Economics Principles Integrated (Section II & V)</h3>
+      <ul class="cl" style="font-size:14px">
+        <li><b>Present Bias (Thaler & Sunstein, 2008):</b> The cognitive tendency to heavily discount future financial security in favor of immediate gratification (such as spontaneous travel, impulsive shopping). FinMate's simulator detects Present Bias and provides real-time goal delay metrics.</li>
+        <li><b>Mental Accounting:</b> People compartmentalize funds into subjective mental buckets. FinMate structures decisions into <i>Needs (Non-negotiables)</i>, <i>Wants (Negotiables)</i>, and <i>Future Wealth (Savings & Goals)</i> to prevent mental leakage.</li>
+        <li><b>Loss Aversion:</b> Psychological discomfort from financial loss. FinMate calculates your <b>Emergency Cushion Runway</b> (3–6 months target) to prevent financial panic during negative cash-flow shocks.</li>
+        <li><b>Nudge Theory:</b> Small, timely interventions and prompts framing decisions clearly encourage disciplined savings without coercive mandates.</li>
+      </ul>
+
+      <h3>India-Specific Financial Realities (Section VII)</h3>
+      <ul class="cl" style="font-size:14px">
+        <li><b>UPI Recurring Mandates:</b> Frictionless digital spending often masks small cumulative expenses.</li>
+        <li><b>EMIs & Borrowing:</b> Consumer loans require evaluating Debt-to-Income (DTI) ratio before taking commitments.</li>
+        <li><b>Seasonal & Festival Spending:</b> Surges during Diwali, weddings, and holidays can deplete buffers if not modeled proactively.</li>
+        <li><b>Systematic Investment Plans (SIPs):</b> Guiding users to direct surplus funds into mutual funds with compound interest calculations.</li>
+      </ul>
+    </div>
+  `);
+}
+
+/* ================= SCENARIO BUILDER ================= */
+function baselineCard(){if(!BASE.income&&!BASE.cats.length)return'<div class="card"><h2>Actual financial baseline</h2><p class="note">No financial profile is connected yet, so the baseline is empty and everything below is built from scratch. Once your backend is ready, load the user\'s profile into <code>BASE</code>.</p></div>';
+ return`<details class="card"><summary><b>Actual financial baseline</b> <span class="tag">Reference · read-only</span></summary><table class="rt" style="margin-top:8px"><thead><tr><th>Category</th><th>Amount</th><th>Priority</th><th>Negotiability</th><th>Subcategories</th></tr></thead><tbody>${BASE.cats.map(c=>`<tr><td data-l="Category">${esc(c.name)}</td><td data-l="Amount">${fmt(c.orig)}</td><td data-l="Priority">${c.pri}</td><td data-l="Negotiability">${c.neg?'Negotiable':'Non-negotiable'}</td><td data-l="Breakdown" class="note">${c.subs.map(x=>`${esc(x.name)} ${fmt(x.amt)}${x.ends?` (ends month ${x.ends})`:''}`).join(' · ')}</td></tr>`).join('')}<tr><td data-l="Category">Savings</td><td data-l="Amount">${fmt(BASE.savings)}</td><td data-l="Priority">—</td><td data-l="Negotiability">—</td><td></td></tr></tbody></table><p class="note">Available funds ${fmt(BASE.income)}/mo${BASE.extra.map(e=>` + ${fmt(e.amt)} ${esc(e.name)}`).join('')}. Existing savings ${fmt(BASE.existing)}.</p></details>`}
+
+function renderBuild(){const s=sim;curLabel();
+ $('#v-build').innerHTML=`
+ <div class="card" style="border-top:4px solid var(--y);background:linear-gradient(180deg, var(--surf), var(--card))">
+   <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+     <div>
+       <h2 style="margin:0 0 4px">Research Paper Scenarios (1-Click Simulators)</h2>
+       <p class="note" style="margin:0">Interactive scenario analysis & behavioral testing as formulated in the FinMate IEEE research paper.</p>
+     </div>
+     <button class="btn s" onclick="openResearchModal()">Paper Framework</button>
+   </div>
+   <div class="grid g5" style="margin-top:14px">
+     <div class="preset-card" onclick="applyPreset('vacation')">
+       <b>🌴 Vacation Trip</b>
+       <p>Model holiday travel costs, buffer recovery & goal impact.</p>
+       <span class="btn s" style="margin-top:4px">Simulate Trip →</span>
+     </div>
+     <div class="preset-card" onclick="applyPreset('loan')">
+       <b>💳 Borrowing / EMI</b>
+       <p>Simulate taking a loan, monthly EMI commitment & DTI ratio.</p>
+       <span class="btn s" style="margin-top:4px">Simulate Loan →</span>
+     </div>
+     <div class="preset-card" onclick="applyPreset('festive')">
+       <b>🪔 Festive Surge</b>
+       <p>India-specific Diwali / wedding spending spikes.</p>
+       <span class="btn s" style="margin-top:4px">Simulate Surge →</span>
+     </div>
+     <div class="preset-card" onclick="applyPreset('sip')">
+       <b>📈 Mutual Fund SIP</b>
+       <p>Reallocate lifestyle spend to wealth compounding.</p>
+       <span class="btn s" style="margin-top:4px">Simulate SIP →</span>
+     </div>
+     <div class="preset-card" onclick="applyPreset('gap')">
+       <b>💼 Income Volatility</b>
+       <p>Test financial runway during salary cut or transition.</p>
+       <span class="btn s" style="margin-top:4px">Simulate Shock →</span>
+     </div>
+   </div>
+ </div>
+
+ ${baselineCard()}
+ <div class="grid split"><div>
+ <div class="card"><h2>Hypothetical income</h2><div class="grid g3">
+  <label class="f">Income source<input value="${esc(s.src)}" oninput="sim.src=this.value"></label>
+  <label class="f">Available funds<input type="number" min="0" value="${s.income}" oninput="sim.income=+this.value||0;live()"></label>
+  <label class="f">Frequency${fsel(s.incFreq,"sim.incFreq=this.value;live()")}</label>
+  <label class="f">Main income ends after (months, 0 = never)<input type="number" min="0" value="${s.incEnd}" oninput="sim.incEnd=+this.value||0;live()"></label>
+  <div class="stat"><small>Yearly equivalent</small><b id="yr"></b></div><div class="stat"><small>Original → hypothetical</small><b id="idf"></b></div></div>
+  <table class="rt" style="margin-top:10px"><thead><tr><th>Additional income</th><th>Amount</th><th>Frequency</th><th>Starts in month</th><th>Lasts (months, 0 = ongoing)</th><th></th></tr></thead><tbody>
+  ${s.extra.map((e,i)=>`<tr><td data-l="Source"><input value="${esc(e.name)}" oninput="sim.extra[${i}].name=this.value"></td><td data-l="Amount"><input type="number" min="0" value="${e.amt}" oninput="sim.extra[${i}].amt=+this.value||0;live()"></td>
+  <td data-l="Frequency">${fsel(e.freq,`sim.extra[${i}].freq=this.value;live()`)}</td><td data-l="Starts in month"><input type="number" min="1" value="${e.from}" oninput="sim.extra[${i}].from=Math.max(1,+this.value||1);live()"></td>
+  <td data-l="Lasts (months)"><input type="number" min="0" value="${e.months}" oninput="sim.extra[${i}].months=+this.value||0;live()"></td><td><button class="btn s d" onclick="sim.extra.splice(${i},1);renderBuild()">Remove</button></td></tr>`).join('')||'<tr><td colspan="6" class="mut">No additional income in this scenario.</td></tr>'}</tbody></table>
+  <button class="btn s" onclick="sim.extra.push({id:uid(),name:'New income',amt:0,freq:'Monthly',from:1,months:0});renderBuild()">+ Add income source or future change</button></div>
+
+  <div class="card"><h2>Hypothetical budget</h2><table class="rt"><thead><tr><th>Category</th><th>Original</th><th>Hypothetical</th><th>Frequency</th><th>Difference / mo</th><th>Priority</th><th>Negotiable</th><th></th></tr></thead><tbody>
+  ${s.cats.map((c,i)=>{const o=ORIG[c.id],mx=Math.max(5000,Math.round((o||2000)*2.5/500)*500);return`<tr><td data-l="Category"><button class="btn s" onclick="sim.cats[${i}].open=!sim.cats[${i}].open;renderBuild()" aria-label="Toggle subcategories">${c.open?'▾':'▸'}</button> ${o==null?`<input value="${esc(c.name)}" oninput="sim.cats[${i}].name=this.value" style="width:130px">`:esc(c.name)} <span id="tg-${i}"></span></td>
+  <td data-l="Original">${o==null?'—':fmt(o)}</td><td data-l="Hypothetical" style="min-width:140px"><input type="number" min="0" id="ca-${i}" value="${amt1(c)}" oninput="setAmt(sim.cats[${i}],this.value);live()" onchange="guard(${i})"><input type="range" id="sl-${i}" min="0" max="${mx}" step="100" value="${amt1(c)}" oninput="setAmt(sim.cats[${i}],this.value);live()" onchange="guard(${i})" aria-label="${esc(c.name)} amount"></td>
+  <td data-l="Frequency">${fsel(c.freq,`sim.cats[${i}].freq=this.value;live();guard(${i})`)}</td><td data-l="Difference" id="d-${i}"></td>
+  <td data-l="Priority"><select onchange="sim.cats[${i}].pri=this.value;live()">${['High','Medium','Low'].map(p=>`<option ${p==c.pri?'selected':''}>${p}</option>`).join('')}</select></td>
+  <td data-l="Negotiable"><input type="checkbox" ${c.neg?'checked':''} onchange="sim.cats[${i}].neg=this.checked;live()" aria-label="Negotiable"></td><td><button class="btn s d" onclick="rmCat(${i})">${o==null?'Remove':'Drop'}</button></td></tr>
+  ${c.open?`<tr><td colspan="8"><div class="subs"><b class="note">Subcategories of ${esc(c.name)}</b>${c.subs.map((x,j)=>`<div class="row"><input value="${esc(x.name)}" oninput="sim.cats[${i}].subs[${j}].name=this.value" style="flex:1;min-width:120px"><input type="number" min="0" id="sa-${i}-${j}" value="${x.amt}" oninput="sim.cats[${i}].subs[${j}].amt=+this.value||0;live()" onchange="guard(${i})">
+  <label class="note">ends after month <input type="number" min="0" value="${x.ends}" style="width:70px" title="0 = ongoing" oninput="sim.cats[${i}].subs[${j}].ends=+this.value||0;live()"></label><button class="btn s d" onclick="sim.cats[${i}].subs.splice(${j},1);renderBuild()">✕</button></div>`).join('')}
+  <button class="btn s" onclick="sim.cats[${i}].subs.push(S('New item',0));renderBuild()">+ Add subcategory</button></div></td></tr>`:''}`}).join('')}</tbody></table>
+  ${s.cats.length?'':'<p class="note">No categories yet. Add your first one to start building a budget.</p>'}<div class="row" style="margin-top:10px"><button class="btn s" onclick="sim.cats.push({id:uid(),name:'New category',pri:'Medium',neg:true,freq:'Monthly',amt:0,subs:[],open:false,ack:false});renderBuild()">+ Add category</button></div>
+  <h3>Savings allocation</h3><div class="row"><input type="number" min="0" value="${s.savings}" id="sv" oninput="sim.savings=+this.value||0;live()"><input type="range" min="0" max="15000" step="100" value="${s.savings}" id="svs" style="flex:1" oninput="sim.savings=+this.value;live()" aria-label="Savings allocation"><span class="note">Original ${fmt(BASE.savings)}</span></div></div></div>
+  <div class="sum"><div class="card" id="sum"></div></div></div>
+  <div class="card"><h2>Charts</h2><div class="grid g3"><div><h3>Expense distribution (hypothetical)</h3><div id="pie"></div></div><div><h3>Original vs hypothetical</h3><div id="cmpb"></div></div><div><h3>Income vs expenses</h3><div id="ie"></div></div></div></div>
+  <p class="row"><button class="btn p big" onclick="show('insights');runAnalysis()">Analyze My Scenario & Behavioral Impact</button><button class="btn big" onclick="show('insights');runPlan()">Generate Financial Action Plan</button><button class="btn big" onclick="show('future')">Predict My Financial Future</button></p>`;
+ live(true);
+}
+
+const set=(id,v)=>{const e=$('#'+id);if(e&&e!==document.activeElement)e.value=v};
+const hyp=c=>{const o=ORIG[c.id],b=BM[c.id];let h=(o==null||Math.abs(mo(c)-o)>.5||c.neg!=b.neg||c.pri!=b.pri||c.freq!=b.freq)?'<span class="tag l">Hypothetical</span>':'';
+ if(!c.neg&&o!=null&&mo(c)<o-.5)h+=' <span class="tag r">Non-negotiable reduced</span>';return h};
+function guard(i){const c=sim.cats[i],o=ORIG[c.id];if(!c.neg&&o!=null&&mo(c)<o-.5&&!c.ack){if(confirm(`"${c.name}" is non-negotiable.\n\nReducing it from ${fmt(o)} to ${fmt(mo(c))} could mean unpaid fees, missed rent or skipped care in real life. This is only a hypothetical experiment. Continue?`)){c.ack=true}else{c.freq='Monthly';setAmt(c,o);renderBuild();return}}live()}
+function rmCat(i){const c=sim.cats[i];if(ORIG[c.id]==null){sim.cats.splice(i,1);renderBuild();return}
+ if(!c.neg&&!confirm(`"${c.name}" is non-negotiable. Dropping it to ₹0 in the simulation is risky. Continue as a hypothetical experiment?`))return;c.ack=true;c.subs=[];c.amt=0;renderBuild()}
+
+function live(first){if(!first)ver++;const s=sim,t=T(s),b=T(BASE);
+ s.cats.forEach((c,i)=>{const o=ORIG[c.id],d=mo(c)-(o||0);set('ca-'+i,amt1(c));set('sl-'+i,amt1(c));c.subs.forEach((x,j)=>set(`sa-${i}-${j}`,x.amt));const e=$('#d-'+i);if(e)e.innerHTML=o==null?'<span class="tag l">new</span>':`<span class="${dcls(d,-1)}">${sg(d)}</span>`;const g=$('#tg-'+i);if(g)g.innerHTML=hyp(c)});
+ set('sv',s.savings);set('svs',s.savings);const y=$('#yr');if(y)y.textContent=fmt(funds(s)*12);const di=$('#idf');if(di)di.innerHTML=`${fmt(funds(BASE))} → <b>${fmt(t.f)}</b>`;
+ const w=worst(s),stat=(l,v,c)=>`<div class="stat"><small>${l}</small><span class="big2 ${c||''}">${fmt(v)}</span></div>`,dl=(v,g)=>`<small class="${dcls(v,g)}">${sg(v)} vs actual</small>`;
+ const dm=[];for(let m=1;m<=12;m++)if(T(s,m).rem<0){dm.push(m);break}
+ const beh=behavioralAnalysis(s);
+
+ $('#sum').innerHTML=`<h2>Live calculation <span class="tag l">Hypothetical</span></h2>
+ <div class="grid g2" style="gap:10px">${stat('Available funds',t.f)+stat('Total expenses',t.exp)}${stat('Non-negotiable',t.non)+stat('Negotiable',t.neg)}${stat('Planned savings',t.sav)+stat('Unallocated balance',t.rem,t.rem<0?'neg':'pos')}</div>
+ <p style="margin:10px 0 4px"><b class="${t.rem<0?'neg':'pos'}">${t.rem<0?'▼ Deficit':'▲ Surplus'} ${fmt(Math.abs(t.rem))}/mo</b> ${dl(t.rem-b.rem,1)}<br><small class="${dcls(t.exp-b.exp,-1)}">${t.exp>b.exp+.5?'Expenses up ':t.exp<b.exp-.5?'Expenses down ':'Expenses unchanged '}${sg(t.exp-b.exp)}</small> · <small class="${dcls(t.sav-b.sav,1)}">Savings ${sg(t.sav-b.sav)}</small> · <small class="${dcls(t.f-b.f,1)}">Funds ${sg(t.f-b.f)}</small></p>
+ ${t.rem<0?`<div class="bad"><b>Budget imbalance.</b> You would spend ${fmt(-t.rem)} more than you have each month.</div>`:w<0?`<div class="warn"><b>Heads up:</b> the budget works now but runs a ${fmt(-w)} deficit from month ${dm[0]} when temporary income ends.</div>`:'<div class="good">Balanced in every month of the next year.</div>'}
+ ${s.cats.some(c=>!c.neg&&ORIG[c.id]!=null&&mo(c)<ORIG[c.id]-.5)?'<div class="warn">A non-negotiable expense is reduced. This is hypothetical and carries real risk.</div>':''}
+ 
+ <div class="nudge-box">
+   <div style="font-weight:700;font-size:13px;display:flex;justify-content:space-between">
+     <span>Pocket CA Behavioral Check</span>
+     <span class="tag ${beh.presentBiasRisk==='High'?'r':beh.presentBiasRisk==='Moderate'?'':'l'}">${beh.presentBiasRisk} Present Bias</span>
+   </div>
+   <p style="margin:6px 0 0;font-size:13px">${beh.nudge}</p>
+   <div style="display:flex;gap:12px;margin-top:8px;font-size:12px;color:var(--mut)">
+     <span>Runway: <b>${beh.runwayMonths} mos</b></span>
+     ${beh.emiAmt>0?`<span>DTI: <b>${beh.dtiRatio}%</b></span>`:''}
+     <span>Needs: <b>${beh.needsPct}%</b> / Wants: <b>${beh.wantsPct}%</b></span>
+   </div>
+ </div>
+ <p class="note">Feasibility: <b>${feas(s)[0]}</b></p>`;
+
+ const items=s.cats.map((c,i)=>({n:c.name,v:mo(c),c:PAL[i%PAL.length]}));const p=$('#pie');
+ if(p)p.innerHTML=pie(items)+`<div class="leg" style="margin-top:8px">${items.map(x=>`<span><i style="background:${x.c}"></i>${esc(x.n)} ${fmt(x.v)}</span>`).join('')}</div>`;
+ const cb=$('#cmpb');if(cb)cb.innerHTML=legend([['Original','#B9AEE8'],['Hypothetical','#D9A400']])+hbars([...s.cats.map(c=>[c.name,ORIG[c.id]||0,mo(c)]),['Savings',BASE.savings,t.sav]]);
+ const ie=$('#ie');if(ie)ie.innerHTML=legend([['Actual','#B9AEE8'],['Hypothetical','#D9A400']])+hbars([['Funds',b.f,t.f],['Expenses',b.exp,t.exp],['Savings',b.sav,t.sav],['Balance',Math.max(0,b.rem),Math.max(0,t.rem)]])
+}
+
+function newScen(){sim=clone(BASE);curId=null;curName='';AN=PLAN=null;ver++;show('build');toast('New scenario started from your baseline')}
+function resetSim(){if(confirm('Restore the original baseline? Unsaved changes will be lost.')){newScen()}}
+
+/* ================= ANALYSIS & BEHAVIORAL INSIGHTS ================= */
+function runAnalysis(){AN={html:analysisHTML(sim),ver};renderInsights()}
+function analysisHTML(s){
+  const t=T(s),b=T(BASE),w=worst(s),f=funds(s)||1,r=risks(s),[fl,why]=feas(s),pos=[];
+  const beh=behavioralAnalysis(s);
+  const dn=s.cats.filter(c=>c.neg&&ORIG[c.id]!=null&&mo(c)<ORIG[c.id]-.5);
+  if(dn.length)pos.push(`Lower negotiable spending: ${dn.map(c=>`${esc(c.name)} ${fmt(ORIG[c.id])} → ${fmt(mo(c))}`).join(', ')}.`);
+  if(t.sav>b.sav)pos.push(`Savings allocation up by ${fmt(t.sav-b.sav)}/month (${fmt((t.sav-b.sav)*12)} a year).`);
+  if(t.f>b.f)pos.push(`Available funds up by ${fmt(t.f-b.f)}/month.`);
+  if(t.rem>b.rem+.5)pos.push(`Unallocated balance improves by ${fmt(t.rem-b.rem)}/month.`);
+  const ins=s.cats.map(c=>{const o=ORIG[c.id],d=mo(c)-(o||0);if(o==null)return`<b>${esc(c.name)}</b> is a new ${fmt(mo(c))} commitment (${(mo(c)/f*100).toFixed(1)}% of funds).`;if(Math.abs(d)<.5)return null;return`<b>${esc(c.name)}</b> ${d<0?'drops':'rises'} by ${fmt(Math.abs(d))} (${Math.round(Math.abs(d)/(o||1)*100)}%), which ${d<0?'frees':'uses'} ${(Math.abs(d)/f*100).toFixed(1)}% of your funds.`}).filter(Boolean);
+
+  return`
+  <div class="${fcls(fl)}"><b>${fl}.</b> ${why}</div>
+
+  <div class="card" style="background:var(--surf);border-color:var(--y);margin:14px 0">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap">
+      <h3 style="margin:0">Behavioral Economics & Pocket CA Evaluation (IEEE Paper Section II & V)</h3>
+      <span class="tag ${beh.presentBiasRisk==='High'?'r':beh.presentBiasRisk==='Moderate'?'':'l'}">Present Bias: ${beh.presentBiasRisk}</span>
+    </div>
+    <p style="font-size:14px;margin:8px 0 10px">${beh.presentBiasMsg}</p>
+    <div class="grid g4" style="gap:10px">
+      <div class="stat"><small>Emergency Runway Cushion</small><b>${beh.runwayMonths} months</b><small class="note">Target: 3–6 mos (Loss Aversion)</small></div>
+      <div class="stat"><small>Needs vs Wants</small><b>${beh.needsPct}% / ${beh.wantsPct}%</b><small class="note">Mental Accounting guideline 50/30</small></div>
+      <div class="stat"><small>Savings Rate</small><b>${beh.savPct}%</b><small class="note">Target: >= 20%</small></div>
+      ${beh.emiAmt>0?`<div class="stat"><small>Debt-to-Income (DTI)</small><b class="${beh.dtiRatio>40?'neg':beh.dtiRatio>30?'warn':'pos'}">${beh.dtiRatio}%</b><small class="note">Guideline: < 35%</small></div>`:`<div class="stat"><small>Debt Commitments</small><b>₹0 (Zero Debt)</b><small class="note">Max financial freedom</small></div>`}
+    </div>
+    <div class="nudge-box" style="margin:12px 0 0">
+      <b>Pocket CA Proactive Nudge:</b>
+      <p style="margin:4px 0 0;font-size:14px">${beh.nudge}</p>
+    </div>
+  </div>
+
+  <h3>Financial Health Overview</h3>
+  <ul class="cl">
+    <li>Balanced now: <b>${t.rem>=0?'Yes':'No'}</b> (${fmt(t.rem)}/month).</li>
+    <li>Sustainable over 12 months: <b>${w>=0?'Yes':'No'}</b>. Worst month: ${fmt(w)}.</li>
+    <li>Overspending: <b>${t.rem<0?'Yes, by '+fmt(-t.rem)+'/month':'No'}</b>.</li>
+    <li>Savings rate ${Math.round(t.sav/(t.f||1)*100)}% of funds: <b>${t.sav>=t.f*.1?'sufficient (10% or more)':'below the 10% guideline'}</b>.</li>
+    <li>Flexibility left: ${fmt(Math.max(0,t.rem))} a month, ${Math.round(Math.max(0,t.rem)/(t.f||1)*100)}% of funds.</li>
+  </ul>
+
+  <h3>Positive Changes</h3>
+  ${pos.length?`<ul class="cl">${pos.map(x=>`<li>${x}</li>`).join('')}</ul>`:'<p class="note">No improvements over your baseline yet.</p>'}
+
+  <h3>Potential Risks</h3>
+  ${r.length?`<ul class="cl">${r.map(x=>`<li>${x.txt}</li>`).join('')}</ul>`:'<p class="note">No major risks detected.</p>'}
+
+  <h3>Category-Level Insights</h3>
+  ${ins.length?`<ul class="cl">${ins.map(x=>`<li>${x}</li>`).join('')}</ul>`:'<p class="note">No categories changed.</p>'}`;
+}
+
+const stale=v=>v!==ver?'<div class="warn">You changed the scenario after this was generated. Regenerate to refresh it.</div>':'';
+function renderInsights(){curLabel();
+ $('#v-insights').innerHTML=`<div class="row" style="margin-bottom:16px"><button class="btn p big" onclick="runAnalysis()">Analyze My Scenario & Behavioral Impact</button><button class="btn big" onclick="runPlan()">Generate Financial Action Plan</button></div>
+ <div class="card fade"><h2>Scenario Analysis & Behavioral Insights <span class="tag l">Hypothetical</span></h2>${AN?stale(AN.ver)+AN.html:'<p class="note">Select Analyze My Scenario to review your hypothetical budget and behavioral indicators.</p>'}</div>
+ <div class="card fade" id="plancard"></div>`;drawPlan()}
+
+function genPlan(s){const t=T(s),w=worst(s),f=funds(s)||1,st=steady(s),[fl,why]=feas(s),a=[],gap=w<0?-w:0,gg=curGoal(),gm=gg?gcalc(s,gg,G.months||gg.months,G.alloc):null;let need=gap;
+ const cand=s.cats.filter(c=>c.neg&&c.pri!=='High'&&mo(c)>0).sort((x,y)=>mo(y)-mo(x));
+ for(const c of cand){if(need<=0)break;const cut=Math.min(need,Math.max(100,Math.round(mo(c)*.25/100)*100));a.push({id:uid(),type:'cut',cat:c.id,amt:cut,txt:`Trim ${c.name} by ${fmt(cut)} (from ${fmt(mo(c))} to ${fmt(mo(c)-cut)}).`,why:`${c.name} is ${c.pri.toLowerCase()} priority and negotiable.`,on:true,decide:true});need-=cut}
+ if(need>0)a.push({id:uid(),type:'info',amt:0,txt:`A gap of ${fmt(need)}/month remains. Explore extra income or lower the savings allocation temporarily.`,why:'Negotiable cuts alone are not enough.',on:true});
+ s.cats.forEach(c=>c.subs.forEach(x=>{if(x.ends&&x.amt>0)a.push({id:uid(),type:'redirect',amt:Math.round(x.amt*F[c.freq]),from:x.ends+1,txt:`${esc(x.name)} (${fmt(x.amt*F[c.freq])}/mo) ends after month ${x.ends}. Redirect that money to savings from month ${x.ends+1}.`,why:'Freed-up money is not double counted.',on:true})}));
+ const tmp=s.extra.filter(e=>e.months&&e.amt>0);tmp.forEach(e=>a.push({id:uid(),type:'info',amt:0,txt:`${esc(e.name)} (${fmt(mo2(e))}/mo) stops after month ${e.from+e.months-1}. Treat it as temporary and plan for a balance of ${fmt(T(s,e.from+e.months).rem)} afterwards.`,why:'Temporary income is never assumed to continue.',on:true}));
+ if(t.sav<f*.1&&gap===0)a.push({id:uid(),type:'save',amt:Math.min(500,Math.max(0,Math.floor(t.rem/100)*100)),txt:'Raise savings gradually by ₹500 a month until you reach 10% of funds.',why:`You save ${Math.round(t.sav/f*100)}% today.`,on:true});
+ if(gm&&!gm.meets)a.push({id:uid(),type:'info',amt:0,txt:`For "${esc(gg.name)}" you need ${fmt(gm.req)}/month to hit the deadline but allocate ${fmt(gm.al)}. Extend the timeline to ${gm.done===Infinity?'a later date':gm.done+' months'} or raise the allocation.`,why:'Based on the Goal Analysis tab.',on:true});
+ const non=risks(s).filter(x=>x.k=='non').map(x=>{const n=x.c.name,alt={Accommodation:'Ask the hostel about a shared room, a payment plan or a cheaper block instead of cutting the rent you owe.',Education:'Check scholarships, fee instalments or free study material before reducing fees.',Healthcare:'Use generic medicines or a student health plan. Do not skip needed care.'}[n]||'Look for a cheaper provider or an instalment option before reducing it.';
+  return{txt:x.txt,risk:`Reducing ${n} can cause missed payments, penalties or health problems.`,alt}});
+ const tl=[['Immediate',[...non.map(n=>`Decide whether to keep the ${n.txt.split(' is ')[0]} reduction. Review: ${n.alt}`),'Review this scenario and tick the actions you accept.']],
+  ['First month',[a.filter(x=>x.type=='cut').length?'Apply the accepted trims. Effect: +'+fmt(a.filter(x=>x.type=='cut').reduce((q,x)=>q+x.amt,0))+'/month.':'Keep spending inside your budget.']],
+  ['Next 3 months',a.filter(x=>x.type=='redirect'&&x.from<=4).map(x=>`From month ${x.from}: send ${fmt(x.amt)}/month to savings.`).concat(a.filter(x=>x.type=='save').map(x=>'Step up savings by '+fmt(x.amt)+'.'))],
+  ['Next 6 months',[st>1&&st<=6?`Your income pattern settles in month ${st}. Expected balance then: ${fmt(T(s,st).rem)}/month.`:'Re-check your budget and goal progress.']],
+  ['Long term',[`Keep building the emergency fund (${fmt(t.sav*12)} a year at this rate) and re-run this simulator when income changes.`]]];
+ return{ver,fl,why,a,non,tl,notes:''}}
+const mo2=e=>(+e.amt||0)*F[e.freq];
+function runPlan(){PLAN=genPlan(sim);renderInsights();toast('Action plan generated based on behavioral rules and research constraints')}
+function outcome(){const s=sim,p=PLAN,t=T(s),st=steady(s),on=p.a.filter(x=>x.on),cuts=on.filter(x=>x.type=='cut').reduce((q,x)=>q+x.amt,0),up=on.filter(x=>x.type=='save').reduce((q,x)=>q+x.amt,0),red=on.filter(x=>x.type=='redirect'&&x.from<=st).reduce((q,x)=>q+x.amt,0),ts=T(s,st),sv=ts.sav+up+red,g=curGoal(),gc=g?gcalc(s,g,G.months||g.months,sv):null;
+ return`<div class="grid g4"><div class="stat"><small>Expected monthly savings (month ${st}+)</small><b class="big2">${fmt(sv)}</b></div><div class="stat"><small>Expected surplus (month ${st}+)</small><b class="big2 ${ts.rem+cuts-up-red<0?'neg':'pos'}">${fmt(ts.rem+cuts-up-red)}</b></div><div class="stat"><small>Worst-month balance after plan</small><b class="big2">${fmt(worst(s)+cuts-up)}</b></div>${g?`<div class="stat"><small>${esc(g.name)}</small><b>${gc.done===Infinity?'no progress':gc.done===0?'complete':dstr(addM(new Date(),gc.done))}</b></div>`:''}</div>
+ <h3>Suggested budget distribution</h3><table class="rt"><thead><tr><th>Category</th><th>Hypothetical</th><th>Suggested</th></tr></thead><tbody>${s.cats.map(c=>{const cut=on.filter(x=>x.type=='cut'&&x.cat==c.id).reduce((q,x)=>q+x.amt,0);return`<tr><td data-l="Category">${esc(c.name)}</td><td data-l="Hypothetical">${fmt(mo(c))}</td><td data-l="Suggested">${fmt(mo(c)-cut)}${cut?` <span class="tag">your decision</span>`:''}</td></tr>`}).join('')}<tr><td data-l="Category">Savings</td><td data-l="Hypothetical">${fmt(t.sav)}</td><td data-l="Suggested">${fmt(sv)}</td></tr></tbody></table>`}
+function drawPlan(){const e=$('#plancard');if(!e)return;if(!PLAN){e.innerHTML='<h2>Financial action plan</h2><p class="note">Select Generate Financial Action Plan. It analyzes your hypothetical numbers and creates a step-by-step roadmap.</p>';return}
+ const p=PLAN;e.innerHTML=`<div class="row"><h2 style="margin:0">Financial action plan <span class="tag l">Hypothetical</span></h2><span class="sp"></span><button class="btn s" onclick="savePlan()">Save plan to scenario</button></div>${stale(p.ver)}
+ <h3>Feasibility</h3><div class="${fcls(p.fl)}"><b>${p.fl}.</b> ${p.why}</div>
+ <h3>Recommended actions <span class="note">(edit the wording or untick what you will not do)</span></h3>${p.a.map((x,i)=>`<div class="row" style="align-items:flex-start;margin:6px 0"><input type="checkbox" ${x.on?'checked':''} onchange="PLAN.a[${i}].on=this.checked;$('#oc').innerHTML=outcome()" aria-label="Include action" style="margin-top:10px"><div style="flex:1;min-width:200px"><input value="${esc(x.txt.replace(/<[^>]+>/g,''))}" oninput="PLAN.a[${i}].txt=this.value" style="width:100%"><div class="note">${x.why}${x.decide?' · <b>Requires your decision</b>':''}</div></div></div>`).join('')||'<p class="note">No actions needed. Your scenario balances.</p>'}
+ <h3>Non-negotiable expense analysis</h3>${p.non.length?p.non.map(n=>`<div class="warn"><b>${n.txt}</b><br>Risk: ${n.risk}<br>Safer alternative: ${n.alt}<br><b>This reduction needs your decision. It is not recommended automatically.</b></div>`).join(''):'<p class="note">No non-negotiable expenses were reduced.</p>'}
+ <h3>Actionable timeline</h3>${p.tl.map(x=>`<p style="margin:6px 0"><b>${x[0]}</b></p><ul class="cl">${x[1].map(y=>`<li>${y}</li>`).join('')||'<li class="mut">Nothing specific.</li>'}</ul>`).join('')}
+ <h3>Expected outcome</h3><div id="oc">${outcome()}</div><h3>Assumptions & your notes</h3><ul class="cl"><li>Savings and income are never counted twice. Freed money is moved, not added.</li><li>Temporary income stops when it ends.</li><li>Estimates only, not guaranteed results.</li></ul><textarea rows="3" placeholder="Your notes" oninput="PLAN.notes=this.value">${esc(p.notes)}</textarea>`}
+
+/* ================= PREDICTIONS ================= */
+const periodN=()=>pr.n==='c'?Math.max(1,Math.min(36,+pr.custom||1)):pr.n;
+function renderFuture(){curLabel();
+ $('#v-future').innerHTML=`<div class="card grid g3"><label class="f">Prediction period<select onchange="pr.n=this.value==='c'?'c':+this.value;renderFuture()">${[[1,'1 month'],[3,'3 months'],[6,'6 months'],[12,'12 months'],['c','Custom']].map(p=>`<option value="${p[0]}" ${p[0]==pr.n?'selected':''}>${p[1]}</option>`).join('')}</select></label>
+ ${pr.n==='c'?`<label class="f">Custom months (1 to 36)<input type="number" min="1" max="36" value="${pr.custom}" oninput="pr.custom=+this.value;drawFuture()"></label>`:''}
+ ${GOALS.length?`<label class="f">Goal<select onchange="G.id=this.value;drawFuture()">${GOALS.map(g=>`<option value="${g.id}" ${g.id==G.id?'selected':''}>${g.name}</option>`).join('')}</select></label>`:''}</div><div id="fut"></div>`;drawFuture()}
+function drawFuture(){const n=periodN(),A=proj(BASE,n),H=proj(sim,n),g=curGoal(),ga=g&&gcalc(BASE,g,g.months,null),gh=g&&gcalc(sim,g,G.months||g.months,G.alloc),labels=['Now',...Array.from({length:n},(_,i)=>'M'+(i+1))];
+ const row=(l,a,h,gd,f=fmt)=>`<tr><td data-l="">${l}</td><td data-l="Actual (baseline)">${f(a)}</td><td data-l="Hypothetical">${f(h)}</td><td data-l="Difference" class="${typeof a==='number'?dcls(h-a,gd):''}">${typeof a==='number'?sg(h-a):''}</td></tr>`;
+ const dt=x=>x.done===Infinity?'never at this rate':x.done===0?'complete':dstr(addM(new Date(),x.done));
+ $('#fut').innerHTML=`<div class="card fade"><h2>Net position over ${n} month${n>1?'s':''}</h2><p class="note">Existing savings + new savings + unspent surplus. Dashed = actual baseline, solid = hypothetical.</p>${legend([['Actual baseline','#B9AEE8'],['Hypothetical','#D9A400']])}${lineChart([{v:A.net,c:'#8E7CE0',d:1},{v:H.net,c:'#D9A400'}],labels)}</div>
+ <div class="card fade"><h2>Monthly surplus or deficit</h2>${lineChart([{v:A.sur,c:'#8E7CE0',d:1},{v:H.sur,c:'#D9A400'}].map(x=>({...x,v:[x.v[0],...x.v]})),labels)}</div>
+ <div class="card fade"><h2>Actual vs hypothetical future</h2><table class="rt"><thead><tr><th></th><th>Actual (baseline)</th><th>Hypothetical</th><th>Difference</th></tr></thead><tbody>
+ ${row('Projected new savings',A.add,H.add,1)}${row('Accumulated savings',A.acc,H.acc,1)}${row('Future available balance (unspent)',A.bal,H.bal,1)}${row('Monthly surplus in month '+n,A.last,H.last,1)}${row('Total expenses',A.exp,H.exp,-1)}
+ ${g?row(esc(g.name)+' progress',ga.prog(n),gh.prog(n),1,v=>v+'%')+row('Estimated goal completion',dt(ga),dt(gh),1,v=>v):''}</tbody></table>
+ ${H.last<0?'<div class="bad">The hypothetical scenario ends this period in deficit.</div>':''}</div>
+ <div class="card"><h2>Assumptions</h2><ul class="cl"><li>Hypothetical figures use your modified inputs and never touch actual records.</li><li>Income with an end date stops then. It is not assumed to continue.</li><li>Savings allocation (${fmt(sim.savings)}/mo hypothetical, ${fmt(BASE.savings)}/mo actual) is the only money counted as savings. Surplus is shown separately.</li><li>Expenses with an end month stop after it. Prices and income stay flat.</li><li>Estimates only, not guaranteed results.</li></ul></div>`}
+
+/* ================= GOALS ================= */
+function addGoal(){const n=$('#gn').value.trim(),t=+$('#gt').value,sv=+$('#gs').value||0,m=+$('#gm').value;if(!n||!(t>0)||!(m>=1))return toast('Enter a name, a target and a deadline in months');
+ const g={id:uid(),name:n,target:t,saved:Math.min(sv,t),months:Math.round(m)};GOALS.push(g);store.set('fm_whatif_goals',GOALS);G.id=g.id;G.months=null;G.alloc=null;renderGoals()}
+function delGoal(){if(!confirm('Remove this simulator goal?'))return;GOALS=GOALS.filter(x=>x.id!=curGoal().id);store.set('fm_whatif_goals',GOALS);G.id=null;renderGoals()}
+function renderGoals(){curLabel();const g=curGoal(),mths=g?(G.months||g.months):0;
+ $('#v-goals').innerHTML=`<div class="card"><h2>${g?'Add another goal':'Add a goal to analyze'}</h2><p class="note">Goals added here are simulator-only and stored in this browser for what-if scenario testing.</p><div class="grid g4"><label class="f">Name<input id="gn"></label><label class="f">Target (₹)<input type="number" min="1" id="gt"></label><label class="f">Saved so far (₹)<input type="number" min="0" id="gs" value="0"></label><label class="f">Deadline (months)<input type="number" min="1" id="gm" value="6"></label></div><div class="row" style="margin-top:10px"><button class="btn p" onclick="addGoal()">Add goal</button></div></div>
+ ${g?`<div class="card grid g3"><label class="f">Goal<select onchange="G.id=this.value;G.months=null;renderGoals()">${GOALS.map(x=>`<option value="${x.id}" ${x.id==g.id?'selected':''}>${esc(x.name)}</option>`).join('')}</select></label>
+ <label class="f">Timeline (months)<input type="number" min="1" value="${mths}" oninput="G.months=Math.max(1,+this.value||1);drawGoal()"></label><label class="f">Monthly allocation (blank = scenario savings)<input type="number" min="0" value="${G.alloc==null?'':G.alloc}" placeholder="${fmt(sim.savings)}" oninput="G.alloc=this.value===''?null:+this.value;drawGoal()"></label><div><button class="btn s d" onclick="delGoal()">Remove goal</button></div></div><div id="gout"></div>`:''}`;if(g)drawGoal()}
+function drawGoal(){const g=curGoal(),m=G.months||g.months,x=gcalc(sim,g,m,G.alloc),a=gcalc(BASE,g,g.months,null),neg=sim.cats.filter(c=>c.neg&&mo(c)>0).sort((p,q)=>mo(q)-mo(p)).slice(0,3),extra=Math.max(0,x.req-x.al);
+ $('#gout').innerHTML=`<div class="card fade"><h2>${esc(g.name)} <span class="tag l">Hypothetical</span></h2><div class="grid g4"><div class="stat"><small>Target / saved</small>${fmt(g.target)} / ${fmt(g.saved)}</div><div class="stat"><small>Remaining</small><b class="big2">${fmt(x.rem)}</b></div><div class="stat"><small>Needed per month for ${m} months</small><b class="big2">${fmt(x.req)}</b></div><div class="stat"><small>You allocate</small><b class="big2 ${x.meets?'pos':'neg'}">${fmt(x.al)}</b></div></div>
+ <div class="${x.meets?'good':x.ok?'warn':'bad'}" style="margin-top:12px">${x.meets?`<b>Realistic.</b> Your allocation covers the goal in ${x.done} months, by ${dstr(addM(new Date(),x.done))}.`:x.ok?`<b>Possible with changes.</b> Your budget can support it (up to ${fmt(x.cap)}/month in its tightest month) but you allocate ${fmt(extra)} less than needed. At this rate it finishes in ${x.done===Infinity?'never':x.done+' months'}.`:`<b>Deadline unrealistic.</b> Even your full spare capacity (${fmt(x.cap)}/month) falls short of ${fmt(x.req)}/month. The earliest finish is about ${x.cap>0?Math.ceil(x.rem/x.cap)+' months':'not possible'}.`}</div>
+ <p>Under your actual baseline this goal needs ${fmt(a.req)}/month (${g.months} months) and you save ${fmt(a.al)}. Completion: ${a.done===Infinity?'never':a.done===0?'done':dstr(addM(new Date(),a.done))}.</p>
+ ${extra>0?`<h3>To reach it sooner</h3><ul class="cl"><li>Raise the allocation by ${fmt(extra)}/month.</li>${neg.map(c=>`<li>Trimming ${esc(c.name)} by 20% would free ${fmt(mo(c)*.2)}/month.</li>`).join('')}<li>Or extend the timeline until the monthly need drops to ${fmt(x.al)}.</li></ul>`:''}<p class="note">Your saved goals are not changed. These are simulator-only experiments.</p></div>`}
+
+/* ================= SAVED SCENARIOS ================= */
+function saveScen(){const name=prompt('Name this scenario',curName||'My scenario');if(!name)return;const all=userScen(),now=new Date().toISOString(),old=all.find(x=>x.id===curId);
+ const rec={id:old?old.id:uid(),name,created:old?old.created:now,modified:now,sim:clone(sim),pr:periodN(),plan:PLAN?clone(PLAN):old?old.plan:null};
+ store.set('fm_whatif_scenarios_v2',old?all.map(x=>x.id===rec.id?rec:x):[rec,...all]);curId=rec.id;curName=name;curLabel();toast('Scenario saved. Your baseline is unchanged.')}
+function savePlan(){if(!PLAN)return;if(!curId)saveScen();if(!curId)return;store.set('fm_whatif_scenarios_v2',userScen().map(x=>x.id===curId?{...x,plan:clone(PLAN),modified:new Date().toISOString()}:x));toast('Action plan saved with the scenario')}
+function renderSaved(){curLabel();const a=allScen();
+ $('#v-saved').innerHTML=`<div class="row"><p class="sub" style="margin:0">Saved scenarios live in this browser only and stay separate from your baseline.</p><span class="sp"></span><button class="btn v" onclick="cmpSel()">Compare selected (${pick.length}/2)</button></div><div style="height:12px"></div>
+ ${a.length?'':'<div class="card">No saved scenarios yet. Build a scenario and select Save Scenario.</div>'}${a.map(r=>{const t=T(r.sim),w=worst(r.sim),[fl]=feas(r.sim);return`<div class="card"><div class="row"><label class="row"><input type="checkbox" ${pick.includes(r.id)?'checked':''} onchange="pickT('${r.id}')" aria-label="Select to compare"><h2 style="margin:0">${esc(r.name)}</h2></label>${r.sample?'<span class="tag">Research Sample</span>':'<span class="tag l">Yours</span>'}<span class="sp"></span><span class="note">Created ${new Date(r.created).toLocaleDateString()}</span></div>
+ <div class="grid g4" style="margin:12px 0"><div class="stat"><small>Income (month 1)</small>${fmt(t.f)}</div><div class="stat"><small>Expenses</small>${fmt(t.exp)}</div><div class="stat"><small>Expected savings</small>${fmt(t.sav)}</div><div class="stat"><small>Remaining balance</small><b class="${t.rem<0?'neg':'pos'}">${fmt(t.rem)}</b></div></div>
+ <p style="margin:0 0 10px"><span class="tag ${fl=='Realistic'?'':fl=='Realistic with adjustments'?'':'r'}">${fl}</span> <span class="note">Prediction period: ${r.pr} months${r.plan?' · action plan saved':''}</span></p>
+ <div class="row"><button class="btn s" onclick="viewS('${r.id}')">View</button><button class="btn s" onclick="loadS('${r.id}','build')">Edit</button><button class="btn s" onclick="dupS('${r.id}')">Duplicate</button>${r.sample?'':`<button class="btn s" onclick="renS('${r.id}')">Rename</button>`}<button class="btn s v" onclick="loadS('${r.id}','future')">Generate predictions</button><button class="btn s" onclick="loadS('${r.id}','insights',1)">Action plan</button>${r.sample?'':`<button class="btn s d" onclick="delS('${r.id}')">Delete</button>`}</div></div>`}).join('')}`}
+const pickT=id=>{pick=pick.includes(id)?pick.filter(x=>x!==id):[...pick,id].slice(-2);renderSaved()};
+function loadS(id,v,plan){const r=getScen(id);sim=clone(r.sim);curId=r.sample?null:r.id;curName=r.sample?'':r.name;pr.n=[1,3,6,12].includes(r.pr)?r.pr:'c';pr.custom=r.pr;AN=null;PLAN=r.plan?clone(r.plan):null;ver++;if(PLAN)PLAN.ver=ver;show(v);if(plan&&!PLAN)runPlan()}
+function viewS(id){const r=getScen(id),t=T(r.sim),[fl,why]=feas(r.sim);modal(`<h2>${esc(r.name)}</h2><div class="${fcls(fl)}"><b>${fl}.</b> ${why}</div><div class="grid g3"><div class="stat"><small>Funds</small>${fmt(t.f)}</div><div class="stat"><small>Expenses</small>${fmt(t.exp)}</div><div class="stat"><small>Balance</small>${fmt(t.rem)}</div></div>${analysisHTML(r.sim)}${r.plan?`<h3>Saved action plan</h3><ul class="cl">${r.plan.a.filter(x=>x.on).map(x=>`<li>${esc(x.txt.replace(/<[^>]+>/g,''))}</li>`).join('')}</ul>`:''}`)}
+function dupS(id){const r=clone(getScen(id)),n=new Date().toISOString();Object.assign(r,{id:uid(),name:r.name.replace('Sample: ','')+' (copy)',sample:false,created:n,modified:n});store.set('fm_whatif_scenarios_v2',[r,...userScen()]);renderSaved();toast('Duplicated')}
+function renS(id){const r=getScen(id),n=prompt('New name',r.name);if(n){store.set('fm_whatif_scenarios_v2',userScen().map(x=>x.id==id?{...x,name:n}:x));if(curId==id)curName=n;renderSaved()}}
+function delS(id){if(confirm('Delete this scenario?')){store.set('fm_whatif_scenarios_v2',userScen().filter(x=>x.id!=id));pick=pick.filter(x=>x!=id);renderSaved()}}
+function cmpSel(){if(pick.length<2)return toast('Tick two scenarios to compare');const[a,b]=pick.map(getScen),m=[a,b].map(r=>{const t=T(r.sim),p=proj(r.sim,12);return{r,t,w:worst(r.sim),p,fl:feas(r.sim)[0],k:risks(r.sim).filter(x=>x.k!='tmp').length,gp:GOALS[0]?gcalc(r.sim,GOALS[0],GOALS[0].months,null).prog(12):null}});
+ const [x,y]=m,rows=[['Income',x.t.f,y.t.f,1],['Expenses',x.t.exp,y.t.exp,-1],['Savings',x.t.sav,y.t.sav,1],['Remaining balance',x.t.rem,y.t.rem,1],['Non-negotiable',x.t.non,y.t.non,-1],['Worst-month balance',x.w,y.w,1],['Predicted savings (12 mo)',x.p.acc,y.p.acc,1]];
+ const sc=q=>(q.w>=0?2:0)+(q.k==0?1:0)+q.t.rem/1e5,win=sc(x)>=sc(y)?x:y,lose=win===x?y:x,why=[];
+ if(win.w>lose.w)why.push(`its worst month is ${fmt(win.w)} versus ${fmt(lose.w)}`);if(win.k<lose.k)why.push(`it carries fewer risks (${win.k} versus ${lose.k})`);if(win.t.non>=lose.t.non)why.push('it does not cut essential commitments below the other');
+ modal(`<h2>Compare scenarios</h2><table class="rt"><thead><tr><th></th><th>${esc(x.r.name)}</th><th>${esc(y.r.name)}</th><th>Diff</th></tr></thead><tbody>${rows.map(r=>`<tr><td data-l="">${r[0]}</td><td data-l="${esc(x.r.name)}">${fmt(r[1])}</td><td data-l="${esc(y.r.name)}">${fmt(r[2])}</td><td data-l="Diff" class="${dcls(r[2]-r[1],r[3])}">${sg(r[2]-r[1])}</td></tr>`).join('')}<tr><td data-l="">Feasibility</td><td data-l="${esc(x.r.name)}">${x.fl}</td><td data-l="${esc(y.r.name)}">${y.fl}</td><td></td></tr>${x.gp!=null?`<tr><td data-l="">${esc(GOALS[0].name)} progress (12 mo)</td><td data-l="${esc(x.r.name)}">${x.gp}%</td><td data-l="${esc(y.r.name)}">${y.gp}%</td><td></td></tr>`:''}</tbody></table>
+ ${legend([[x.r.name,'#B9AEE8'],[y.r.name,'#D9A400']])}${hbars(rows.map(r=>[r[0],Math.max(0,r[1]),Math.max(0,r[2])]))}
+ <div class="good"><b>${esc(win.r.name)} looks more sustainable</b>${why.length?' because '+why.join(', and '):' because its overall balance is stronger'}. Sustainability here means staying balanced every month without cutting essentials.</div>`)}
+
+/* Connect real backend profile into baseline if available */
+async function loadBaseProfile(){
+  const token = () => { try { return localStorage.getItem('token'); } catch (e) { return null; } };
+  if(!token()) return;
+  const h = { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token() };
+  try {
+    const [fundsRes, expRes, goalsRes] = await Promise.all([
+      fetch('/api/funds', { headers: h }).then(r=>r.ok?r.json():null).catch(()=>null),
+      fetch('/api/expenses', { headers: h }).then(r=>r.ok?r.json():[]).catch(()=>[]),
+      fetch('/api/goals', { headers: h }).then(r=>r.ok?r.json():[]).catch(()=>[])
+    ]);
+    if(fundsRes){
+      const incAmt = Number(fundsRes.monthly_income || fundsRes.take_home_salary || fundsRes.primary_income || fundsRes.total_monthly_funds || 40000);
+      BASE.income = incAmt;
+      BASE.persona = fundsRes.persona ? fundsRes.persona.replace('_', ' ').toUpperCase() : 'Your Profile';
+      BASE.existing = Number(fundsRes.total_funds || fundsRes.current_balance || fundsRes.existing_savings || 25000);
+      BASE.savings = Number(fundsRes.savings_target || fundsRes.general_savings || 4000);
+      const rawExp = Array.isArray(expRes) ? expRes : (expRes.entries || []);
+      if(rawExp.length){
+        BASE.cats = rawExp.map((e, idx)=>({
+          id: 'bc_'+(e.id||idx),
+          name: e.name || e.category || 'Expense',
+          pri: e.priority || 'Medium',
+          neg: Boolean(e.is_negotiable || e.negotiable),
+          freq: 'Monthly',
+          amt: Number(e.amount || 0),
+          subs: [S(e.name || e.category || 'Expense', Number(e.amount || 0))],
+          open: false,
+          ack: false
+        }));
+      }
+      const rawGoals = Array.isArray(goalsRes) ? goalsRes : (goalsRes.goals || []);
+      if(rawGoals.length){
+        GOALS = rawGoals.map(g=>({
+          id: String(g.id),
+          name: g.name,
+          target: Number(g.target_amount || g.target || 50000),
+          saved: Number(g.saved_amount || g.saved || 0),
+          months: 12
+        }));
+      }
+      refreshBaseLookup();
+      sim = clone(BASE);
+      curLabel();
+      live(true);
+    }
+  }catch(err){
+    console.warn('Could not load profile baseline into what-if simulator:', err);
+  }
+}
+
+show('build');
+loadBaseProfile();
+</script></body></html>

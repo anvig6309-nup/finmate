@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Your Available Funds – FINMATE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root { --yellow: #FFC72C; --yellow-deep: #F5B000; --yellow-pale: #FFF6C9; --yellow-line: #F3D55B; --ink: #14110A; --muted: #5E5A4A; --line: #E6E2D3; --bg: #FAFAF7; --bad: #B3261E; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: "Inter", "Segoe UI", system-ui, sans-serif; color: var(--ink); background: var(--bg); min-height: 100vh; }
+:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+
+header { background: #fff; border-bottom: 1px solid var(--line); }
+.bar { width: min(1000px, 92%); margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 1.1rem 0; }
+.logo { display: inline-flex; align-items: center; gap: .7rem; font-size: 1.5rem; font-weight: 800; letter-spacing: .01em; color: var(--ink); text-decoration: none; }
+.logo-mark { width: 42px; height: 42px; border-radius: 12px; background: var(--yellow); display: grid; place-items: center; font-size: 1.35rem; }
+.pill { display: inline-flex; align-items: center; gap: .4rem; background: var(--yellow-pale); border: 1px solid var(--yellow-line); border-radius: 999px; padding: .5rem 1rem; font-weight: 700; color: var(--ink); text-decoration: none; }
+
+main { width: min(1000px, 92%); margin: 0 auto; padding: 2.6rem 0 2rem; }
+h1 { font-size: clamp(2.2rem, 6vw, 3.5rem); font-weight: 800; letter-spacing: -.035em; line-height: 1.05; }
+.sub { color: var(--muted); font-size: 1.15rem; margin: .9rem 0 1.8rem; }
+.card { background: #fff; border: 1px solid var(--line); border-radius: 28px; padding: 1.7rem; margin-bottom: 1.5rem; box-shadow: 0 2px 10px rgba(20, 17, 10, .03); }
+h2 { font-size: 1.5rem; font-weight: 800; letter-spacing: -.02em; }
+.desc { color: var(--muted); line-height: 1.6; margin: .8rem 0 1.3rem; }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 1.3rem; }
+.field label, .cap { display: block; font-weight: 700; margin-bottom: .45rem; }
+.money { display: flex; align-items: center; gap: .5rem; border: 1.5px solid var(--line); border-radius: 18px; background: #fff; padding: 0 1.1rem; transition: border-color .2s, box-shadow .2s; }
+.money:focus-within { border-color: var(--ink); box-shadow: 0 0 0 4px var(--yellow-pale); }
+.money.bad { border-color: var(--bad); }
+.money b { font-size: 1.1rem; }
+.money input { flex: 1; min-width: 0; border: 0; outline: none; background: none; font: 600 1.25rem inherit; font-family: inherit; padding: 1.05rem 0; }
+.money input::placeholder { color: #7a7766; font-weight: 500; }
+input[type=number] { -moz-appearance: textfield; }
+input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; }
+.note { color: var(--muted); font-size: .95rem; margin-top: 1rem; line-height: 1.5; }
+.fnote { color: var(--muted); font-size: .88rem; margin-top: .5rem; min-height: 1.2rem; }
+
+.src { border: 1.5px solid var(--line); border-radius: 22px; background: var(--bg); padding: 1.1rem; margin-bottom: 1rem; display: grid; grid-template-columns: 1.3fr 1fr 1fr 44px; gap: .8rem; align-items: end; }
+.src .money { padding: 0 .8rem; }
+.src .money input { font-size: 1.05rem; padding: .8rem 0; }
+.src input[type=text], .src input[type=date], .src select { width: 100%; border: 1.5px solid var(--line); border-radius: 18px; padding: .9rem 1rem; font: 500 1rem inherit; font-family: inherit; background: #fff; min-width: 0; }
+.src input:focus, .src select:focus { outline: none; border-color: var(--ink); box-shadow: 0 0 0 4px var(--yellow-pale); }
+.dates { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 1fr; gap: .8rem; }
+.x { height: 48px; border-radius: 16px; border: 1.5px solid var(--line); background: #fff; font-size: 1.3rem; cursor: pointer; }
+.x:hover { background: var(--yellow-pale); }
+.none { color: var(--muted); margin-bottom: 1rem; }
+.add { font: 700 1.1rem inherit; font-family: inherit; color: var(--ink); background: #fff; border: 2px solid var(--ink); border-radius: 20px; padding: 1.05rem 1.7rem; cursor: pointer; transition: background .2s; }
+.add:hover { background: var(--yellow-pale); }
+
+.footer { position: sticky; bottom: 0; background: #fff; box-shadow: 0 -8px 24px rgba(20, 17, 10, .08); padding: 1.1rem 0 .9rem; z-index: 5; }
+.footer-in { width: min(1000px, 92%); margin: 0 auto; }
+.stats { display: grid; grid-template-columns: 1fr 1fr 1.1fr; gap: 1rem; align-items: stretch; }
+.stat { border: 1.5px solid var(--line); border-radius: 20px; padding: .8rem 1.1rem; }
+.stat.hi { background: var(--yellow-pale); border-color: var(--yellow-line); }
+.stat small { display: block; font-weight: 700; color: var(--muted); }
+.stat b { font-size: 1.9rem; font-weight: 800; letter-spacing: -.02em; }
+.go { font: 800 1.4rem inherit; font-family: inherit; color: var(--ink); background: var(--yellow); border: 0; border-radius: 20px; cursor: pointer; transition: background .2s, transform .2s; }
+.go:hover:not(:disabled) { background: var(--yellow-deep); transform: translateY(-2px); }
+.go:disabled { background: #FFE9A3; color: #8C8150; cursor: not-allowed; }
+.msg { margin-top: .7rem; color: var(--muted); font-size: 1rem; min-height: 1.4rem; }
+.msg.bad { color: var(--bad); font-weight: 600; }
+
+@media (max-width: 760px) {
+  .two { grid-template-columns: 1fr; }
+  .stats { grid-template-columns: 1fr 1fr; } .go { grid-column: 1 / -1; padding: 1rem; }
+  .src { grid-template-columns: 1fr 1fr; } .src .name { grid-column: 1 / -1; } .x { justify-self: end; width: 44px; }
+  .dates { grid-template-columns: 1fr; }
+  .card { padding: 1.3rem; border-radius: 24px; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+<script src="api.js"></script>
+<script>FM.requireLogin();</script>
+</head>
+<body>
+<header>
+  <div class="bar">
+    <a href="index.html" class="logo"><span class="logo-mark">F</span>FINMATE</a>
+    <a href="persona.html" class="pill" title="Change persona">🏪 Business Owner</a>
+  </div>
+</header>
+
+<main>
+  <h1>Your Available Funds</h1>
+  <p class="sub">Tell us how much money you can use personally. Monthly funds are required. Yearly funds are optional.</p>
+
+  <section class="card">
+    <h2>Your regular funds</h2>
+    <p class="desc">Enter the money you can take from your business for personal use each month. Don’t include business revenue or money needed to run the business. If you also receive yearly money, such as an annual bonus or dividend, add it as yearly funds. Don’t repeat your monthly funds there, because yearly funds are added on top (a yearly amount equal to monthly × 12 is ignored).</p>
+    <div class="two">
+      <div class="field">
+        <label for="monthly">Monthly funds (required)</label>
+        <div class="money" id="monthlyBox"><b>₹</b><input id="monthly" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0"></div>
+      </div>
+      <div class="field">
+        <label for="yearly">Yearly funds (optional)</label>
+        <div class="money"><b>₹</b><input id="yearly" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0"></div>
+        <p class="fnote" id="yearlyNote"></p>
+      </div>
+    </div>
+    <p class="note">Minimum for business owners: ₹40,000 per month. Yearly funds and additional income do not count toward this minimum.</p>
+  </section>
+
+  <section class="card">
+    <h2>Additional income sources</h2>
+    <p class="desc">Rent, investments, a spouse’s income, side income, or anything else personal. This is optional.</p>
+    <div id="sources"></div>
+    <button type="button" class="add" id="add">+ Add income source</button>
+  </section>
+</main>
+
+<div class="footer">
+  <div class="footer-in">
+    <div class="stats">
+      <div class="stat hi"><small>Total per month</small><b id="mTotal">₹0</b></div>
+      <div class="stat"><small>Total per year</small><b id="yTotal">₹0</b></div>
+      <button type="button" class="go" id="go" disabled>Continue →</button>
+    </div>
+    <p class="msg" id="msg" aria-live="polite"></p>
+  </div>
+</div>
+
+<script>
+const MINIMUM = 40000;
+const KEY = "finmate_business_funds";
+const PER_YEAR = { daily: 365, weekly: 52, monthly: 12, yearly: 1, "one-time": 1 };
+const LABELS = { daily: "Daily", weekly: "Weekly", monthly: "Monthly", yearly: "Yearly", "one-time": "One-time" };
+const $ = (id) => document.getElementById(id);
+const inr = (n) => "₹" + Number(n || 0).toLocaleString("en-IN", { maximumFractionDigits: 2 });
+const num = (v) => { const n = parseFloat(v); return isNaN(n) ? 0 : n; };
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+let sources = [];
+
+function renderSources() {
+  $("sources").innerHTML = sources.length ? sources.map((s, i) => `
+    <div class="src" data-i="${i}">
+      <div class="name"><span class="cap">Income source name</span><input class="s-name" type="text" maxlength="50" value="${esc(s.name)}" placeholder="e.g. Rental income" aria-label="Income source name"></div>
+      <div><span class="cap">Amount</span><div class="money"><b>₹</b><input class="s-amt" type="number" min="0" step="0.01" inputmode="decimal" value="${esc(s.amount)}" placeholder="0" aria-label="Amount"></div></div>
+      <div><span class="cap">Frequency</span><select class="s-freq" aria-label="Frequency">${Object.keys(LABELS).map((k) => `<option value="${k}" ${k === s.frequency ? "selected" : ""}>${LABELS[k]}</option>`).join("")}</select></div>
+      <button type="button" class="x" aria-label="Remove this source">×</button>
+      ${s.frequency === "one-time" ? `<div class="dates">
+        <div><span class="cap">Start date</span><input class="s-start" type="date" value="${esc(s.start)}" aria-label="Start date"></div>
+        <div><span class="cap">End date</span><input class="s-end" type="date" value="${esc(s.end)}" aria-label="End date"></div></div>` : ""}
+    </div>`).join("") : '<p class="none">No additional sources added.</p>';
+}
+
+function calculate() {
+  const monthly = num($("monthly").value), yearly = num($("yearly").value);
+  const yearlyDuplicate = yearly > 0 && monthly > 0 && Math.abs(yearly - monthly * 12) < 1;
+  const yearlyCounted = yearlyDuplicate ? 0 : yearly;
+  const extra = sources.reduce((sum, s) => sum + num(s.amount) * PER_YEAR[s.frequency], 0);
+  const year = monthly * 12 + yearlyCounted + extra;
+  return { monthly, yearly, yearlyDuplicate, year, month: year / 12 };
+}
+
+function problem() {
+  if (num($("monthly").value) < 0) return "Monthly funds cannot be negative.";
+  if (num($("yearly").value) < 0) return "Yearly funds cannot be negative.";
+  for (const s of sources) {
+    const name = s.name.trim() || "a source";
+    if (num(s.amount) < 0) return `The amount for ${name} cannot be negative.`;
+    if (s.frequency === "one-time" && s.start && s.end && s.end < s.start) return `The end date for ${name} must be on or after its start date.`;
+  }
+  return "";
+}
+
+function update() {
+  const r = calculate(), issue = problem();
+  $("mTotal").textContent = inr(r.month);
+  $("yTotal").textContent = inr(r.year);
+  $("yearlyNote").textContent = r.yearlyDuplicate ? "This equals your monthly funds × 12, so it isn’t added again." : r.yearly > 0 ? "Added on top of your monthly funds." : "";
+
+  const ok = r.monthly >= MINIMUM && !issue;
+  $("go").disabled = !ok;
+  $("monthlyBox").classList.toggle("bad", $("monthly").value !== "" && r.monthly < MINIMUM);
+  const msg = $("msg");
+  msg.className = "msg";
+  if (issue) { msg.textContent = issue; msg.classList.add("bad"); }
+  else if ($("monthly").value === "" || r.monthly === 0) msg.textContent = "Enter your monthly funds to continue.";
+  else if (r.monthly < MINIMUM) { msg.textContent = `Monthly funds must be at least ${inr(MINIMUM)} to continue. You entered ${inr(r.monthly)}.`; msg.classList.add("bad"); }
+  else msg.textContent = "Looks good. You can continue.";
+}
+
+document.addEventListener("input", (e) => {
+  const row = e.target.closest(".src");
+  if (row) {
+    const s = sources[row.dataset.i], c = e.target.classList;
+    if (c.contains("s-name")) s.name = e.target.value;
+    if (c.contains("s-amt")) s.amount = e.target.value;
+    if (c.contains("s-start")) s.start = e.target.value;
+    if (c.contains("s-end")) s.end = e.target.value;
+  }
+  update();
+});
+
+document.addEventListener("change", (e) => {
+  if (e.target.classList.contains("s-freq")) {
+    sources[e.target.closest(".src").dataset.i].frequency = e.target.value;
+    renderSources();
+  }
+  update();
+});
+
+$("sources").addEventListener("click", (e) => {
+  if (e.target.classList.contains("x")) {
+    sources.splice(e.target.closest(".src").dataset.i, 1);
+    renderSources();
+    update();
+  }
+});
+
+$("add").addEventListener("click", () => {
+  sources.push({ name: "", amount: "", frequency: "monthly", start: "", end: "" });
+  renderSources();
+  update();
+  $("sources").lastElementChild.querySelector(".s-name").focus();
+});
+
+$("go").addEventListener("click", () => {
+  const r = calculate();
+  if (r.monthly < MINIMUM || problem()) return update();
+  const data = {
+    persona: "business_owner",
+    monthlyFunds: r.monthly,
+    yearlyFunds: r.yearly,
+    yearlyCounted: !r.yearlyDuplicate,
+    sources: sources.filter((s) => num(s.amount) > 0).map((s) => ({
+      name: s.name.trim() || "Other", amount: num(s.amount), frequency: s.frequency,
+      startDate: s.frequency === "one-time" && s.start ? s.start : null,
+      endDate: s.frequency === "one-time" && s.end ? s.end : null,
+    })),
+    totalMonthlyFunds: Math.round(r.month * 100) / 100,
+    totalYearlyFunds: Math.round(r.year * 100) / 100,
+    minimumMonthlyFunds: MINIMUM,
+    savedAt: new Date().toISOString(),
+  };
+  try { localStorage.setItem(KEY, JSON.stringify(data)); }
+  catch (err) { $("msg").textContent = "Couldn’t save in this browser. Check that storage isn’t blocked."; $("msg").className = "msg bad"; return; }
+  FM.syncFunds(data, 'finmate_business_funds');
+  location.href = "business_category.html";
+});
+
+try {
+  const saved = JSON.parse(localStorage.getItem(KEY) || "null");
+  if (saved) {
+    $("monthly").value = saved.monthlyFunds || "";
+    $("yearly").value = saved.yearlyFunds || "";
+    sources = (saved.sources || []).map((s) => ({ name: s.name, amount: s.amount, frequency: s.frequency, start: s.startDate || "", end: s.endDate || "" }));
+  }
+} catch (err) {}
+renderSources();
+update();
+</script>
+</body>
+</html>

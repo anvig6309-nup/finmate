@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Can I Afford This? – FINMATE</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="theme.css">
+<style>
+:root{--y:#f9cb1b;--ys:#fff8d6;--yl:#f0dc7a;--ink:#0f172a;--mut:#5b6475;--line:#e6e8ec;--bg:#fafaf8;--w:#fff;--lav:#ece8ff;--lavd:#5b4bc4;--ok:#1a7f4b;--warn:#a15c00;--bad:#b42318}
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:"Plus Jakarta Sans",system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+header{background:var(--w);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+.wrap{max-width:1100px;margin:0 auto;padding:0 20px}
+.bar{display:flex;align-items:center;gap:14px;height:72px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:21px}
+.logo b{display:grid;place-items:center;width:40px;height:40px;background:var(--y);border-radius:10px}
+.menu{border:1px solid var(--line);background:var(--w);border-radius:999px;padding:8px 14px;font-weight:600;cursor:pointer;display:none}
+nav{display:flex;gap:8px;margin-left:auto}
+nav button{border:1px solid var(--line);background:var(--w);border-radius:999px;padding:9px 16px;font-weight:600;cursor:pointer}
+nav button[aria-current=true]{background:var(--y);border-color:var(--y)}
+main{max-width:1100px;margin:0 auto;padding:28px 20px 60px}
+.card{background:var(--w);border:1px solid var(--line);border-radius:20px;padding:24px;margin-bottom:20px}
+.hero{border-top:6px solid var(--y)}
+h1{font-size:clamp(30px,5vw,44px);letter-spacing:-.03em;margin:0 0 8px;line-height:1.1}
+h2{margin:0 0 12px;font-size:22px;letter-spacing:-.02em}h3{margin:0 0 6px;font-size:18px}
+.sub{color:var(--mut);font-size:18px;margin:0 0 16px}
+.pill{display:inline-block;background:var(--lav);color:var(--lavd);border-radius:999px;padding:5px 12px;font-weight:600;font-size:14px}
+.grid3{display:grid;grid-template-columns:2fr 1fr 1fr;gap:16px}
+.field{margin-bottom:16px}.hidden{display:none!important}
+label{display:block;font-weight:600;font-size:14px;margin-bottom:6px}
+input,select{width:100%;background:var(--w);border:1px solid var(--line);border-radius:12px;padding:14px 16px;font-size:16px}
+.btn{border:0;border-radius:12px;padding:14px 22px;font-weight:700;cursor:pointer;font-size:16px}
+.yel{background:var(--y)}.dark{background:var(--ink);color:var(--w)}.ghost{background:var(--w);border:1px solid var(--line)}.danger{color:var(--bad)}
+.btn.big{width:100%;padding:18px;font-size:18px}
+.btn.sm{padding:8px 14px;font-size:14px;border-radius:10px}
+.err{color:var(--bad);font-weight:600;font-size:14px;margin:0 0 12px}
+.status{display:inline-block;border-radius:999px;padding:6px 14px;font-weight:700;font-size:14px}
+.s-ok{background:#e3f6ec;color:var(--ok)}.s-adj{background:var(--ys);color:var(--warn)}.s-long{background:var(--lav);color:var(--lavd)}.s-no{background:#fde8e6;color:var(--bad)}
+.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:16px 0}
+.m{background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:14px}
+.m small{display:block;color:var(--mut);font-weight:600;font-size:13px}.m strong{font-size:20px}
+.note{background:var(--ys);border:1px solid var(--yl);border-radius:12px;padding:12px 16px;font-size:14px;margin:12px 0}
+.plans{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:16px}
+.plan{border:1px solid var(--line);border-radius:18px;padding:20px;background:var(--w);display:flex;flex-direction:column}
+.plan.c-faster{border-top:5px solid var(--y)}.plan.c-comfortable{border-top:5px solid var(--lavd)}.plan.c-flexible{border-top:5px solid var(--ink)}
+.big-n{font-size:26px;font-weight:800;letter-spacing:-.02em}
+.plan ul,.steps{margin:6px 0 12px;padding-left:20px}.plan li,.steps li{margin-bottom:4px;font-size:14px}
+.k{font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.04em;color:var(--mut);margin-top:10px}
+.row{display:flex;gap:10px;flex-wrap:wrap;margin-top:auto;padding-top:12px}
+.bar-bg{height:14px;background:var(--line);border-radius:999px;overflow:hidden;margin:10px 0}
+.bar-fg{height:100%;background:var(--y)}
+svg{width:100%;height:auto}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:480px}th,td{border-bottom:1px solid var(--line);padding:10px;text-align:left;font-size:14px;vertical-align:top}th{background:var(--bg)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;margin-top:6px}.legend i{display:inline-block;width:12px;height:3px;margin-right:6px;vertical-align:middle}
+dialog{border:0;border-radius:20px;padding:24px;width:min(440px,92vw)}dialog::backdrop{background:rgba(15,23,42,.45)}
+.saved-head{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:flex-start}
+details{margin-top:10px}summary{cursor:pointer;font-weight:600}
+@media(max-width:860px){.menu{display:block}nav{display:none;position:absolute;top:72px;left:0;right:0;background:var(--w);border-bottom:1px solid var(--line);flex-direction:column;padding:12px 20px;margin:0}nav.open{display:flex}.bar{position:relative}.grid3{grid-template-columns:1fr}.metrics{grid-template-columns:1fr 1fr}}
+@media(max-width:480px){.metrics{grid-template-columns:1fr}.btn{width:100%}.row .btn{flex:1}}
+</style>
+<script src="api.js"></script>
+</head>
+<body>
+<header><div class="wrap bar">
+  <button class="menu" id="menu" type="button" aria-expanded="false">☰ Menu</button>
+  <div class="logo"><b>F</b>FINMATE</div>
+  <nav id="nav">
+    <button type="button" data-view="check">Can I Afford This?</button>
+    <button type="button" data-view="saved">My Saved Plans</button>
+    <button type="button" data-view="track">Active Plan</button>
+  </nav>
+</div></header>
+
+<main>
+  <section id="v-check">
+    <div class="card hero">
+      <h1>Can I Afford This?</h1>
+      <p class="sub">Tell us what you want. We’ll help you find a smart way to get it.</p>
+      <p id="profileNote" style="color:var(--mut);font-size:14px;margin:0 0 16px"></p>
+      <div class="grid3">
+        <div class="field"><label for="pName">What do you want to buy?</label><input id="pName" placeholder="e.g. Guitar" maxlength="60"></div>
+        <div class="field"><label for="pPrice">Estimated price (₹)</label><input id="pPrice" type="number" min="1" inputmode="numeric" placeholder="15000"></div>
+        <div class="field"><label for="pTime">How soon?</label>
+          <select id="pTime"><option value="1">1 month</option><option value="3">3 months</option><option value="6" selected>6 months</option><option value="12">1 year</option><option value="custom">Custom duration</option></select></div>
+      </div>
+      <div class="field hidden" id="customWrap"><label for="pCustom">Custom duration (months)</label><input id="pCustom" type="number" min="1" max="120" placeholder="e.g. 9"></div>
+      <p class="err hidden" id="formErr"></p>
+      <button class="btn yel big" id="go" type="button">Find My Way</button>
+    </div>
+    <div id="result"></div>
+  </section>
+  <section id="v-saved" class="hidden"></section>
+  <section id="v-track" class="hidden"></section>
+</main>
+
+<dialog id="dlg"><form method="dialog" id="dlgForm">
+  <h2 id="dlgTitle">Edit plan</h2>
+  <div class="field" id="dNameWrap"><label for="dName">Plan name</label><input id="dName" maxlength="60"></div>
+  <div class="field"><label for="dItem">Purchase</label><input id="dItem" maxlength="60"></div>
+  <div class="field"><label for="dPrice">Price (₹)</label><input id="dPrice" type="number" min="1"></div>
+  <div class="field"><label for="dMonths">Timeline (months)</label><input id="dMonths" type="number" min="1" max="120"></div>
+  <p class="err hidden" id="dErr"></p>
+  <div class="row"><button class="btn yel" id="dOk" type="button">Save</button><button class="btn ghost" id="dCancel" type="button">Cancel</button></div>
+</form></dialog>
+
+<script>
+const PROFILE_KEY = 'finmate_profile';
+const PROFILE = Object.assign(
+  { income: 0, extraIncome: [], expenses: [], savings: null, goals: [], budget: null },
+  (() => { try { return JSON.parse(localStorage.getItem(PROFILE_KEY)) || {}; } catch (e) { return {}; } })()
+);
+
+const STRATS = {
+  comfortable: { label: 'Comfortable Plan', surplus: .5, extra: .5, trim: 0, sav: .5, blurb: 'Sustainable and protects essentials and commitments.' },
+  faster: { label: 'Faster Plan', surplus: .9, extra: 1, trim: .2, sav: .8, blurb: 'Reaches the purchase sooner with small trims to low and medium priority extras.' },
+  flexible: { label: 'Flexible Plan', surplus: .3, extra: .3, trim: 0, sav: .3, blurb: 'Lower monthly savings over a longer timeline.' }
+};
+const RESERVE_MONTHS = 2, CAP = 60;
+const KEYS = { plans: 'finmate_afford_plans', active: 'finmate_afford_active' };
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const fmt = n => '₹' + Math.round(n).toLocaleString('en-IN');
+const dateIn = m => { const d = new Date(); d.setMonth(d.getMonth() + m); return d.toLocaleDateString('en-IN', { month: 'short', year: 'numeric' }); };
+const store = {
+  get(k, d) { try { const v = JSON.parse(localStorage.getItem(k)); return v == null ? d : v; } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+
+/* Finance engine */
+const P = PROFILE;
+const live = (e, m) => e.endsIn == null || m <= e.endsIn;
+const sum = (list, f) => list.reduce((a, x) => a + f(x), 0);
+const essentials = () => sum(P.expenses.filter(e => !e.negotiable), e => e.amount);
+const usableSavings = () => Math.max(0, (P.savings || 0) - sum(P.goals, g => g.saved) - RESERVE_MONTHS * essentials());
+
+function monthlyCash(m, S) {
+  const exp = P.expenses.filter(e => live(e, m));
+  const base = P.income - sum(exp, e => e.amount) - sum(P.goals, g => g.monthly);
+  const extra = sum(P.extraIncome.filter(e => live(e, m)), e => e.amount);
+  const trim = sum(exp.filter(e => e.negotiable && e.priority !== 'High'), e => e.amount) * S.trim;
+  return Math.max(0, base) * S.surplus + extra * S.extra + trim;
+}
+
+function simulate(price, S) {
+  const alloc = Math.min(price, usableSavings() * S.sav), rem = price - alloc;
+  let acc = 0, months = rem <= 0 ? 0 : null;
+  const series = [alloc], cashes = [];
+  for (let m = 1; m <= CAP; m++) {
+    const c = monthlyCash(m, S);
+    cashes.push(c); acc += c;
+    series.push(Math.min(price, alloc + acc));
+    if (months === null && acc >= rem) months = m;
+  }
+  return { alloc, rem, months, series, cashes };
+}
+
+function missingInfo() {
+  const out = [];
+  if (!(P.income > 0)) out.push('monthly income');
+  if (!P.expenses.length) out.push('current expenses');
+  if (P.savings == null) out.push('current savings');
+  if (P.budget == null) out.push('a monthly budget (current expenses were used instead)');
+  return out;
+}
+
+function buildPlan(p, key) {
+  const S = STRATS[key], sim = simulate(p.price, S), n = sim.months;
+  const horizon = n == null ? CAP : n;
+  const live4 = P.expenses.filter(e => e.negotiable && e.priority !== 'High');
+  const adj = S.trim > 0
+    ? live4.map(e => `Trim ${e.name} by ${Math.round(S.trim * 100)}% (about ${fmt(e.amount * S.trim)}/month)`).concat('Rent, groceries, EMI and other essentials are left untouched')
+    : ['No cuts needed. This plan only uses your monthly surplus', 'Essential and high-priority expenses are left untouched'];
+  const ending = P.expenses.filter(e => e.endsIn && e.endsIn < horizon)
+    .map(e => `${e.name} (${fmt(e.amount)}/month) ends after month ${e.endsIn}. From month ${e.endsIn + 1}, about ${fmt(e.amount * S.surplus)} of it can go to this purchase`);
+  const inc = P.extraIncome.map(e => `${e.name} (${fmt(e.amount)}/month${e.endsIn ? ', ends after month ' + e.endsIn : ''}): put ${fmt(e.amount * S.extra)}/month toward this purchase`);
+  const goals = key === 'faster'
+    ? P.goals.map(g => `${g.name}: your ${fmt(g.monthly)}/month contribution is not changed, but there is little buffer. If money gets tight, consider moving its date by a month or two`)
+    : ['None. Your goal contributions continue unchanged'];
+  const risks = [];
+  if (key === 'faster') risks.push('Tight monthly buffer. An unexpected bill could delay the purchase');
+  if (P.extraIncome.some(e => e.endsIn && n != null && e.endsIn < n)) risks.push('Part of the plan relies on temporary income that ends before the purchase date');
+  if (n == null) risks.push('Not reachable within 5 years at this savings level');
+  if (!risks.length) risks.push('Low. Review the plan if your income or expenses change');
+  const monthly = n ? Math.ceil(sim.rem / n) : n === 0 ? 0 : null;
+  const why = n == null ? 'Your current surplus is too small to reach this price in a reasonable time.'
+    : `${S.blurb} It uses ${fmt(sim.alloc)} from existing savings (your emergency reserve stays protected) and about ${fmt(monthly || 0)} a month, reaching ${fmt(p.price)} in ${n} month${n === 1 ? '' : 's'}.`;
+  return { key, label: S.label, purchase: p, months: n, date: n == null ? null : dateIn(n), alloc: sim.alloc, remaining: sim.rem,
+    monthly, weekly: monthly == null ? null : Math.ceil(monthly / 4.33), adj, ending, inc, goals, risks, why, series: sim.series, cashes: sim.cashes };
+}
+
+function analyse(p) {
+  const all = Object.keys(STRATS).map(k => buildPlan(p, k));
+  const [c, f, fl] = all, T = p.months;
+  let status, text;
+  if (c.months != null && c.months <= T) { status = ['Achievable', 's-ok']; text = `Your usual surplus covers this within ${T} months without touching essentials.`; }
+  else if (f.months != null && f.months <= T) { status = ['Achievable with adjustments', 's-adj']; text = `The comfortable pace needs ${c.months == null ? 'more than 5 years' : c.months + ' months'}. Small trims to low and medium priority extras get you there within ${T} months.`; }
+  else if (fl.months != null || c.months != null || f.months != null) {
+    const best = Math.min(...[c, f, fl].map(x => x.months).filter(x => x != null));
+    if (best <= CAP) { status = ['Needs a longer timeline', 's-long']; text = `Even the fastest realistic plan needs about ${best} months, longer than your ${T}-month target.`; }
+  }
+  if (!status) { status = ['Not currently financially feasible', 's-no']; text = 'At your current surplus this price is out of reach for now.'; }
+  const shown = [c];
+  if (f.months != null && (c.months == null || f.months < c.months)) shown.push(f);
+  if (fl.months != null && (c.months == null || fl.months > c.months)) shown.push(fl);
+  return { status, text, plans: shown.filter(x => x.months != null), all, p };
+}
+
+function adviceSteps(r) {
+  const p = r.p, first = r.plans[0], steps = [];
+  if (!first) {
+    return ['Choose a lower-priced option or a later date and run the check again.', 'Look at whether any low-priority negotiable expense can be reduced permanently.', 'Raise your monthly surplus first (extra income or a lower fixed cost), then revisit this purchase.', 'Keep your emergency reserve and goals intact in the meantime.'];
+  }
+  steps.push(`Move ${fmt(first.monthly)} a month (about ${fmt(first.weekly)} a week) into a separate pot for the ${p.name.toLowerCase()} as soon as you get paid.`);
+  P.expenses.filter(e => e.endsIn && e.endsIn < first.months).forEach(e => steps.push(`When ${e.name.toLowerCase()} ends after month ${e.endsIn}, redirect its ${fmt(e.amount)} instead of spending it elsewhere.`));
+  P.extraIncome.forEach(e => steps.push(`Use ${e.name.toLowerCase()} income (${fmt(e.amount)}/month) for this purchase while it lasts${e.endsIn ? ' (it ends after month ' + e.endsIn + ')' : ''}.`));
+  if (r.status[1] === 's-adj') steps.push('Pick the Faster Plan and trim only the low and medium priority extras shown in it.');
+  if (r.status[1] === 's-long' || r.status[1] === 's-no') steps.push(`If ${p.months} months is firm, consider a lower price, a second-hand option or a short-term income boost.`);
+  steps.push('Update your actual savings regularly once you start a plan so the tracker stays accurate.');
+  return steps;
+}
+
+function assumptions() {
+  return ['Based on the financial information saved in your FinMate profile', `Emergency reserve of ${RESERVE_MONTHS} months of non-negotiable expenses is never used`, 'Existing goal contributions continue unchanged', 'No inflation or price changes', 'Advice is generated by built-in rules; no real AI service is connected'];
+}
+
+/* Charts */
+function chart(r) {
+  const T = r.p.months, maxN = Math.max(T, ...r.plans.map(x => x.months));
+  const M = Math.min(CAP, Math.max(T, maxN) + 1), W = 600, H = 190, L = 8, B = 24;
+  const x = m => L + (W - L * 2) * m / M, y = v => H - B - (H - B - 12) * v / r.p.price;
+  const cols = { comfortable: '#5b4bc4', faster: '#d9a800', flexible: '#0f172a' };
+  const lines = r.plans.map(pl => `<polyline fill="none" stroke="${cols[pl.key]}" stroke-width="2.5" points="${pl.series.slice(0, M + 1).map((v, m) => x(m).toFixed(1) + ',' + y(v).toFixed(1)).join(' ')}"/>`).join('');
+  const ticks = [0, Math.round(M / 2), M].map(m => `<text x="${x(m)}" y="${H - 6}" font-size="11" text-anchor="${m === 0 ? 'start' : m === M ? 'end' : 'middle'}" fill="#5b6475">${m} mo</text>`).join('');
+  const dl = T <= M ? `<line x1="${x(T)}" x2="${x(T)}" y1="8" y2="${H - B}" stroke="#b42318" stroke-dasharray="3 4"/>` : '';
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Projected savings against price"><line x1="${L}" x2="${W - L}" y1="${y(r.p.price)}" y2="${y(r.p.price)}" stroke="#aab" stroke-dasharray="5 4"/><line x1="${L}" x2="${W - L}" y1="${H - B}" y2="${H - B}" stroke="#e6e8ec"/>${dl}${lines}${ticks}</svg>
+  <div class="legend">${r.plans.map(pl => `<span><i style="background:${cols[pl.key]}"></i>${pl.label}</span>`).join('')}<span><i style="background:#aab"></i>Price</span><span><i style="background:#b42318"></i>Your deadline</span></div>`;
+}
+
+/* Result view */
+let current = null;
+function planCard(pl, i) {
+  const li = a => a.map(t => `<li>${esc(t)}</li>`).join('');
+  return `<article class="plan c-${pl.key}">
+    <h3>${pl.label}</h3>
+    <div class="big-n">${fmt(pl.monthly)}<small style="font-size:14px;font-weight:600;color:var(--mut)"> / month</small></div>
+    <div style="color:var(--mut);font-size:14px">${pl.weekly ? 'About ' + fmt(pl.weekly) + ' / week · ' : ''}Estimated date: <b>${pl.date}</b> (${pl.months} mo)</div>
+    <p style="font-size:14px">${esc(pl.why)}</p>
+    <div class="k">Expense adjustments</div><ul>${li(pl.adj)}</ul>
+    ${pl.inc.length ? `<div class="k">Additional income</div><ul>${li(pl.inc)}</ul>` : ''}
+    ${pl.ending.length ? `<div class="k">Expenses that end</div><ul>${li(pl.ending)}</ul>` : ''}
+    <div class="k">Goals affected</div><ul>${li(pl.goals)}</ul>
+    <div class="k">Risks</div><ul>${li(pl.risks)}</ul>
+    <div class="row"><button class="btn dark sm" data-act="save" data-i="${i}">Save Plan</button><button class="btn yel sm" data-act="start" data-i="${i}">Start This Plan</button></div>
+  </article>`;
+}
+
+function renderResult() {
+  const r = current, p = r.p, c = r.all[0];
+  const T = Math.min(p.months, CAP), avg = sum(c.cashes.slice(0, T), x => x) / T;
+  const req = Math.max(0, p.price - c.alloc) / p.months;
+  const miss = missingInfo();
+  $('#result').innerHTML = `<div class="card">
+    <span class="status ${r.status[1]}">${r.status[0]}</span>
+    <h2 style="margin-top:12px">${esc(p.name)}: ${fmt(p.price)} in ${p.months} month${p.months === 1 ? '' : 's'}</h2>
+    <p>${r.text}</p>
+    <div class="metrics">
+      <div class="m"><small>Purchase price</small><strong>${fmt(p.price)}</strong></div>
+      <div class="m"><small>Deadline</small><strong>${dateIn(p.months)}</strong></div>
+      <div class="m"><small>Existing savings allocated</small><strong>${fmt(c.alloc)}</strong></div>
+      <div class="m"><small>Remaining to save</small><strong>${fmt(c.remaining)}</strong></div>
+      <div class="m"><small>Needed per month for deadline</small><strong>${fmt(req)}</strong></div>
+      <div class="m"><small>Realistic monthly savings</small><strong>${fmt(avg)}</strong></div>
+    </div>
+    ${miss.length ? `<div class="note"><b>Missing information:</b> ${esc(miss.join(', '))}. Nothing was invented for these.</div>` : ''}
+    ${r.plans.length ? chart(r) : ''}
+  </div>
+  <div class="card"><h2>What you can do</h2>
+    <p>${r.plans.length ? `Here is how I’d approach the ${esc(p.name.toLowerCase())}. Projected savings are estimates, and you decide what to start.` : 'Right now the numbers do not work, but there are still sensible ways forward.'}</p>
+    <ol class="steps">${adviceSteps(r).map(s => `<li>${esc(s)}</li>`).join('')}</ol></div>
+  ${r.plans.length ? `<h2>Your plans</h2><div class="plans">${r.plans.map(planCard).join('')}</div>` : ''}`;
+  $('#result').scrollIntoView({ behavior: 'smooth' });
+}
+
+function readForm() {
+  const name = $('#pName').value.trim(), price = Number($('#pPrice').value);
+  const t = $('#pTime').value, months = Number(t === 'custom' ? $('#pCustom').value : t);
+  return check(name, price, months);
+}
+function check(name, price, months) {
+  if (!name) return { err: 'Enter what you want to buy.' };
+  if (!(price > 0) || price > 1e9) return { err: 'Enter a valid price greater than 0.' };
+  if (!Number.isInteger(months) || months < 1 || months > 120) return { err: 'Enter a duration from 1 to 120 months.' };
+  return { p: { name, price, months } };
+}
+
+$('#pTime').onchange = () => $('#customWrap').classList.toggle('hidden', $('#pTime').value !== 'custom');
+$('#go').onclick = () => {
+  const v = readForm(), e = $('#formErr');
+  if (v.err) { e.textContent = v.err; e.classList.remove('hidden'); return; }
+  e.classList.add('hidden');
+  if (!(P.income > 0)) {
+    current = null;
+    $('#result').innerHTML = `<div class="card"><h2>We need your financial profile first</h2>
+      <p>FinMate has no income information yet, so a reliable affordability check isn’t possible. Nothing has been estimated or assumed.</p>
+      <p><b>Missing:</b> ${esc(missingInfo().join(', '))}.</p>
+      <p style="color:var(--mut)">Once your income, expenses, savings and goals are available, press Find My Way again.</p></div>`;
+    return;
+  }
+  current = analyse(v.p);
+  renderResult();
+};
+
+/* Saved plans */
+const plans = () => store.get(KEYS.plans, []);
+const toSaved = (pl, name) => ({
+  id: uid(), name, key: pl.key, purchase: pl.purchase, savedAt: new Date().toISOString(),
+  result: { months: pl.months, date: pl.date, monthly: pl.monthly, weekly: pl.weekly, alloc: pl.alloc, remaining: pl.remaining },
+  actions: { adj: pl.adj, inc: pl.inc, ending: pl.ending, goals: pl.goals, risks: pl.risks, why: pl.why }, assumptions: assumptions()
+});
+
+function refreshSaved(s) {
+  const pl = buildPlan(s.purchase, s.key);
+  return { ...s, ...toSaved(pl, s.name), id: s.id, savedAt: s.savedAt, recalculatedAt: new Date().toISOString() };
+}
+
+let compareIds = new Set();
+function renderSaved() {
+  const list = plans(), el = $('#v-saved');
+  const cards = list.map(s => {
+    const r = s.result, li = a => a.map(t => `<li>${esc(t)}</li>`).join('');
+    return `<article class="card">
+      <div class="saved-head"><div><h3>${esc(s.name)}</h3><span class="pill">${STRATS[s.key].label}</span></div>
+      <label style="display:flex;gap:8px;align-items:center;font-weight:600"><input type="checkbox" style="width:auto" data-cmp="${s.id}" ${compareIds.has(s.id) ? 'checked' : ''}>Compare</label></div>
+      <p style="margin:10px 0 0">${esc(s.purchase.name)} · ${fmt(s.purchase.price)} · wanted in ${s.purchase.months} mo</p>
+      <p style="margin:4px 0"><b>${fmt(r.monthly)}</b>/month${r.weekly ? ' (~' + fmt(r.weekly) + '/week)' : ''} · estimated <b>${r.date}</b></p>
+      <details><summary>Actions and assumptions</summary>
+        <p style="font-size:14px">${esc(s.actions.why)}</p>
+        <div class="k">Adjustments</div><ul>${li(s.actions.adj)}</ul>
+        ${s.actions.inc.length ? `<div class="k">Additional income</div><ul>${li(s.actions.inc)}</ul>` : ''}
+        ${s.actions.ending.length ? `<div class="k">Expenses that end</div><ul>${li(s.actions.ending)}</ul>` : ''}
+        <div class="k">Risks</div><ul>${li(s.actions.risks)}</ul>
+        <div class="k">Assumptions</div><ul>${li(s.assumptions)}</ul>
+        <p style="font-size:13px;color:var(--mut)">Saved ${new Date(s.savedAt).toLocaleDateString('en-IN')}${s.recalculatedAt ? ' · recalculated ' + new Date(s.recalculatedAt).toLocaleDateString('en-IN') : ''}</p>
+      </details>
+      <div class="row"><button class="btn yel sm" data-sact="start" data-id="${s.id}">Start</button><button class="btn ghost sm" data-sact="edit" data-id="${s.id}">Edit</button><button class="btn ghost sm" data-sact="dup" data-id="${s.id}">Duplicate</button><button class="btn ghost sm" data-sact="recalc" data-id="${s.id}">Recalculate</button><button class="btn ghost sm danger" data-sact="del" data-id="${s.id}">Delete</button></div>
+    </article>`;
+  }).join('');
+  const picked = list.filter(s => compareIds.has(s.id));
+  const cmp = picked.length >= 2 ? `<div class="card"><h2>Compare plans</h2><div class="scroll"><table><tr><th></th>${picked.map(s => `<th>${esc(s.name)}</th>`).join('')}</tr>
+    ${[['Purchase', s => esc(s.purchase.name)], ['Price', s => fmt(s.purchase.price)], ['Strategy', s => STRATS[s.key].label], ['Monthly', s => fmt(s.result.monthly)], ['Weekly', s => s.result.weekly ? fmt(s.result.weekly) : '–'], ['From savings', s => fmt(s.result.alloc)], ['Estimated date', s => s.result.date], ['Months needed', s => s.result.months]].map(([l, f]) => `<tr><th>${l}</th>${picked.map(s => `<td>${f(s)}</td>`).join('')}</tr>`).join('')}</table></div></div>` : '';
+  el.innerHTML = `<div class="card hero"><h1>My Saved Purchase Plans</h1><p class="sub" style="margin:0">${list.length ? 'Tick two or more plans to compare them.' : 'No saved plans yet. Generate a plan and press Save Plan.'}</p></div>${cmp}${cards}`;
+}
+
+$('#v-saved').addEventListener('change', e => {
+  const id = e.target.dataset.cmp;
+  if (!id) return;
+  e.target.checked ? compareIds.add(id) : compareIds.delete(id);
+  renderSaved();
+});
+$('#v-saved').addEventListener('click', e => {
+  const a = e.target.dataset.sact; if (!a) return;
+  const list = plans(), i = list.findIndex(s => s.id === e.target.dataset.id), s = list[i];
+  if (a === 'del') { if (confirm('Delete "' + s.name + '"?')) { list.splice(i, 1); compareIds.delete(s.id); store.set(KEYS.plans, list); renderSaved(); } }
+  else if (a === 'dup') { list.splice(i + 1, 0, { ...s, id: uid(), name: s.name + ' (copy)', savedAt: new Date().toISOString() }); store.set(KEYS.plans, list); renderSaved(); }
+  else if (a === 'recalc') { list[i] = refreshSaved(s); store.set(KEYS.plans, list); renderSaved(); }
+  else if (a === 'edit') openDialog('edit', s);
+  else if (a === 'start') startPlan(buildPlan(s.purchase, s.key), s.name);
+});
+
+/* Dialog */
+let dlgMode = null, dlgTarget = null;
+function openDialog(mode, s) {
+  dlgMode = mode; dlgTarget = s;
+  $('#dlgTitle').textContent = mode === 'edit' ? 'Edit plan' : 'Revise active plan';
+  $('#dNameWrap').classList.toggle('hidden', mode !== 'edit');
+  $('#dName').value = s.name || '';
+  const p = mode === 'edit' ? s.purchase : { name: s.item, price: s.target, months: s.months };
+  $('#dItem').value = p.name; $('#dPrice').value = p.price; $('#dMonths').value = p.months;
+  $('#dErr').classList.add('hidden');
+  $('#dlg').showModal();
+}
+$('#dCancel').onclick = () => $('#dlg').close();
+$('#dOk').onclick = () => {
+  const v = check($('#dItem').value.trim(), Number($('#dPrice').value), Number($('#dMonths').value));
+  const name = $('#dName').value.trim();
+  if (v.err || (dlgMode === 'edit' && !name)) { $('#dErr').textContent = v.err || 'Enter a plan name.'; $('#dErr').classList.remove('hidden'); return; }
+  if (dlgMode === 'edit') {
+    const list = plans(), i = list.findIndex(s => s.id === dlgTarget.id);
+    list[i] = refreshSaved({ ...dlgTarget, name, purchase: v.p });
+    store.set(KEYS.plans, list); renderSaved();
+  } else {
+    const a = store.get(KEYS.active, null), pl = buildPlan(v.p, a.key);
+    a.item = v.p.name; a.target = v.p.price; a.months = v.p.months;
+    a.monthly = pl.months == null ? null : Math.ceil(Math.max(0, v.p.price - a.saved) / Math.max(1, pl.months));
+    a.paceMonths = pl.months;
+    store.set(KEYS.active, a); renderTrack();
+  }
+  $('#dlg').close();
+};
+
+/* Save and start from results */
+$('#result').addEventListener('click', e => {
+  const act = e.target.dataset.act; if (!act) return;
+  const pl = current.plans[Number(e.target.dataset.i)];
+  if (act === 'save') {
+    const name = prompt('Name this plan:', `${pl.purchase.name} – ${pl.label}`);
+    if (!name || !name.trim()) return;
+    const list = plans(); list.unshift(toSaved(pl, name.trim().slice(0, 60))); store.set(KEYS.plans, list);
+    e.target.textContent = 'Saved ✓';
+  } else startPlan(pl);
+});
+
+/* Active plan tracker */
+function startPlan(pl, name) {
+  const existing = store.get(KEYS.active, null);
+  const msg = `Start "${name || pl.label}" for ${pl.purchase.name}? ` + (existing ? 'This replaces your current active plan. ' : '') + 'Your real budget and goals will not be changed. You will log actual savings yourself.';
+  if (!confirm(msg)) return;
+  store.set(KEYS.active, { key: pl.key, name: name || `${pl.purchase.name} – ${pl.label}`, item: pl.purchase.name, target: pl.purchase.price, months: pl.purchase.months,
+    paceMonths: pl.months, monthly: pl.monthly, saved: 0, startedAt: new Date().toISOString(), status: 'active' });
+  show('track');
+}
+
+function renderTrack() {
+  const a = store.get(KEYS.active, null), el = $('#v-track');
+  if (!a) { el.innerHTML = '<div class="card hero"><h1>Active Plan</h1><p class="sub" style="margin:0">No plan started yet. Generate a plan and press Start This Plan.</p></div>'; return; }
+  const left = Math.max(0, a.target - a.saved), pct = Math.min(100, Math.round(a.saved / a.target * 100));
+  const elapsed = Math.floor((Date.now() - new Date(a.startedAt)) / (30.44 * 864e5));
+  const proj = Math.min(a.target, (a.monthly || 0) * elapsed);
+  const eta = left === 0 ? 'Reached' : a.monthly ? dateIn(Math.ceil(left / a.monthly)) : 'Not estimable';
+  el.innerHTML = `<div class="card hero">
+    <div class="saved-head"><div><h1 style="font-size:32px">${esc(a.item)}</h1><span class="pill">${esc(a.name)}</span></div><span class="status ${a.status === 'active' ? 's-ok' : 's-adj'}">${a.status === 'active' ? 'Active' : 'Paused'}</span></div>
+    <div class="bar-bg" aria-label="Progress"><div class="bar-fg" style="width:${pct}%"></div></div>
+    <p style="margin:0"><b>${pct}%</b> complete based on actual savings you entered</p>
+    <div class="metrics">
+      <div class="m"><small>Purchase target</small><strong>${fmt(a.target)}</strong></div>
+      <div class="m"><small>Actual amount saved</small><strong>${fmt(a.saved)}</strong></div>
+      <div class="m"><small>Remaining</small><strong>${fmt(left)}</strong></div>
+      <div class="m"><small>Monthly savings target</small><strong>${a.monthly == null ? '–' : fmt(a.monthly)}</strong></div>
+      <div class="m"><small>Estimated purchase date (current pace)</small><strong>${eta}</strong></div>
+      <div class="m"><small>Projected by now (not actual)</small><strong>${fmt(proj)}</strong></div>
+    </div>
+    ${left === 0 ? '<div class="note">You have reached your target. Time to make the purchase.</div>' : a.saved < proj ? `<div class="note">You are ${fmt(proj - a.saved)} behind the projection. Update your amount when you add to your savings, or revise the plan.</div>` : ''}
+    <div class="field"><label for="tSaved">Total actually saved so far (₹)</label><input id="tSaved" type="number" min="0" value="${a.saved}"></div>
+    <p class="err hidden" id="tErr"></p>
+    <div class="row" style="margin-top:0"><button class="btn yel" data-tact="update">Update saved amount</button><button class="btn ghost" data-tact="pause">${a.status === 'active' ? 'Pause' : 'Resume'}</button><button class="btn ghost" data-tact="revise">Revise plan</button><button class="btn ghost danger" data-tact="stop">Stop plan</button></div>
+  </div>`;
+}
+$('#v-track').addEventListener('click', e => {
+  const t = e.target.dataset.tact; if (!t) return;
+  const a = store.get(KEYS.active, null);
+  if (t === 'update') {
+    const v = Number($('#tSaved').value);
+    if (!(v >= 0) || $('#tSaved').value === '') { $('#tErr').textContent = 'Enter a valid amount.'; $('#tErr').classList.remove('hidden'); return; }
+    a.saved = v;
+  } else if (t === 'pause') a.status = a.status === 'active' ? 'paused' : 'active';
+  else if (t === 'revise') { openDialog('revise', a); return; }
+  else if (t === 'stop') { if (!confirm('Stop this plan? Your entered savings progress will be cleared from FinMate’s tracker.')) return; localStorage.removeItem(KEYS.active); renderTrack(); return; }
+  store.set(KEYS.active, a); renderTrack();
+});
+
+/* Navigation */
+function show(v) {
+  ['check', 'saved', 'track'].forEach(k => $('#v-' + k).classList.toggle('hidden', k !== v));
+  document.querySelectorAll('nav button').forEach(b => b.setAttribute('aria-current', b.dataset.view === v));
+  $('#nav').classList.remove('open'); $('#menu').setAttribute('aria-expanded', 'false');
+  if (v === 'saved') renderSaved();
+  if (v === 'track') renderTrack();
+  window.scrollTo(0, 0);
+}
+document.querySelectorAll('nav button').forEach(b => b.onclick = () => show(b.dataset.view));
+$('#menu').onclick = () => { const o = $('#nav').classList.toggle('open'); $('#menu').setAttribute('aria-expanded', o); };
+$('#profileNote').textContent = P.income > 0
+  ? 'Using the financial information already saved in your FinMate profile. You only enter the purchase details.'
+  : 'Your financial profile isn’t available yet. Add your income, expenses and savings in FinMate to get a personalised result.';
+show('check');
+</script>
+</body>
+</html>

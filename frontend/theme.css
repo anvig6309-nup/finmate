@@ -1,0 +1,285 @@
+/* FinMate Global Dark Mode & Theme Stylesheet */
+:root {
+  --transition-theme: background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+}
+
+:root[data-eff="dark"],
+:root[data-theme="dark"],
+html.dark {
+  color-scheme: dark;
+
+  /* Global Dark Palette */
+  --bg: #111318;
+  --soft: #181b24;
+  --surf: #181b24;
+  --cream: #111318;
+  --card: #1c202c;
+  --w: #1c202c;
+  --white: #1c202c;
+  --in: #161822;
+  --grey: #252a3a;
+  --ink: #f3f5fa;
+  --mut: #9ba3b8;
+  --muted: #9ba3b8;
+  --mute: #9ba3b8;
+  --line: #2b3246;
+  --border: #2b3246;
+
+  /* FinMate Yellow Accent */
+  --y: #f7c514;
+  --yd: #e2b30e;
+  --yi: #111318;
+  --soft-y: #2b240a;
+  --y2: #2d2610;
+  --ys: #2d2610;
+  --yl: #544410;
+  --lemon: #f7c514;
+  --lemon-50: #26210b;
+  --lemon-100: #332b0f;
+  --lemon-dark: #eab308;
+
+  /* Purple / Lavender */
+  --pill: #262238;
+  --lav: #2d2644;
+  --lavd: #a99ceb;
+  --pur: #a99ceb;
+  --vio: #8b79e6;
+
+  /* Status Colors */
+  --ok: #22c55e;
+  --good: #22c55e;
+  --bad: #ef4444;
+  --danger: #ef4444;
+  --red: #ef4444;
+  --warn: #f59e0b;
+
+  --sh: 0 10px 30px rgba(0, 0, 0, 0.6);
+}
+
+/* Base dark elements */
+:root[data-eff="dark"] body,
+html.dark body {
+  background: var(--bg) !important;
+  color: var(--ink) !important;
+}
+
+:root[data-eff="dark"] aside,
+:root[data-eff="dark"] header,
+:root[data-eff="dark"] nav,
+:root[data-eff="dark"] .panel,
+:root[data-eff="dark"] .card,
+:root[data-eff="dark"] .top,
+:root[data-eff="dark"] dialog,
+:root[data-eff="dark"] .modal,
+html.dark aside,
+html.dark header,
+html.dark nav,
+html.dark .panel,
+html.dark .card,
+html.dark .top,
+html.dark dialog,
+html.dark .modal {
+  background-color: var(--card) !important;
+  color: var(--ink) !important;
+  border-color: var(--line) !important;
+}
+
+:root[data-eff="dark"] input,
+:root[data-eff="dark"] select,
+:root[data-eff="dark"] textarea,
+:root[data-eff="dark"] .input,
+html.dark input,
+html.dark select,
+html.dark textarea,
+html.dark .input {
+  background-color: var(--in, #161822) !important;
+  color: var(--ink) !important;
+  border-color: var(--line) !important;
+}
+
+:root[data-eff="dark"] input::placeholder,
+:root[data-eff="dark"] textarea::placeholder,
+html.dark input::placeholder,
+html.dark textarea::placeholder {
+  color: var(--mut) !important;
+}
+
+/* Buttons in dark mode */
+:root[data-eff="dark"] .btn:not(.y):not(.p):not(.pri):not(.d):not(.v):not(.btn-primary):not(.btn-dark),
+html.dark .btn:not(.y):not(.p):not(.pri):not(.d):not(.v):not(.btn-primary):not(.btn-dark) {
+  background-color: var(--card);
+  color: var(--ink);
+  border-color: var(--line);
+}
+
+:root[data-eff="dark"] .btn:not(.y):not(.p):not(.pri):not(.d):not(.v):not(.btn-primary):hover,
+html.dark .btn:not(.y):not(.p):not(.pri):not(.d):not(.v):not(.btn-primary):hover {
+  background-color: var(--grey);
+}
+
+:root[data-eff="dark"] .btn.d,
+html.dark .btn.d {
+  background-color: rgba(239, 68, 68, 0.15) !important;
+  border-color: var(--bad) !important;
+  color: #fca5a5 !important;
+}
+
+/* Tables */
+:root[data-eff="dark"] table th,
+:root[data-eff="dark"] table td,
+html.dark table th,
+html.dark table td {
+  border-color: var(--line) !important;
+  color: var(--ink);
+}
+:root[data-eff="dark"] table th,
+html.dark table th {
+  background-color: var(--soft) !important;
+  color: var(--mut) !important;
+}
+
+/* Dashboard specific elements */
+:root[data-eff="dark"] .goal,
+:root[data-eff="dark"] .plan,
+:root[data-eff="dark"] .ins,
+html.dark .goal,
+html.dark .plan,
+html.dark .ins {
+  background-color: var(--card) !important;
+  color: var(--ink) !important;
+  border-color: var(--line) !important;
+}
+
+:root[data-eff="dark"] .tiles .tile,
+html.dark .tiles .tile {
+  color: #111318 !important;
+}
+
+:root[data-eff="dark"] .goal:nth-child(3n+2),
+html.dark .goal:nth-child(3n+2) {
+  background-color: #242038 !important;
+}
+
+:root[data-eff="dark"] .goal:nth-child(3n+3),
+html.dark .goal:nth-child(3n+3) {
+  background-color: #2a2512 !important;
+}
+
+:root[data-eff="dark"] .panel.lav,
+html.dark .panel.lav {
+  background-color: var(--lav) !important;
+}
+
+:root[data-eff="dark"] .panel.grey,
+html.dark .panel.grey {
+  background-color: var(--soft) !important;
+}
+
+:root[data-eff="dark"] .hero,
+html.dark .hero {
+  background: linear-gradient(135deg, #2d2610, #1c202c) !important;
+  color: var(--ink) !important;
+}
+
+:root[data-eff="dark"] .hero h1,
+:root[data-eff="dark"] .hero strong,
+html.dark .hero h1,
+html.dark .hero strong {
+  color: #fff !important;
+}
+
+:root[data-eff="dark"] .rg .tr,
+html.dark .rg .tr {
+  stroke: var(--line) !important;
+}
+
+:root[data-eff="dark"] .rg text,
+html.dark .rg text {
+  fill: var(--ink) !important;
+}
+
+/* Predictions specific elements */
+:root[data-eff="dark"] .kpi,
+:root[data-eff="dark"] .seg,
+:root[data-eff="dark"] .chip,
+html.dark .kpi,
+html.dark .seg,
+html.dark .chip {
+  background-color: var(--in) !important;
+  border-color: var(--line) !important;
+  color: var(--ink) !important;
+}
+
+:root[data-eff="dark"] .seg button,
+html.dark .seg button {
+  color: var(--mut);
+}
+
+:root[data-eff="dark"] .seg button.on,
+html.dark .seg button.on {
+  background-color: var(--y);
+  color: var(--yi);
+}
+
+:root[data-eff="dark"] #tip,
+html.dark #tip {
+  background-color: var(--card) !important;
+  color: var(--ink) !important;
+  border-color: var(--line) !important;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.6) !important;
+}
+
+/* What-If specific elements */
+:root[data-eff="dark"] .stat,
+:root[data-eff="dark"] .subs,
+html.dark .stat,
+html.dark .subs {
+  background-color: var(--in) !important;
+  border-color: var(--line) !important;
+}
+
+:root[data-eff="dark"] .good,
+html.dark .good {
+  background-color: rgba(34, 197, 94, 0.15) !important;
+  color: #86efac !important;
+  border-color: rgba(34, 197, 94, 0.3) !important;
+}
+
+:root[data-eff="dark"] .warn,
+html.dark .warn {
+  background-color: rgba(245, 158, 11, 0.15) !important;
+  color: #fde68a !important;
+  border-color: rgba(245, 158, 11, 0.3) !important;
+}
+
+:root[data-eff="dark"] .bad,
+html.dark .bad {
+  background-color: rgba(239, 68, 68, 0.15) !important;
+  color: #fca5a5 !important;
+  border-color: rgba(239, 68, 68, 0.3) !important;
+}
+
+/* Pocket CA specific */
+:root[data-eff="dark"] .composer,
+html.dark .composer {
+  background: linear-gradient(transparent, var(--bg) 30%) !important;
+}
+
+:root[data-eff="dark"] .box,
+html.dark .box {
+  background-color: var(--card) !important;
+  border-color: var(--line) !important;
+}
+
+:root[data-eff="dark"] .a .b,
+html.dark .a .b {
+  background-color: var(--card) !important;
+  color: var(--ink) !important;
+  border-color: var(--line) !important;
+}
+
+:root[data-eff="dark"] .u .b,
+html.dark .u .b {
+  background-color: var(--y) !important;
+  color: var(--yi) !important;
+}

@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pocket CA – FINMATE</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="theme.css">
+<style>
+:root{--y:#f9cb1b;--ys:#fff8d6;--yl:#f0dc7a;--ink:#0f172a;--mut:#5b6475;--line:#e6e8ec;--bg:#fafaf8;--w:#fff;--lav:#ece8ff;--lavd:#5b4bc4;--bad:#b42318}
+*{box-sizing:border-box}html,body{margin:0;height:100%}
+body{font-family:"Plus Jakarta Sans",system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5;display:flex;flex-direction:column}
+button,textarea{font:inherit;color:inherit}:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+header{background:var(--w);border-bottom:1px solid var(--line);flex:none}
+.bar{display:flex;align-items:center;gap:12px;height:64px;padding:0 20px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:20px}
+.logo b{display:grid;place-items:center;width:36px;height:36px;background:var(--y);border-radius:10px}
+.back{margin-left:auto;text-decoration:none;font-weight:600}
+.btn{border:1px solid var(--line);background:var(--w);border-radius:10px;padding:8px 14px;font-weight:700;font-size:14px;cursor:pointer;white-space:nowrap}
+.btn.y{background:var(--y);border-color:var(--y)}.btn.d{color:var(--bad)}.btn:disabled{opacity:.5;cursor:not-allowed}
+.app{flex:1;min-height:0;display:grid;grid-template-columns:290px 1fr}
+aside{background:var(--w);border-right:1px solid var(--line);display:flex;flex-direction:column;min-height:0}
+aside .top{padding:14px;display:flex;flex-direction:column;gap:8px}
+#list{flex:1;overflow:auto;padding:0 8px 8px}
+.ci{display:flex;align-items:center;gap:4px;border-radius:12px;padding:2px 4px 2px 12px}
+.ci.on{background:var(--lav)}.ci:hover{background:var(--ys)}.ci.on:hover{background:var(--lav)}
+.ci button.t{flex:1;min-width:0;text-align:left;background:none;border:0;padding:9px 0;cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600;font-size:14px}
+.ci button.x{background:none;border:0;cursor:pointer;color:var(--mut);padding:6px 8px;border-radius:8px;font-size:16px}
+.small{color:var(--mut);font-size:13px;padding:8px 14px}
+main{display:flex;flex-direction:column;min-width:0;min-height:0}
+#thread{flex:1;overflow:auto;padding:24px 20px}
+.col{max-width:760px;margin:0 auto}
+.empty{text-align:center;color:var(--mut);margin-top:12vh}.empty h1{color:var(--ink);font-size:28px;letter-spacing:-.02em;margin:0 0 6px}
+.m{display:flex;margin-bottom:14px}.m.u{justify-content:flex-end}
+.b{max-width:85%;padding:11px 16px;border-radius:20px;word-break:break-word}
+.u .b{background:var(--y);border-bottom-right-radius:6px;white-space:pre-wrap}
+.a .b{background:var(--w);border:1px solid var(--line);border-bottom-left-radius:6px}
+.b p{margin:0 0 8px}.b p:last-child,.b ul:last-child{margin-bottom:0}.b ul{margin:0 0 8px;padding-left:20px}
+.dots{display:inline-flex;gap:5px;padding:4px 0}.dots i{width:7px;height:7px;border-radius:50%;background:var(--lavd);opacity:.35;animation:p 1.1s infinite}
+.dots i:nth-child(2){animation-delay:.18s}.dots i:nth-child(3){animation-delay:.36s}@keyframes p{50%{opacity:1}}
+@media(prefers-reduced-motion:reduce){.dots i{animation:none;opacity:.7}}
+.err{background:#fdecea;border:1px solid #f3c2bd;color:var(--bad);border-radius:14px;padding:12px 16px;margin-bottom:14px;font-size:14px}
+.err button{margin-left:8px}
+.note{background:var(--ys);border:1px solid var(--yl);border-radius:14px;padding:12px 16px;margin-bottom:14px;font-size:14px}
+.composer{flex:none;padding:12px 20px 14px;background:linear-gradient(transparent,var(--bg) 30%)}
+.box{max-width:760px;margin:0 auto;display:flex;gap:10px;align-items:flex-end;background:var(--w);border:1px solid var(--line);border-radius:22px;padding:8px 8px 8px 16px}
+textarea{flex:1;border:0;outline:0;resize:none;max-height:160px;padding:8px 0;background:transparent;font-size:16px}
+.send{width:42px;height:42px;border-radius:50%;border:0;background:var(--y);font-size:18px;font-weight:800;cursor:pointer}.send:disabled{opacity:.45;cursor:not-allowed}
+.disc{max-width:760px;margin:6px auto 0;text-align:center;color:var(--mut);font-size:12px}
+#menu{display:none}
+dialog{border:0;border-radius:20px;padding:24px;width:min(400px,92vw)}dialog::backdrop{background:rgba(15,23,42,.45)}
+.hidden{display:none!important}
+@media(max-width:760px){.app{grid-template-columns:1fr;position:relative}aside{position:absolute;inset:0 30% 0 0;z-index:5;transform:translateX(-102%);transition:transform .2s;box-shadow:4px 0 20px #0002}aside.open{transform:none}#menu{display:inline-block}.b{max-width:92%}}
+</style>
+<script src="api.js"></script>
+</head>
+<body>
+<header><div class="bar">
+  <button class="btn" id="menu" aria-label="Chat history">History</button>
+  <div class="logo"><b>F</b>FINMATE · Pocket CA</div>
+  <a class="back" href="dashboard.html">← Dashboard</a>
+</div></header>
+
+<div class="app">
+  <aside id="side">
+    <div class="top"><button class="btn y" data-act="new">+ New chat</button></div>
+    <div id="list"></div>
+    <div class="top"><button class="btn d" data-act="clear" id="clearBtn">Clear history</button></div>
+  </aside>
+  <main>
+    <div id="thread"><div class="col" id="col"></div></div>
+    <div class="composer">
+      <div class="box">
+        <textarea id="inp" rows="1" maxlength="2000" placeholder="Ask Pocket CA about your money…" aria-label="Message"></textarea>
+        <button class="send" id="send" aria-label="Send" title="Send">↑</button>
+      </div>
+      <p class="disc">Pocket CA is an educational budgeting assistant, not a Chartered Accountant or regulated financial adviser. It can read your saved data but never changes it.</p>
+    </div>
+  </main>
+</div>
+
+<dialog id="dlg"><h2 id="dT" style="margin:0 0 8px"></h2><p id="dP" style="color:var(--mut);margin:0 0 16px"></p>
+  <div style="display:flex;gap:10px"><button class="btn d" id="dOk">Delete</button><button class="btn" id="dNo">Cancel</button></div></dialog>
+
+<script>
+const CONFIG = {
+  API_BASES: ['', 'http://localhost:5000', 'http://127.0.0.1:5000', 'http://localhost:3000', 'http://localhost:8000'],
+  BASE: '/api/pocket-ca',
+  TOKEN_KEYS: ['token', 'authToken', 'finmate_token'],
+  LOGIN_PAGE: 'login.html'
+};
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+let apiBase = null;
+const getToken = () => {
+  for (const st of [localStorage, sessionStorage]) {
+    for (const k of CONFIG.TOKEN_KEYS) { const v = st.getItem(k); if (v) return v.replace(/^"|"$/g, ''); }
+    for (let i = 0; i < st.length; i++) { const k = st.key(i); if (/token|jwt/i.test(k)) { const v = st.getItem(k); if (v && v.length > 20) return v.replace(/^"|"$/g, ''); } }
+  }
+  return null;
+};
+class AuthError extends Error {}
+async function call(base, path, opts = {}) {
+  const t = getToken();
+  return fetch(base + path, { method: opts.method || 'GET', body: opts.body, credentials: 'include', headers: { Accept: 'application/json', ...(opts.body ? { 'Content-Type': 'application/json' } : {}), ...(t ? { Authorization: 'Bearer ' + t } : {}) } });
+}
+async function api(path, opts = {}) {
+  let res;
+  if (apiBase !== null) { try { res = await call(apiBase, path, opts); } catch (e) { throw new Error('Cannot reach the server'); } }
+  else {
+    for (const b of CONFIG.API_BASES) {
+      try { const r = await call(b, path, opts); if (r.status === 404 && !(r.headers.get('content-type') || '').includes('json')) continue; res = r; apiBase = b; break; } catch (e) {}
+    }
+    if (!res) throw new Error('Cannot reach the backend. Set API_BASES in the script');
+  }
+  if (res.status === 401) throw new AuthError('Not signed in');
+  if (!res.ok) {
+    let j = {}; try { j = await res.clone().json(); } catch (e) {}
+    const er = new Error(j.message || j.error || 'Server returned ' + res.status); er.code = j.code; er.status = res.status; throw er;
+  }
+  return res.status === 204 ? null : res.json().catch(() => null);
+}
+
+const S = { convs: [], cur: null, msgs: [], busy: false, err: null, loading: false };
+
+function md(t) {
+  const out = []; let ul = false;
+  for (const l of esc(t).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>').split('\n')) {
+    if (/^\s*[-•*]\s+/.test(l)) { if (!ul) { out.push('<ul>'); ul = true; } out.push('<li>' + l.replace(/^\s*[-•*]\s+/, '') + '</li>'); }
+    else { if (ul) { out.push('</ul>'); ul = false; } if (l.trim()) out.push('<p>' + l + '</p>'); }
+  }
+  if (ul) out.push('</ul>');
+  return out.join('');
+}
+
+function drawList() {
+  $('#list').innerHTML = S.convs.length ? S.convs.map(c => `<div class="ci ${c.id === S.cur ? 'on' : ''}"><button class="t" data-act="open" data-id="${esc(c.id)}" title="${esc(c.title)}">${esc(c.title || 'New chat')}</button><button class="x" data-act="del" data-id="${esc(c.id)}" aria-label="Delete conversation">×</button></div>`).join('') : '<p class="small">No conversations yet.</p>';
+  $('#clearBtn').classList.toggle('hidden', !S.convs.length);
+}
+function drawThread(stick = true) {
+  const el = $('#thread');
+  let h = '';
+  if (S.loading) h = '<p class="small" style="text-align:center">Loading conversation…</p>';
+  else if (!S.msgs.length && !S.busy) h = '<div class="empty"><h1>Hi, I’m Pocket CA</h1><p>Ask me anything about your money. I already have your saved budget, income, expenses and goals, so you don’t need to repeat them.</p></div>';
+  h += S.msgs.map(m => `<div class="m ${m.role === 'user' ? 'u' : 'a'}"><div class="b">${m.role === 'user' ? esc(m.content) : md(m.content)}</div></div>`).join('');
+  if (S.busy) h += '<div class="m a"><div class="b"><span class="dots" role="status" aria-label="Pocket CA is thinking"><i></i><i></i><i></i></span></div></div>';
+  if (S.err) h += S.err.code === 'AI_NOT_CONFIGURED'
+    ? '<div class="note"><b>Pocket CA’s AI service isn’t configured.</b> Ask the app owner to add the AI API key to the backend environment. Your message was not answered.</div>'
+    : `<div class="err">${esc(S.err.message)}${S.err.text ? '<button class="btn" data-act="retry">Retry</button>' : ''}</div>`;
+  $('#col').innerHTML = h;
+  if (stick) el.scrollTop = el.scrollHeight;
+}
+function gate(e) { if (e instanceof AuthError) { location.href = CONFIG.LOGIN_PAGE; return true; } return false; }
+
+async function loadConvs() {
+  try { const r = await api(CONFIG.BASE + '/conversations'); S.convs = Array.isArray(r) ? r : (r && r.conversations) || []; }
+  catch (e) { if (gate(e)) return; S.err = { message: 'Couldn’t load chat history: ' + e.message + '.' }; }
+  drawList();
+}
+async function openConv(id) {
+  S.cur = id; S.err = null; S.loading = true; S.msgs = []; drawList(); drawThread(); $('#side').classList.remove('open');
+  try { const r = await api(CONFIG.BASE + '/conversations/' + encodeURIComponent(id) + '/messages'); S.msgs = (Array.isArray(r) ? r : (r && r.messages) || []).map(m => ({ role: m.role, content: m.content })); }
+  catch (e) { if (gate(e)) return; S.err = { message: 'Couldn’t open this conversation: ' + e.message + '.' }; }
+  S.loading = false; drawThread();
+}
+function newChat() { S.cur = null; S.msgs = []; S.err = null; drawList(); drawThread(); $('#side').classList.remove('open'); $('#inp').focus(); }
+
+async function send(text) {
+  text = (text ?? $('#inp').value).trim();
+  if (!text || S.busy) return;
+  $('#inp').value = ''; resize(); S.err = null; S.busy = true;
+  S.msgs.push({ role: 'user', content: text }); drawThread(); $('#send').disabled = true;
+  try {
+    const r = await api(CONFIG.BASE + '/chat', { method: 'POST', body: JSON.stringify({ conversation_id: S.cur, message: text }) });
+    if (!r || !r.message || !r.message.content) throw new Error('Pocket CA returned an empty reply');
+    if (r.conversation && r.conversation.id) S.cur = r.conversation.id;
+    S.msgs.push({ role: 'assistant', content: r.message.content });
+    S.busy = false; drawThread(); loadConvs();
+  } catch (e) {
+    if (gate(e)) return;
+    S.msgs.pop(); S.busy = false;
+    S.err = { message: e.code === 'AI_NOT_CONFIGURED' ? '' : 'Your message wasn’t sent: ' + e.message + '.', code: e.code, text };
+    drawThread();
+  }
+  $('#send').disabled = false;
+}
+
+const dlg = $('#dlg'); let onYes = null;
+function confirmBox(t, p, label, fn) { $('#dT').textContent = t; $('#dP').textContent = p; $('#dOk').textContent = label; onYes = fn; dlg.showModal(); }
+$('#dNo').onclick = () => dlg.close();
+$('#dOk').onclick = async () => { dlg.close(); try { await onYes(); } catch (e) { if (!gate(e)) { S.err = { message: e.message + '.' }; drawThread(); } } };
+
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-act]'); if (!b) return;
+  const a = b.dataset.act, id = b.dataset.id;
+  if (a === 'new') newChat();
+  else if (a === 'open') openConv(id);
+  else if (a === 'retry') { const t = S.err.text; S.err = null; send(t); }
+  else if (a === 'del') confirmBox('Delete this conversation?', 'Only this conversation and its messages are deleted. Your budgets, goals and other financial records are not affected.', 'Delete', async () => {
+    await api(CONFIG.BASE + '/conversations/' + encodeURIComponent(id), { method: 'DELETE' });
+    if (S.cur === id) newChat(); await loadConvs(); });
+  else if (a === 'clear') confirmBox('Clear all chat history?', 'All your Pocket CA conversations will be deleted. Your financial records are not affected.', 'Clear all', async () => {
+    await api(CONFIG.BASE + '/conversations', { method: 'DELETE' }); newChat(); await loadConvs(); });
+});
+const inp = $('#inp');
+function resize() { inp.style.height = 'auto'; inp.style.height = Math.min(inp.scrollHeight, 160) + 'px'; }
+inp.addEventListener('input', resize);
+inp.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) { e.preventDefault(); send(); } });
+$('#send').onclick = () => send();
+$('#menu').onclick = () => $('#side').classList.toggle('open');
+window.addEventListener('pageshow', e => { if (e.persisted) loadConvs(); });
+drawThread(); loadConvs();
+</script>
+</body>
+</html>

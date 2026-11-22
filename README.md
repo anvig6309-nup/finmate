@@ -1,4 +1,17 @@
-# FinMate (Flask + SQLite backend, HTML frontend)
+# FinMate — Your Pocket CA
+
+> Intelligent personal finance platform featuring persona-based budgeting, predictive goal forecasting, passwordless authentication, and AI financial advisory.
+
+---
+
+## 👥 Project Contributors & Team
+
+| Contributor | Area / Role | Contributions & Deliverables |
+| :--- | :--- | :--- |
+| **`anvig6309@gmail.com`** | **Backend, Architecture & DevOps** | Complete Flask backend architecture, SQLite database schema & migrations, JWT authentication & session management, Gmail magic link & 6-digit OTP engine, Gemini AI Pocket CA integration, financial calculation engines, security rate-limiting, and Render deployment setup. |
+| **`anvichauhan315@gmail.com`** | **Frontend Engineering** | Complete frontend user interface, landing page, persona onboarding screens, budget planner views, responsive design, interactive styling, and client-side interactions. |
+
+---
 
 ## Run on Windows (VS Code terminal = PowerShell)
     py -m venv venv

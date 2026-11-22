@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>FinMate · Financial Predictions</title>
+<link rel="stylesheet" href="theme.css">
+<style>
+:root{--bg:#f4f1e6;--card:#fff;--ink:#17140a;--mut:#6a665a;--line:#e6e2d6;--y:#f7c514;--yi:#17140a;--soft:#fff8de;--pill:#ece9fb;--good:#13804a;--bad:#c0332b;--warn:#a85f00;--in:#faf9f5;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+:root[data-eff="dark"]{--bg:#111318;--card:#1c202c;--ink:#f3f5fa;--mut:#9ba3b8;--line:#2b3246;--y:#f7c514;--yi:#111318;--soft:#2b240a;--pill:#262238;--good:#22c55e;--bad:#ef4444;--warn:#f59e0b;--in:#161822;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header{display:flex;align-items:center;gap:14px;padding:14px 20px;border-bottom:1px solid var(--line)}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:20px;letter-spacing:.5px;text-decoration:none;color:inherit}
+.logo b{background:var(--y);color:var(--yi);width:38px;height:38px;border-radius:10px;display:grid;place-items:center;font-size:22px}
+main{max-width:980px;margin:0 auto;padding:20px 16px 60px;display:grid;gap:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px}
+.hero{border-top:5px solid var(--y)}
+h1{margin:0 0 4px;font-size:clamp(28px,5vw,38px);letter-spacing:-.5px;line-height:1.1}
+h2{margin:0 0 10px;font-size:20px}h3{margin:16px 0 8px;font-size:16px}
+p{margin:0}.mut{color:var(--mut)}.sm{font-size:13px}
+.pill{display:inline-block;background:var(--pill);border:1px solid var(--line);border-radius:999px;padding:4px 14px;font-weight:600;font-size:14px;margin-right:6px}
+.btn{font:inherit;font-weight:700;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:8px 16px;cursor:pointer;text-decoration:none;display:inline-block}
+.btn.pri{background:var(--y);color:var(--yi);border-color:var(--y);padding:12px 22px}
+.btn:focus-visible,.seg button:focus-visible,.chip:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid var(--y);outline-offset:2px}
+.seg{display:inline-flex;flex-wrap:wrap;gap:4px;background:var(--in);border:1px solid var(--line);border-radius:14px;padding:4px}
+.seg button{font:inherit;font-weight:700;border:0;background:none;color:var(--ink);padding:8px 14px;border-radius:10px;cursor:pointer}
+.seg button.on{background:var(--y);color:var(--yi)}
+.row{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:14px}
+input,select{font:inherit;color:var(--ink);background:var(--in);border:1px solid var(--line);border-radius:10px;padding:9px 12px}
+#custom{width:90px}
+.chip{font:inherit;font-weight:600;border:1.5px solid var(--line);background:var(--in);color:var(--ink);border-radius:999px;padding:6px 14px;cursor:pointer;display:inline-flex;align-items:center;gap:7px}
+.chip[aria-pressed=true]{border-color:var(--y);background:var(--soft)}
+.chip i{width:11px;height:11px;border-radius:50%;display:inline-block}
+.tag{display:inline-block;font-size:12px;font-weight:800;border-radius:6px;padding:2px 8px;margin-right:6px}
+.tag.a{background:var(--ink);color:var(--bg)}.tag.h{background:var(--y);color:var(--yi);border:1px dashed var(--yi)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:12px 0}
+.kpi{border:1px solid var(--line);border-radius:14px;padding:12px;background:var(--in)}
+.kpi small{color:var(--mut);display:block}.kpi b{font-size:20px}
+.good{color:var(--good)}.bad{color:var(--bad)}.warn{color:var(--warn)}
+.bar{height:9px;background:var(--line);border-radius:9px;overflow:hidden;min-width:90px}.bar i{display:block;height:100%;background:var(--y)}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap}th{color:var(--mut);font-weight:600}
+ul{margin:6px 0;padding-left:20px}li{margin:4px 0}
+.note{background:var(--soft);border:1px solid var(--y);border-radius:12px;padding:10px 14px;margin:10px 0;display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.empty{text-align:center;padding:28px 12px;border:2px dashed var(--line);border-radius:16px;display:grid;gap:12px;justify-items:center}
+.cw{position:relative}svg{width:100%;height:auto;display:block;touch-action:pan-y}
+#tip{position:absolute;top:8px;pointer-events:none;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 12px;font-size:13px;box-shadow:0 6px 18px rgba(0,0,0,.18);min-width:190px;z-index:2}
+#tip div{display:flex;justify-content:space-between;gap:12px}
+.leg{display:flex;flex-wrap:wrap;gap:12px;font-size:13px;margin-top:8px}
+.leg span{display:inline-flex;align-items:center;gap:6px}.leg s{display:inline-block;width:22px;border-top:3px solid}
+#nav{position:absolute;left:16px;top:70px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:8px;display:grid;z-index:15;box-shadow:0 8px 24px rgba(0,0,0,.25);min-width:230px}
+#nav a{padding:9px 14px;color:var(--ink);text-decoration:none;border-radius:8px;font-weight:600;font-size:14px;display:flex;align-items:center;gap:8px}
+#nav a:hover{background:var(--soft)}
+#nav a.active{background:var(--soft);color:var(--y);font-weight:700}
+#toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:999px;font-size:14px;z-index:99}
+[hidden]{display:none!important}
+</style><script src="api.js"></script>
+</head><body>
+<header>
+  <button class="btn" id="menuBtn" aria-expanded="false" aria-controls="nav">☰ Menu</button>
+  <a href="dashboard.html" class="logo" title="Back to Dashboard"><b>F</b>FINMATE</a>
+  <div style="margin-left:auto;display:flex;gap:8px;align-items:center">
+    <a href="dashboard.html" class="btn" style="display:inline-flex;align-items:center;gap:6px"><span>←</span> Dashboard</a>
+    <a href="whatif.html" class="btn">What-If Simulator</a>
+  </div>
+</header>
+<nav id="nav" hidden>
+  <a href="dashboard.html">📊 Dashboard</a>
+  <a href="budget_planner.html">📝 Smart Budget Planner</a>
+  <a href="goals.html">🎯 Financial Goals</a>
+  <a href="pocket_ca.html">💬 Pocket CA</a>
+  <a href="afford.html">🔍 Can I Afford This?</a>
+  <a href="whatif.html">🧪 What-If Simulator</a>
+  <a href="predictions.html" class="active">🔮 Financial Predictions</a>
+  <a href="profile.html">👤 Profile</a>
+  <a href="settings.html">⚙️ Settings</a>
+</nav>
+<main>
+<section class="card hero">
+<h1>Financial Predictions</h1>
+<p class="mut">See where your money is heading. Two separate views: your real finances, and your what-if scenarios.</p>
+
+<div class="row"><div class="seg" role="tablist" aria-label="Prediction mode">
+<button data-a="mode" data-v="a" role="tab">My Financial Future</button><button data-a="mode" data-v="w" role="tab">What-If Financial Future</button></div></div>
+<div class="row"><b class="sm">Prediction period</b><div class="seg" aria-label="Prediction period">
+<button data-a="per" data-v="1">1 month</button><button data-a="per" data-v="3">3 months</button><button data-a="per" data-v="6">6 months</button><button data-a="per" data-v="12">1 year</button><button data-a="per" data-v="c">Custom</button></div>
+<label id="cl" class="sm"><input id="custom" type="number" min="1" max="60" value="18" aria-label="Custom months"> months (1–60)</label></div>
+</section>
+<section id="view"></section>
+<section class="card" id="cmp"></section>
+
+</main>
+<div id="toast" hidden></div>
+<script>
+const $=s=>document.querySelector(s),C=o=>JSON.parse(JSON.stringify(o)),fz=o=>{Object.values(o).forEach(v=>typeof v=='object'&&fz(v));return Object.freeze(o)};
+const R=n=>'₹'+Math.round(n).toLocaleString('en-IN'),S=n=>(n>0?'+':n<0?'−':'')+R(Math.abs(n));
+const K=n=>{const a=Math.abs(n),s=n<0?'−':'';return s+'₹'+(a>=1e7?(a/1e7).toFixed(1)+'Cr':a>=1e5?(a/1e5).toFixed(1)+'L':a>=1e3?Math.round(a/1e3)+'k':Math.round(a))};
+const E=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const MN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],B0=new Date();
+const md=m=>{const d=new Date(B0.getFullYear(),B0.getMonth()+m,1);return MN[d.getMonth()]+' '+d.getFullYear()};
+
+const COL=['#2b7de9','#1f9d6b','#d9480f','#9333ea'];
+let PROFILE=null,SC=[];const seen={};
+const st={mode:'a',per:12,sel:[],cmp:[],metric:'sv',pin:null,empty:false};
+const scs=()=>st.empty?[]:SC,sc=id=>SC.find(s=>s.id===id);
+
+/* ---- deterministic engine (pure: never mutates input) ---- */
+const act=(i,m)=>m<i.s||(i.e&&m>i.e)?0:i.f==='o'?(m===i.s?i.a:0):i.f==='y'?((m-i.s)%12?0:i.a):i.a;
+const al=d=>d.goals.reduce((s,g)=>s+g.m,0)+d.gen;
+function sim(d,n){const A=al(d),T=d.goals.reduce((s,g)=>s+g.t,0)||1,gp=m=>100*d.goals.reduce((s,g)=>s+Math.min(g.t,g.v+g.m*m),0)/T;
+let bal=d.bal,sv=d.sav,ci=0,ce=0,neg=0;const r=[{m:0,ci:0,ce:0,net:0,bal,sv,gp:gp(0)}];
+for(let m=1;m<=n;m++){const i=d.inc.reduce((s,x)=>s+act(x,m),0),e=d.exp.reduce((s,x)=>s+act(x,m),0);ci+=i;ce+=e;bal+=i-e-A;sv+=A;if(!neg&&bal<0)neg=m;r.push({m,ci,ce,net:ci-ce,bal,sv,gp:gp(m)})}
+return{r,al:A,last:r[n],ci,ce,neg,n}}
+const eta=g=>g.v>=g.t?0:g.m>0?Math.ceil((g.t-g.v)/g.m):null;
+const N=()=>st.per==='c'?Math.min(60,Math.max(1,Math.round(+$('#custom').value)||1)):st.per;
+
+/* ---- results panel ---- */
+function risks(d,x){const o=[],n=x.n,avg=x.ce/n||1;
+if(x.neg)o.push(`Available balance drops below zero in <b>${md(x.neg)}</b> (lowest: ${R(Math.min(...x.r.map(r=>r.bal)))}).`);
+if(x.ci&&x.ce/x.ci>.85)o.push(`Expenses use <b>${Math.round(100*x.ce/x.ci)}%</b> of income, leaving little buffer.`);
+const em=x.last.sv/(d.exp.reduce((s,e)=>s+(e.f==='m'?e.a:0),0)||1);if(em<3)o.push(`Savings cover only ${em.toFixed(1)} months of regular expenses (3–6 is a common target).`);
+d.inc.filter(i=>i.e&&i.e<=n).forEach(i=>o.push(`<b>${E(i.n)}</b> stops after ${md(i.e)}: income falls by ${R(i.a)}/month.`));
+d.exp.filter(e=>e.f==='o'&&e.s<=n&&e.a>=10000).forEach(e=>o.push(`One-time cost <b>${E(e.n)}</b> (${R(e.a)}) in ${md(e.s)}.`));
+d.exp.filter(e=>e.f==='y'&&e.s<=n).forEach(e=>o.push(`Yearly cost <b>${E(e.n)}</b> (${R(e.a)}) due in ${md(e.s)}.`));
+return o.length?o:['No major risks detected for this period.']}
+
+function recs(d,x){const o=[];
+d.exp.filter(e=>e.g==='Negotiable'&&e.f==='m').sort((a,b)=>b.a-a.a).slice(0,2).forEach(e=>o.push(`Trim or renegotiate <b>${E(e.n)}</b> by 10%: frees ${R(e.a*.1)}/month (${R(e.a*.1*x.n)} over this period).`));
+const g=[...d.goals].filter(g=>eta(g)>0).sort((a,b)=>(a.p==='High'?0:1)-(b.p==='High'?0:1))[0];
+if(g&&g.m>0){const a=eta(g),b=Math.ceil((g.t-g.v)/(g.m+1000));o.push(`Adding ₹1,000/month to <b>${E(g.n)}</b> reaches it about ${a-b} month(s) sooner (${md(b)}).`)}
+if(x.neg)o.push('Lower the monthly savings set-aside or delay a one-time purchase to keep your balance above zero.');
+return o.length?o:['Your plan looks healthy. Keep contributions steady.']}
+
+function stale(s){return s.ver!==seen[s.id]?`<div class="note"><span>⚠ <b>${E(s.name)}</b> was edited (v${s.ver}). Predictions below were recalculated with the new assumptions; earlier predictions (v${seen[s.id]}) used older assumptions.</span><button class="btn" data-a="seen" data-v="${s.id}">Got it</button></div>`:''}
+function panel(d,title,tag,n,extra=''){const x=sim(d,n),l=x.last,net=l.net;
+const goals=d.goals.map(g=>{const p=Math.min(100,100*(g.v+g.m*n)/g.t),e=eta(g);return`<tr><td>${E(g.n)}</td><td>${g.p}</td><td><div class="bar"><i style="width:${p}%"></i></div></td><td>${p.toFixed(0)}%</td><td>${e===0?'Reached':e===null?'No contributions':e>120?'10+ years':md(e)+(e<=n?' (in period)':'')}</td></tr>`}).join('');
+return`<div class="card" style="border-left:5px solid ${tag==='a'?'var(--ink)':d.color}"><h2>${tag==='a'?'<span class="tag a">ACTUAL</span>':'<span class="tag h">WHAT-IF · hypothetical</span>'}${E(title)}</h2>${extra}
+<p class="mut sm">${n} month${n>1?'s':''} · ${md(1)} to ${md(n)} · estimates only</p>
+<div class="kpis"><div class="kpi"><small>Projected income</small><b>${R(x.ci)}</b></div><div class="kpi"><small>Projected expenses</small><b>${R(x.ce)}</b></div>
+<div class="kpi"><small>Estimated savings</small><b>${R(l.sv)}</b></div><div class="kpi"><small>Future available balance</small><b class="${l.bal<0?'bad':''}">${R(l.bal)}</b></div>
+<div class="kpi"><small>${net>=0?'Surplus':'Deficit'} (income − expenses)</small><b class="${net>=0?'good':'bad'}">${S(net)}</b></div><div class="kpi"><small>Overall goal progress</small><b>${l.gp.toFixed(0)}%</b></div></div>
+<h3>Financial goals</h3><div class="tw"><table><tr><th>Goal</th><th>Priority</th><th>Progress at end</th><th></th><th>Estimated completion</th></tr>${goals}</table></div>
+<h3>Financial risks</h3><ul>${risks(d,x).map(t=>`<li>${t}</li>`).join('')}</ul>
+<h3>Recommendations</h3><ul>${recs(d,x).map(t=>`<li>${t}</li>`).join('')}</ul>
+<details><summary class="sm"><b>Assumptions</b></summary><ul class="sm mut"><li>Estimates, not guarantees. No inflation, interest or tax is applied.</li><li>Month 1 is ${md(1)}. Monthly items repeat every month; yearly items occur once a year in their due month; one-time items count only in their month.</li><li>Temporary income stops after its end month.</li><li>Each month ${R(x.al)} is set aside (goals ${R(x.al-d.gen)} + general ${R(d.gen)}); it leaves available balance and is added to savings.</li><li>Starting balance ${R(d.bal)}, starting savings ${R(d.sav)}.</li></ul></details></div>`}
+
+const hasP=()=>!!PROFILE&&(PROFILE.inc.length+PROFILE.exp.length+PROFILE.goals.length>0||PROFILE.bal>0||PROFILE.sav>0);
+function noProf(){return`<div class="card"><div class="empty"><div style="font-size:34px">📊</div><b>No financial profile yet</b><p class="mut">Add your income, expenses, savings and goals. Your predictions will appear here once you have.</p><a class="btn pri" href="profile.html">Set up my profile</a></div></div>`}
+function emptyBox(t){return`<div class="empty"><div style="font-size:34px">🧪</div><b>${t}</b><p class="mut">Build a scenario in the What-If Simulator, save it, then come back to see its projected future.</p><a class="btn pri" href="whatif.html">Open What-If Simulator</a></div>`}
+
+function view(n,L){if(st.mode==='a'&&!hasP())return noProf();if(st.mode==='a')return panel(PROFILE,'My Financial Future','a',n,'<p class="sm mut">Uses only your saved profile. Nothing here is changed by predictions.</p>');
+const chips=L.map(s=>`<button class="chip" data-a="sel" data-v="${s.id}" aria-pressed="${st.sel.includes(s.id)}"><i style="background:${s.color}"></i>${E(s.name)}</button>`).join('');
+if(!L.length)return`<div class="card">${emptyBox('No saved What-If scenarios yet')}</div>`;
+const p=st.sel.map(id=>sc(id)).map(s=>panel(s,s.name,'h',n,stale(s)+`<p class="sm mut">${E(s.desc)}. Uses only this scenario’s hypothetical data.</p>`)).join('');
+return`<div class="card" style="margin-bottom:18px"><h2>What-If Financial Future</h2><p class="mut sm">Choose one or more saved scenarios. Nothing is applied to your real budget.</p><div class="row">${chips}</div></div>${p||'<div class="card mut">Select a scenario above to see its projection.</div>'}`}
+
+/* ---- comparison ---- */
+const MET={sv:'Projected savings',bal:'Future available balance',ie:'Income vs expenses',net:'Surplus / deficit',gp:'Goal progress'};
+let CH=null;const fm=(v,gp)=>gp?v.toFixed(1)+'%':R(v);
+function cmp(n,L){if(!hasP()){CH=null;return'<h2>Actual vs What-If comparison</h2><p class="mut sm">Add your financial profile first. It is the baseline for every comparison.</p>'}const ids=st.cmp.filter(id=>L.some(s=>s.id===id)),m=st.metric,gp=m==='gp';
+const opts=Object.entries(MET).map(([k,v])=>`<option value="${k}" ${k===m?'selected':''}>${v}</option>`).join('');
+const chips=L.map(s=>`<button class="chip" data-a="cmp" data-v="${s.id}" aria-pressed="${ids.includes(s.id)}" title="${ids.includes(s.id)?'Remove from':'Add to'} comparison"><i style="background:${s.color}"></i>${E(s.name)}${s.ver!==seen[s.id]?' (edited)':''}</button>`).join('');
+let h=`<h2>Actual vs What-If comparison</h2><p class="mut sm">Same ${n}-month period and assumptions for every line. Viewing this chart never changes your budget or saved scenarios.</p>
+<div class="row"><label class="sm"><b>Compare</b> <select id="metric">${opts}</select></label></div><div class="row"><span class="chip" aria-pressed="true" style="cursor:default"><i style="background:var(--ink)"></i>Actual (baseline)</span>${chips}</div>`;
+if(!L.length){CH=null;return h+'<div style="margin-top:14px">'+emptyBox('No saved scenarios to compare')+'</div>'}
+const ds=[{id:'actual',label:'Actual',color:'var(--ink)',d:PROFILE,x:sim(PROFILE,n),h:0},...ids.map(id=>{const s=sc(id);return{id,label:s.name,color:s.color,d:s,x:sim(s,n),h:1,s}})];
+const series=[];ds.forEach(o=>{(m==='ie'?[['ci','income',0],['ce','expenses',1]]:[[m,'',0]]).forEach(([k,lb,dash])=>series.push({...o,k,lb:(o.h?'What-If · ':'Actual · ')+(o.h?o.label:'')+(lb?(o.h?' ':'')+lb:'')||'Actual',dash}))});
+series.forEach(s=>{if(!s.h)s.lb='Actual'+(m==='ie'?' '+(s.k==='ci'?'income':'expenses'):'')});
+let p=[];if(n<=24)for(let i=0;i<=n;i++)p.push(i);else{for(let i=0;i<=n;i+=12)p.push(i);if(p.at(-1)!==n)p.push(n)}
+const W=720,H=300,L0=58,R0=14,T0=14,B0_=30,vals=series.flatMap(s=>p.map(i=>s.x.r[i][s.k])),mn=Math.min(0,...vals),mx=Math.max(...vals,1),pad=(mx-mn)*.06||1;
+const X=i=>L0+(W-L0-R0)*i/(p.length-1),Y=v=>T0+(H-T0-B0_)*(1-(v-mn)/((mx+pad)-mn));
+CH={series,p,X,Y,W,m,gp,n};
+const grid=[0,1,2,3,4].map(i=>{const v=mn+((mx+pad)-mn)*i/4;return`<line x1="${L0}" x2="${W-R0}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--line)"/><text x="${L0-6}" y="${Y(v)+4}" text-anchor="end" font-size="11" fill="var(--mut)">${gp?v.toFixed(0)+'%':K(v)}</text>`}).join('');
+const step=Math.ceil(p.length/8),xl=p.map((v,i)=>i%step&&i!==p.length-1?'':`<text x="${X(i)}" y="${H-8}" text-anchor="middle" font-size="11" fill="var(--mut)">${v===0?'Now':n<=24?'M'+v:v%12?'M'+v:'Y'+v/12}</text>`).join('');
+const lines=series.map(s=>`<path d="${p.map((v,i)=>(i?'L':'M')+X(i).toFixed(1)+','+Y(s.x.r[v][s.k]).toFixed(1)).join('')}" fill="none" stroke="${s.color}" stroke-width="${s.h?2.5:3.2}" ${s.dash?'stroke-dasharray="6 5"':s.h?'':'stroke-dasharray="1 0"'} stroke-linejoin="round"/>`).join('');
+h+=`<div class="cw" id="cw" style="margin-top:12px"><svg id="svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="${MET[m]} comparison chart">${grid}${xl}${lines}<g id="hov"></g></svg><div id="tip" hidden></div></div>
+<p class="sm mut">${n<=24?'Monthly':'Yearly'} timeline. Hover or tap a point to see values; click to pin. ${m==='ie'?'Solid = income, dashed = expenses. ':''}Solid dark line is your <b>actual</b> projection; coloured lines are <b>hypothetical</b>.</p>
+<div class="leg">${series.map(s=>`<span><s style="border-color:${s.color};${s.dash?'border-top-style:dashed':''}"></s>${E(s.lb)}</span>`).join('')}</div>`;
+const key=o=>m==='ie'?o.x.last.net:o.x.last[m],rk=[...ds].sort((a,b)=>key(b)-key(a)),best=rk[0],a0=ds[0];
+h+=`<h3>Result at ${md(n)}</h3><div class="tw"><table><tr><th>Projection</th><th>${m==='ie'?'Income / expenses':MET[m]}</th><th>Difference vs actual</th><th></th></tr>${rk.map(o=>{const df=key(o)-key(a0);return`<tr><td><span class="tag ${o.h?'h':'a'}">${o.h?'WHAT-IF':'ACTUAL'}</span>${E(o.label)}</td><td>${m==='ie'?R(o.x.last.ci)+' / '+R(o.x.last.ce)+' (net '+S(o.x.last.net)+')':fm(o.x.last[m],gp)}</td><td class="${o.h?df>0?'good':df<0?'bad':'':''}">${o.h?(gp?(df>=0?'+':'−')+Math.abs(df).toFixed(1)+' pts':S(df)):'baseline'}</td><td>${o===best?'<b class="good">★ Best outcome</b>':''}</td></tr>`}).join('')}</table></div>`;
+const al0=al(PROFILE),mt=Object.keys(MET).indexOf(m);
+h+=`<h3>Why the difference</h3>`+(ids.length?`<ul>${ds.slice(1).map(o=>{const a=a0.x,b=o.x,dI=b.ci-a.ci,dE=b.ce-a.ce,dA=(b.al-a.al)*n,df=key(o)-key(a0);
+const t={sv:[['more set aside for savings',dA]],bal:[['income',dI],['lower spending',-dE],['savings set-aside',-dA]],ie:[['income',dI],['lower spending',-dE]],net:[['income',dI],['lower spending',-dE]],gp:[['monthly goal contributions',o.d.goals.reduce((s,g)=>s+g.m,0)-PROFILE.goals.reduce((s,g)=>s+g.m,0)]]}[m],top=[...t].sort((x,y)=>Math.abs(y[1])-Math.abs(x[1]))[0];
+return`<li><b>${E(o.label)}</b> ${Math.abs(df)<.5?'matches':df>0?'beats':'trails'} actual${Math.abs(df)<.5?'':' by '+(gp?Math.abs(df).toFixed(1)+' pts':R(Math.abs(df)))}. Contributions over ${n} months: ${t.map(([k,v])=>k+' '+(gp?(v>=0?'+':'−')+R(Math.abs(v))+'/mo':S(v))).join(', ')}. Biggest driver: <b>${top[0]}</b>.</li>`}).join('')}</ul>`:'<p class="mut sm">Add a scenario above to compare it with your actual projection.</p>');
+h+=`<p class="sm mut">${best.h?`<b>${E(best.label)}</b> gives the best projected outcome for this metric.`:'Your <b>actual</b> projection gives the best outcome for this metric.'} All numbers are deterministic estimates from the stated assumptions.</p>`;
+return h}
+
+function bind(){if(!CH)return;const{series,p,X,Y,W,m,gp,n}=CH,svg=$('#svg'),g=$('#hov'),tp=$('#tip'),cw=$('#cw');
+const show=i=>{if(i==null){g.innerHTML='';tp.hidden=true;return}const mm=p[i],x=X(i),base={};series.filter(s=>!s.h).forEach(s=>base[s.k]=s.x.r[mm][s.k]);
+g.innerHTML=`<line x1="${x}" x2="${x}" y1="14" y2="270" stroke="var(--mut)" stroke-dasharray="3 3"/>`+series.map(s=>`<circle cx="${x}" cy="${Y(s.x.r[mm][s.k])}" r="5" fill="${s.color}" stroke="var(--card)" stroke-width="2"/>`).join('');
+tp.innerHTML=`<b>${mm?'Month '+mm+' · '+md(mm):'Today'}</b>`+series.map(s=>{const v=s.x.r[mm][s.k],d=v-base[s.k];return`<div><span style="color:${s.color}">● ${E(s.lb)}</span><span>${fm(v,gp)}${s.h&&mm?` <small class="${d>=0?'good':'bad'}">(${gp?(d>=0?'+':'−')+Math.abs(d).toFixed(1)+'pts':S(d)})</small>`:''}</span></div>`}).join('');
+tp.hidden=false;const pc=x/W;tp.style.left=pc>.55?'auto':'calc('+pc*100+'% + 12px)';tp.style.right=pc>.55?'calc('+(1-pc)*100+'% + 12px)':'auto'};
+const ix=e=>{const r=svg.getBoundingClientRect(),f=(e.clientX-r.left)/r.width*W;return Math.max(0,Math.min(p.length-1,Math.round((f-X(0))/(X(p.length-1)-X(0))*(p.length-1))))};
+svg.onpointermove=e=>show(ix(e));svg.onpointerleave=()=>show(st.pin);svg.onclick=e=>{const i=ix(e);st.pin=st.pin===i?null:i;show(st.pin)};show(st.pin)}
+
+function render(){const n=N(),L=scs();st.sel=st.sel.filter(id=>L.some(s=>s.id===id));
+document.querySelectorAll('[data-a=mode]').forEach(b=>b.classList.toggle('on',b.dataset.v===st.mode));
+document.querySelectorAll('[data-a=per]').forEach(b=>b.classList.toggle('on',String(st.per)===b.dataset.v));
+$('#cl').hidden=st.per!=='c';$('#view').innerHTML=view(n,L);$('#cmp').innerHTML=cmp(n,L);bind()}
+
+const tg=(a,v)=>{const i=a.indexOf(v);i<0?a.push(v):a.splice(i,1)};
+function toast(t){const e=$('#toast');e.textContent=t;e.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>e.hidden=true,2600)}
+
+document.addEventListener('click',e=>{const t=e.target.closest('[data-a]');if(!t)return;const a=t.dataset.a,v=t.dataset.v;
+if(a==='mode')st.mode=v;else if(a==='per'){st.per=v==='c'?'c':+v;st.pin=null}else if(a==='sel')tg(st.sel,v);else if(a==='cmp'){tg(st.cmp,v);st.pin=null}
+else if(a==='seen')seen[v]=sc(v).ver;else if(a==='clr')st.empty=!st.empty;
+render()});
+
+document.addEventListener('change',e=>{if(e.target.id==='metric'){st.metric=e.target.value;st.pin=null;render()}});
+$('#custom').addEventListener('input',()=>{st.pin=null;render()});
+
+// Menu dropdown handling
+$('#menuBtn').onclick=(e)=>{
+  e.stopPropagation();
+  const n=$('#nav');
+  const open=!n.hidden;
+  n.hidden=open;
+  $('#menuBtn').setAttribute('aria-expanded',!open);
+};
+document.addEventListener('click',e=>{
+  if(!e.target.closest('#menuBtn')&&!e.target.closest('#nav')){
+    $('#nav').hidden=true;
+    $('#menuBtn').setAttribute('aria-expanded','false');
+  }
+});
+
+window.FinMate={
+  load(p,list){
+    PROFILE=p?fz(C(p)):null;
+    SC=(list||[]).map((x,i)=>({color:COL[i%4],ver:1,...x}));
+    SC.forEach(x=>seen[x.id]=x.ver);
+    st.sel=[];
+    st.cmp=SC.slice(0,2).map(x=>x.id);
+    render();
+  }
+};
+
+// Auto-load profile & saved scenarios from backend API
+async function initPredictions() {
+  const token = () => { try { return localStorage.getItem('token'); } catch (e) { return null; } };
+  const h = token() ? { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token() } : { 'Content-Type': 'application/json' };
+  try {
+    const [fundsRes, expRes, goalsRes, scenRes] = await Promise.all([
+      fetch('/api/funds', { headers: h }).then(r => r.ok ? r.json() : null).catch(() => null),
+      fetch('/api/expenses', { headers: h }).then(r => r.ok ? r.json() : []).catch(() => []),
+      fetch('/api/goals', { headers: h }).then(r => r.ok ? r.json() : []).catch(() => []),
+      fetch('/api/scenarios', { headers: h }).then(r => r.ok ? r.json() : []).catch(() => [])
+    ]);
+
+    if (fundsRes) {
+      const incAmt = Number(fundsRes.monthly_income || fundsRes.take_home_salary || fundsRes.primary_income || fundsRes.total_monthly_funds || 35000);
+      const inc = [{ n: 'Primary Income', a: incAmt, f: 'm', s: 1 }];
+      if (fundsRes.additional_income) {
+        inc.push({ n: 'Additional Income', a: Number(fundsRes.additional_income), f: 'm', s: 1 });
+      }
+      const rawExp = Array.isArray(expRes) ? expRes : (expRes.entries || []);
+      const exp = rawExp.length ? rawExp.map(e => ({
+        n: e.name || e.category || 'Expense',
+        a: Number(e.amount || 0),
+        f: e.frequency === 'yearly' ? 'y' : e.frequency === 'one_time' ? 'o' : 'm',
+        s: 1,
+        g: e.is_negotiable || e.negotiable ? 'Negotiable' : 'Fixed'
+      })) : [
+        { n: 'Rent & Utilities', a: Math.round(incAmt * 0.3), f: 'm', s: 1, g: 'Fixed' },
+        { n: 'Groceries & Food', a: Math.round(incAmt * 0.2), f: 'm', s: 1, g: 'Fixed' },
+        { n: 'Lifestyle & Discretionary', a: Math.round(incAmt * 0.15), f: 'm', s: 1, g: 'Negotiable' }
+      ];
+
+      const rawGoals = Array.isArray(goalsRes) ? goalsRes : (goalsRes.goals || []);
+      const goals = rawGoals.length ? rawGoals.map(g => ({
+        n: g.name || 'Goal',
+        t: Number(g.target_amount || g.target || 50000),
+        v: Number(g.saved_amount || g.saved || 0),
+        m: Number(g.monthly_contribution || g.monthly_target || 3000),
+        p: g.priority || 'Medium'
+      })) : [
+        { n: 'Emergency Fund', t: incAmt * 3, v: Math.round(incAmt * 0.5), m: Math.round(incAmt * 0.1), p: 'High' }
+      ];
+
+      const bal = Number(fundsRes.total_funds || fundsRes.current_balance || fundsRes.minimum_monthly_funds || 20000);
+      const sav = Number(fundsRes.existing_savings || fundsRes.savings_target || 15000);
+      const gen = Number(fundsRes.general_savings || 2000);
+
+      const profile = { bal, sav, gen, inc, exp, goals };
+
+      let scens = (Array.isArray(scenRes) && scenRes.length) ? scenRes : [];
+      if (!scens.length) {
+        try {
+          const localScen = JSON.parse(localStorage.getItem('fm_whatif_scenarios_v2') || '[]');
+          if (localScen.length) {
+            scens = localScen.map(s => {
+              const simData = s.sim || {};
+              return {
+                id: s.id,
+                name: s.name,
+                desc: 'Saved what-if scenario',
+                ver: 1,
+                bal: Number(simData.existing || bal),
+                sav: Number(simData.savings || sav),
+                gen: gen,
+                inc: [{ n: simData.src || 'Simulated Income', a: Number(simData.income || incAmt), f: 'm', s: 1 }],
+                exp: (simData.cats || []).map(c => ({
+                  n: c.name,
+                  a: Number(c.amt || 0),
+                  f: 'm',
+                  s: 1,
+                  g: c.neg ? 'Negotiable' : 'Fixed'
+                })),
+                goals: goals
+              };
+            });
+          }
+        } catch (e) {}
+      }
+
+      window.FinMate.load(profile, scens);
+    } else {
+      render();
+    }
+  } catch (e) {
+    render();
+  }
+}
+
+initPredictions();
+</script></body></html>

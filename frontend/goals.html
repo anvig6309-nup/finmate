@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Your Financial Goals – FINMATE</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 64 64%27%3E%3Crect width=%2764%27 height=%2764%27 rx=%2712%27 fill=%27%23FACC15%27/%3E%3Ctext x=%2732%27 y=%2747%27 font-family=%27Arial,sans-serif%27 font-size=%2740%27 font-weight=%27800%27 text-anchor=%27middle%27 fill=%27%230F172A%27%3EF%3C/text%3E%3C/svg%3E">
+<meta name="theme-color" content="#ffffff">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="theme.css">
+<style>
+  :root {
+    --lemon: #FACC15; --lemon-dark: #EAB308; --lemon-100: #FEF9C3; --lemon-50: #FEFCE8;
+    --ink: #0F172A; --muted: #475569; --line: #E7E5E4; --soft: #FAFAF9; --danger: #B91C1C;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  body { margin: 0; font-family: 'Inter', system-ui, sans-serif; color: var(--ink); background: var(--soft); line-height: 1.55; -webkit-font-smoothing: antialiased; overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
+  h1, h2, p { margin: 0; }
+  a { color: inherit; text-decoration: none; }
+  button, input, select { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  [hidden] { display: none !important; }
+  :focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; border-radius: 10px; }
+
+  .wrap { width: min(860px, 100% - 2rem); margin-inline: auto; }
+  .top { background: #fff; border-bottom: 1px solid var(--line); padding-top: env(safe-area-inset-top); }
+  .top .wrap { height: 64px; display: flex; align-items: center; justify-content: space-between; }
+  .logo { display: inline-flex; align-items: center; gap: .55rem; font-weight: 800; font-size: 1.2rem; letter-spacing: .06em; min-height: 44px; }
+  .logo i { width: 34px; height: 34px; border-radius: 8px; background: var(--lemon); color: var(--ink); display: grid; place-items: center; font-style: normal; font-size: 1.2rem; letter-spacing: 0; line-height: 1; }
+  .chip { font-size: .8rem; font-weight: 700; padding: .3rem .8rem; border-radius: 999px; background: var(--lemon-100); border: 1px solid var(--lemon); }
+
+  main { padding: 1.25rem 0 9rem; }
+  .back { display: inline-flex; align-items: center; min-height: 44px; font-weight: 600; font-size: .92rem; color: var(--muted); background: none; border: 0; padding: 0; }
+  .back:hover { color: var(--ink); }
+  h1 { font-size: clamp(1.8rem, 5.5vw, 2.5rem); font-weight: 800; letter-spacing: -.03em; line-height: 1.1; }
+  .sub { margin-top: .5rem; color: var(--muted); max-width: 40rem; }
+  .total { margin-top: 1rem; font-weight: 700; font-size: .95rem; }
+  .empty { margin-top: 1.25rem; padding: 2rem 1rem; text-align: center; border: 1.5px dashed var(--line); border-radius: 20px; background: #fff; color: var(--muted); }
+  .empty b { display: block; color: var(--ink); font-size: 1.05rem; margin-bottom: .2rem; }
+
+  .goal { margin-top: 1.25rem; background: #fff; border: 1px solid var(--line); border-radius: 20px; padding: 1.1rem; }
+  .goal.err { border-color: var(--danger); }
+  .g-head { display: flex; justify-content: space-between; align-items: center; gap: .5rem; margin-bottom: .8rem; }
+  h2 { font-size: 1.1rem; font-weight: 800; }
+  .del { min-height: 40px; padding: 0 .9rem; border: 1.5px solid var(--line); border-radius: 10px; background: #fff; font-weight: 700; font-size: .85rem; color: var(--muted); }
+  .del:hover { border-color: var(--danger); color: var(--danger); }
+  .g-grid { display: grid; gap: .8rem; grid-template-columns: 1fr 1fr; }
+  .g-grid .wide { grid-column: span 2; }
+  @media (max-width: 560px) { .g-grid { grid-template-columns: 1fr; } .g-grid .wide { grid-column: auto; } }
+  label { display: block; font-size: .8rem; font-weight: 700; color: var(--muted); margin-bottom: .3rem; }
+  .input { width: 100%; min-height: 46px; padding: 0 .9rem; border: 1.5px solid var(--line); border-radius: 12px; background: #fff; font-weight: 600; }
+  .input:focus { outline: none; border-color: var(--lemon-dark); box-shadow: 0 0 0 3px rgba(250, 204, 21, .35); }
+  .input.bad { border-color: var(--danger); }
+  .field { position: relative; }
+  .field span { position: absolute; left: .9rem; top: 50%; transform: translateY(-50%); font-weight: 700; color: var(--muted); pointer-events: none; }
+  .field .input { padding-left: 1.9rem; }
+  input[type=number]::-webkit-inner-spin-button { display: none; }
+  .seg { display: flex; border: 1.5px solid var(--line); border-radius: 12px; overflow: hidden; background: #fff; }
+  .seg button { flex: 1; min-height: 44px; border: 0; border-right: 1px solid var(--line); background: transparent; font-weight: 600; }
+  .seg button:last-child { border-right: 0; }
+  .seg button:hover { background: var(--lemon-50); }
+  .seg button[aria-checked="true"] { background: var(--lemon); font-weight: 800; }
+  .seg.bad { border-color: var(--danger); }
+
+  .g-sum { margin-top: 1rem; padding: .9rem; border-radius: 14px; background: var(--lemon-50); border: 1px solid var(--lemon-dark); }
+  .g-line { font-size: .85rem; font-weight: 600; color: var(--muted); }
+  .g-nums { margin-top: .6rem; display: grid; grid-template-columns: repeat(3, 1fr); gap: .6rem; }
+  .g-nums small { display: block; font-size: .72rem; font-weight: 700; color: var(--muted); }
+  .g-nums b { font-size: clamp(.95rem, 3.6vw, 1.2rem); letter-spacing: -.01em; }
+  .g-err { margin-top: .6rem; font-size: .85rem; font-weight: 700; color: var(--danger); }
+  .g-err:empty { display: none; }
+
+  .btn { display: inline-flex; align-items: center; justify-content: center; min-height: 50px; padding: 0 1.4rem; border-radius: 12px; border: 2px solid transparent; font-weight: 800; transition: background .2s; }
+  .btn-add { margin-top: 1.25rem; width: 100%; background: #fff; border-color: var(--ink); }
+  .btn-add:hover { background: var(--ink); color: #fff; }
+  @media (min-width: 560px) { .btn-add { width: auto; } }
+  .btn-primary { background: var(--lemon); color: var(--ink); }
+  .btn-primary:hover { background: var(--lemon-dark); }
+  .btn-skip { background: #fff; border-color: var(--line); color: var(--ink); }
+  .btn-skip:hover { border-color: var(--ink); }
+
+  .bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; background: rgba(255, 255, 255, .96); backdrop-filter: blur(14px); border-top: 1px solid var(--line); padding-bottom: env(safe-area-inset-bottom); }
+  .bar .wrap { padding: .75rem 0; display: grid; gap: .5rem; grid-template-columns: 1fr; }
+  @media (min-width: 560px) { .bar .wrap { grid-template-columns: 1fr 1fr; } .bar-note { grid-column: 1 / -1; } }
+  .bar-note { font-size: .85rem; color: var(--danger); font-weight: 600; min-height: 1.1rem; text-align: center; }
+  .bar-note:empty { display: none; }
+</style>
+<script src="api.js"></script>
+<script>FM.requireLogin();</script>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a href="index.html" class="logo" aria-label="FINMATE home"><i aria-hidden="true">F</i>FINMATE</a>
+    <span class="chip">Optional step</span>
+  </div>
+</header>
+
+<main class="wrap">
+  <button class="back" type="button" id="back">← Back</button>
+  <h1>What are you planning for?</h1>
+  <p class="sub">Tell FinMate about your financial goals so we can help you plan and save better.</p>
+  <p class="total" id="total" hidden></p>
+
+  <div id="empty" class="empty"><b>No goals yet</b>Add a goal below, or skip this step. You can add goals later from your dashboard.</div>
+  <div id="cards"></div>
+  <button class="btn btn-add" id="add" type="button">+ Add a Goal</button>
+  <datalist id="goal-names">
+    <option value="Buy a Laptop"><option value="Buy a New Phone"><option value="Higher Education"><option value="Vacation"><option value="Buy a Vehicle">
+    <option value="Emergency Fund"><option value="Home Purchase"><option value="Wedding"><option value="Start a Business"><option value="Personal Savings">
+  </datalist>
+</main>
+
+<footer class="bar">
+  <div class="wrap">
+    <button class="btn btn-skip" id="skip" type="button">Skip for Now</button>
+    <button class="btn btn-primary" id="save" type="button">Save Goals &amp; Continue →</button>
+    <p class="bar-note" id="bar-note" role="alert"></p>
+  </div>
+</footer>
+
+<script>
+const CATEGORIES = ['Education', 'Technology and Gadgets', 'Travel and Vacation', 'Vehicle', 'Home and Property', 'Family and Marriage', 'Healthcare', 'Emergency Fund', 'Business and Career', 'Shopping and Lifestyle', 'Hobbies and Personal Development', 'Savings and Investments', 'Other'];
+const DURATIONS = [['1', '1 month'], ['3', '3 months'], ['6', '6 months'], ['12', '1 year'], ['24', '2 years'], ['36', '3 years'], ['custom', 'Custom duration']];
+const PRIORITIES = ['High', 'Medium', 'Low'];
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const rupees = n => '₹' + Math.round(n).toLocaleString('en-IN');
+const today = () => new Date().toISOString().slice(0, 10);
+const readJSON = (key, fallback) => { try { const v = JSON.parse(localStorage.getItem(key)); return v == null ? fallback : v; } catch (e) { return fallback; } };
+const writeJSON = (key, value) => { try { localStorage.setItem(key, JSON.stringify(value)); return true; } catch (e) { return false; } };
+
+const monthsOf = g => g.duration === 'custom' ? (g.customMonths > 0 ? Math.floor(g.customMonths) : 0) : Number(g.duration) || 0;
+const remainingOf = g => Math.max(0, (g.target || 0) - (g.saved || 0));
+const monthlyOf = g => monthsOf(g) > 0 ? remainingOf(g) / monthsOf(g) : 0;
+const categoryLabel = g => g.category === 'Other' ? (g.customCategory || '').trim() : g.category;
+const durationLabel = g => { const m = monthsOf(g); if (!m) return 'Not set'; const d = DURATIONS.find(x => x[0] === String(m)); return d ? d[1] : `${m} month${m > 1 ? 's' : ''}`; };
+
+const validate = g => {
+  const problems = [];
+  if (!g.name.trim()) problems.push('goal name');
+  if (!g.category) problems.push('category');
+  else if (g.category === 'Other' && !(g.customCategory || '').trim()) problems.push('custom category');
+  if (!(g.target > 0)) problems.push('a target amount greater than zero');
+  if (g.saved > g.target && g.target > 0) problems.push('a saved amount that does not exceed the target');
+  if (!g.duration) problems.push('duration');
+  else if (g.duration === 'custom' && !(monthsOf(g) > 0)) problems.push('number of months');
+  if (!g.priority) problems.push('priority');
+  return problems;
+};
+
+const toSaved = g => ({
+  id: g.id,
+  name: g.name.trim(),
+  category: g.category,
+  customCategory: g.category === 'Other' ? g.customCategory.trim() : '',
+  categoryLabel: categoryLabel(g),
+  target: g.target,
+  saved: g.saved || 0,
+  remaining: remainingOf(g),
+  months: monthsOf(g),
+  monthlyRequired: Math.round(monthlyOf(g) * 100) / 100,
+  priority: g.priority,
+  startDate: g.startDate
+});
+
+const Store = {
+  load() {
+    const saved = readJSON('finmate_goals', []);
+    if (!Array.isArray(saved)) return [];
+    return saved.filter(g => g && g.name && g.months > 0).map(g => {
+      const standard = DURATIONS.some(d => d[0] === String(g.months));
+      return {
+        id: String(g.id), name: String(g.name), category: CATEGORIES.includes(g.category) ? g.category : (g.category ? 'Other' : ''),
+        customCategory: g.customCategory || (CATEGORIES.includes(g.category) ? '' : g.category || ''),
+        target: Number(g.target) || null, saved: Number(g.saved) || 0,
+        duration: standard ? String(g.months) : 'custom', customMonths: standard ? null : Number(g.months),
+        priority: PRIORITIES.includes(g.priority) ? g.priority : null, startDate: g.startDate || today()
+      };
+    });
+  },
+  save(list) { const out = list.map(toSaved); const ok = writeJSON('finmate_goals', out); FM.syncGoals(out); return ok; },
+  hasSaved() { const v = readJSON('finmate_goals', null); return Array.isArray(v) && v.length > 0; },
+  saveEmpty() { const ok = writeJSON('finmate_goals', []); FM.syncGoals([]); return ok; }
+};
+
+let goals = Store.load();
+let counter = goals.reduce((m, g) => Math.max(m, parseInt(String(g.id).replace(/\D/g, ''), 10) || 0), 0);
+let showErrors = false;
+
+const newGoal = () => ({ id: 'g' + ++counter, name: '', category: '', customCategory: '', target: null, saved: 0, duration: '', customMonths: null, priority: null, startDate: today() });
+
+function cardHtml(g, i) {
+  return `<article class="goal" data-id="${g.id}">
+    <div class="g-head"><h2>Goal ${i + 1}</h2><button class="del" type="button" data-del>Delete</button></div>
+    <div class="g-grid">
+      <div class="wide"><label>Goal name</label><input class="input" data-f="name" list="goal-names" maxlength="60" placeholder="e.g. Buy a Laptop" value="${esc(g.name)}"></div>
+      <div><label>Goal category (required)</label><select class="input" data-f="category"><option value="">Select a category</option>${CATEGORIES.map(c => `<option ${c === g.category ? 'selected' : ''}>${esc(c)}</option>`).join('')}</select></div>
+      <div data-wrap="custom-cat" ${g.category === 'Other' ? '' : 'hidden'}><label>Custom category</label><input class="input" data-f="customCategory" maxlength="40" placeholder="e.g. Pet care" value="${esc(g.customCategory)}"></div>
+      <div><label>Tentative goal amount</label><div class="field"><span>₹</span><input class="input" data-f="target" type="number" inputmode="decimal" min="0" step="any" placeholder="e.g. 50000" value="${g.target ?? ''}"></div></div>
+      <div><label>Already saved (optional)</label><div class="field"><span>₹</span><input class="input" data-f="saved" type="number" inputmode="decimal" min="0" step="any" placeholder="0" value="${g.saved || ''}"></div></div>
+      <div><label>Goal duration</label><select class="input" data-f="duration"><option value="">Select duration</option>${DURATIONS.map(([v, l]) => `<option value="${v}" ${v === g.duration ? 'selected' : ''}>${l}</option>`).join('')}</select></div>
+      <div data-wrap="custom-months" ${g.duration === 'custom' ? '' : 'hidden'}><label>Number of months</label><input class="input" data-f="customMonths" type="number" inputmode="numeric" min="1" step="1" placeholder="e.g. 18" value="${g.customMonths ?? ''}"></div>
+      <div class="wide"><label>Priority</label><div class="seg" role="radiogroup" aria-label="Goal priority" data-seg>${PRIORITIES.map(p => `<button type="button" role="radio" data-priority="${p}" aria-checked="${g.priority === p}">${p}</button>`).join('')}</div></div>
+    </div>
+    <div class="g-sum">
+      <p class="g-line" data-line></p>
+      <div class="g-nums"><div><small>Remaining amount</small><b data-remaining></b></div><div><small>Duration</small><b data-duration></b></div><div><small>Monthly savings required</small><b data-monthly></b></div></div>
+    </div>
+    <p class="g-err" data-err></p>
+  </article>`;
+}
+
+function renderCards() {
+  $('#cards').innerHTML = goals.map(cardHtml).join('');
+  $('#empty').hidden = goals.length > 0;
+  $('#add').textContent = goals.length ? '+ Add Another Goal' : '+ Add a Goal';
+  refresh();
+}
+
+function refresh() {
+  document.querySelectorAll('.goal').forEach(card => {
+    const g = goals.find(x => x.id === card.dataset.id);
+    if (!g) return;
+    const ready = g.target > 0 && monthsOf(g) > 0;
+    const cat = categoryLabel(g);
+    card.querySelector('[data-line]').textContent = [g.name.trim() || 'Untitled goal', cat || 'No category', g.priority ? g.priority + ' priority' : 'Priority not set', `${rupees(g.target || 0)} target`, `${rupees(g.saved || 0)} saved`].join(' · ');
+    card.querySelector('[data-remaining]').textContent = g.target > 0 ? rupees(remainingOf(g)) : '—';
+    card.querySelector('[data-duration]').textContent = durationLabel(g);
+    card.querySelector('[data-monthly]').textContent = ready ? rupees(monthlyOf(g)) : '—';
+    const problems = validate(g);
+    const bad = showErrors && problems.length > 0;
+    card.classList.toggle('err', bad);
+    card.querySelector('[data-seg]').classList.toggle('bad', bad && !g.priority);
+    card.querySelector('[data-err]').textContent = bad ? 'Please provide ' + problems.join(', ') + '.' : '';
+  });
+  const valid = goals.filter(g => g.target > 0 && monthsOf(g) > 0);
+  const need = valid.reduce((t, g) => t + monthlyOf(g), 0);
+  $('#total').hidden = !valid.length;
+  $('#total').textContent = `${goals.length} goal${goals.length > 1 ? 's' : ''} · about ${rupees(need)} per month needed in total`;
+}
+
+$('#add').addEventListener('click', () => {
+  goals.push(newGoal());
+  renderCards();
+  const cards = document.querySelectorAll('.goal');
+  const last = cards[cards.length - 1];
+  last.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  last.querySelector('[data-f="name"]').focus({ preventScroll: true });
+});
+
+$('#cards').addEventListener('click', ev => {
+  const card = ev.target.closest('.goal');
+  if (!card) return;
+  const g = goals.find(x => x.id === card.dataset.id);
+  if (ev.target.closest('[data-del]')) { goals = goals.filter(x => x !== g); renderCards(); return; }
+  const btn = ev.target.closest('[data-priority]');
+  if (!btn) return;
+  g.priority = btn.dataset.priority;
+  card.querySelectorAll('[data-priority]').forEach(b => b.setAttribute('aria-checked', b === btn));
+  refresh();
+});
+
+function onField(ev) {
+  const field = ev.target.dataset.f;
+  if (!field) return;
+  const card = ev.target.closest('.goal');
+  const g = goals.find(x => x.id === card.dataset.id);
+  const v = ev.target.value;
+  if (field === 'name' || field === 'customCategory') g[field] = v;
+  else if (field === 'category') { g.category = v; card.querySelector('[data-wrap="custom-cat"]').hidden = v !== 'Other'; }
+  else if (field === 'duration') { g.duration = v; g.startDate = today(); card.querySelector('[data-wrap="custom-months"]').hidden = v !== 'custom'; }
+  else if (field === 'customMonths') { g.customMonths = v === '' ? null : Math.max(0, parseInt(v, 10) || 0); g.startDate = today(); }
+  else if (field === 'target') g.target = v === '' ? null : Math.max(0, parseFloat(v) || 0);
+  else if (field === 'saved') g.saved = v === '' ? 0 : Math.max(0, parseFloat(v) || 0);
+  refresh();
+}
+$('#cards').addEventListener('input', onField);
+$('#cards').addEventListener('change', onField);
+
+$('#save').addEventListener('click', () => {
+  const note = $('#bar-note');
+  showErrors = true;
+  refresh();
+  const bad = goals.filter(g => validate(g).length);
+  if (bad.length) {
+    note.textContent = `${bad.length} goal${bad.length > 1 ? 's need' : ' needs'} attention. Fix them, or delete them, to continue.`;
+    document.querySelector('.goal.err').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+  if (!Store.save(goals)) { note.textContent = 'Could not save your goals. Check that browser storage is allowed and try again.'; return; }
+  window.location.href = 'dashboard.html';
+});
+
+$('#skip').addEventListener('click', () => {
+  if (!Store.hasSaved()) Store.saveEmpty();
+  window.location.href = 'dashboard.html';
+});
+
+$('#back').addEventListener('click', () => { if (history.length > 1) history.back(); else window.location.href = 'index.html'; });
+
+renderCards();
+</script>
+</body>
+</html>

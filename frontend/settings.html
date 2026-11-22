@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>FinMate · Settings</title>
+<style>
+:root{--bg:#fff;--card:#fff;--soft:#fffbea;--ink:#1a1a1a;--mute:#6b6b6b;--line:#ece7d4;--y:#f7c61b;--y2:#fff3bf;--red:#c62828;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+:root[data-eff="dark"]{--bg:#16140d;--card:#201d12;--soft:#2a2410;--ink:#f6f2e4;--mute:#b3ac95;--line:#3a3520;--y2:#3b3210;--red:#ef6a6a;color-scheme:dark}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 Inter,system-ui,"Segoe UI",sans-serif}
+header{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--line)}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:.5px;font-size:20px}
+.logo i{width:36px;height:36px;border-radius:9px;background:var(--y);color:#1a1a1a;display:grid;place-items:center;font-style:normal}
+button,select,input{font:inherit;color:inherit}
+.btn{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:8px 18px;cursor:pointer;font-weight:600}
+.btn.y{background:var(--y);border-color:var(--y);color:#1a1a1a}.btn.d{color:var(--red);border-color:var(--red)}.btn.s{padding:4px 12px;font-size:13px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.wrap{display:grid;grid-template-columns:230px 1fr;gap:24px;max-width:1100px;margin:0 auto;padding:20px}
+nav{display:flex;flex-direction:column;gap:4px;position:sticky;top:12px;align-self:start}
+nav a{padding:11px 16px;border-radius:12px;text-decoration:none;color:var(--ink);font-weight:600;display:flex;gap:10px}
+nav a.on{background:var(--y);color:#1a1a1a}
+.banner{background:var(--y2);border:1px solid var(--y);border-radius:14px;padding:12px 16px;margin-bottom:16px}
+.card{background:var(--card);border:1px solid var(--line);border-top:4px solid var(--y);border-radius:16px;padding:22px;margin-bottom:18px}
+h2{margin:0 0 4px;font-size:22px}h3{margin:20px 0 8px;font-size:16px}.mute{color:var(--mute);font-size:14px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.row:last-child{border:0}.row small{display:block;color:var(--mute)}
+label.f{display:block;margin:12px 0 4px;font-weight:600;font-size:14px}
+input[type=text],input[type=number],input[type=password],select{width:100%;max-width:340px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--soft)}
+.tg{position:relative;width:44px;height:24px;flex:none}.tg input{opacity:0;position:absolute;inset:0;margin:0;cursor:pointer;z-index:1}
+.tg span{position:absolute;inset:0;background:var(--line);border-radius:99px;transition:.15s}.tg span:after{content:"";position:absolute;left:3px;top:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:.15s}
+.tg input:checked+span{background:var(--y)}.tg input:checked+span:after{left:23px}
+.themes{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.themes label{border:2px solid var(--line);border-radius:12px;padding:14px;cursor:pointer;font-weight:600;display:block;text-align:center}
+.themes input{display:none}.themes label:has(input:checked){border-color:var(--y);background:var(--y2)}
+.acts{display:flex;gap:6px;flex-wrap:wrap}.empty{padding:16px;border:1px dashed var(--line);border-radius:12px;text-align:center;color:var(--mute)}
+.mask{position:fixed;inset:0;background:#0009;display:grid;place-items:center;padding:16px;z-index:9}
+.modal{background:var(--card);border-radius:16px;padding:22px;max-width:440px;width:100%;border-top:4px solid var(--y)}
+.modal .acts{justify-content:flex-end;margin-top:16px}
+#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1a1a1a;color:#fff;padding:10px 18px;border-radius:99px;display:none;z-index:10}
+@media(max-width:760px){.wrap{grid-template-columns:1fr;padding:12px}nav{flex-direction:row;overflow-x:auto;position:static}nav a{white-space:nowrap}.themes{grid-template-columns:1fr}}
+</style>
+<link rel="stylesheet" href="theme.css">
+<script src="api.js"></script>
+<script>FM.requireLogin();</script>
+</head><body>
+<header>
+  <a href="dashboard.html" class="logo" style="text-decoration:none;color:inherit" title="Back to Dashboard"><i>F</i>FINMATE</a>
+  <div style="display:flex;gap:10px;align-items:center">
+    <a href="dashboard.html" class="btn">← Dashboard</a>
+    <button class="btn" data-act="logout">Log out</button>
+  </div>
+</header>
+<div class="wrap"><nav id="nav"></nav><main id="main"></main></div>
+<div id="toast"></div>
+<script>
+/* ===== FinMate Settings — independent page. No profile/financial-profile data lives here. =====
+Connect with:
+FinMateSettings.init({apiBase:'/api', getToken:()=>token, onLogout:()=>{...}, loginUrl:'/login',
+  version:'1.0.0', links:{privacy:'/privacy',terms:'/terms',disclaimer:'/disclaimer'}, support:{email:'...'},
+  deliveryEnabled:false, endpoints:{...override any path below} })
+Expected endpoints (override via `endpoints`): GET/PUT /settings, POST /auth/logout, POST /auth/change-password,
+GET /auth/sessions (+DELETE /auth/sessions/:id), DELETE /account {password},
+GET /export?format=csv|json, and per-list GET/PATCH/DELETE + POST :id/duplicate (+ POST /budgets/:id/load).
+The server must enforce auth + ownership on all of these. */
+const $=(s,e=document)=>e.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const SECTIONS=[['appearance','Appearance'],['saved','Saved data'],['privacy','Privacy & security'],['export','Data export'],['about','About FinMate']];
+const LISTS=[
+ {k:'budgets',t:'Saved budgets',p:'/budgets',a:['rename','duplicate','load','delete']},
+ {k:'scenarios',t:'What-if scenarios',p:'/scenarios',a:['rename','duplicate','delete']},
+ {k:'purchase',t:'Purchase plans',p:'/purchase-plans',a:['delete']},
+ {k:'saving',t:'Started saving plans',p:'/saving-plans',a:['delete']},
+ {k:'chats',t:'Pocket CA history',p:'/pocket-ca/conversations',a:['rename','delete'],clear:true}];
+const NOTIFS=[['budgetSummary','Budget summaries'],['spendingSummary','Spending summaries'],['budgetAlerts','Budget limit alerts'],['goalReminders','Financial goal reminders'],['savingReminders','Saving plan reminders'],['purchaseReminders','Purchase plan reminders'],['paymentReminders','Payment reminders']];
+const DEF={theme:'system',currency:'INR',period:'monthly',bufferPct:'',savingsTarget:'',carryOver:false,notifications:{}};
+const S={cfg:null,s:{...DEF},lists:{},sessions:null,sec:'appearance',err:{}};
+const ep=(k,d)=>(S.cfg&&S.cfg.endpoints&&S.cfg.endpoints[k])||d;
+function toast(m){const t=$('#toast');t.textContent=m;t.style.display='block';clearTimeout(toast.t);toast.t=setTimeout(()=>t.style.display='none',2600)}
+async function api(method,path,body,raw){
+ if(!S.cfg)throw Error('Not connected to the FinMate backend');
+ const h={};const tk=S.cfg.getToken&&S.cfg.getToken();if(tk)h.Authorization='Bearer '+tk;if(body)h['Content-Type']='application/json';
+ const r=await fetch((S.cfg.apiBase||'')+path,{method,headers:h,credentials:'include',body:body?JSON.stringify(body):undefined});
+ if(r.status===401){localLogout();throw Error('Session expired')}
+ if(!r.ok)throw Error((await r.text().catch(()=>''))||r.statusText);
+ return raw?r:(r.status===204?null:r.json().catch(()=>null));
+}
+function localLogout(){try{localStorage.removeItem('fm-theme')}catch(e){}
+ if(S.cfg&&S.cfg.onLogout)S.cfg.onLogout();else if(S.cfg&&S.cfg.loginUrl)location.href=S.cfg.loginUrl;}
+/* theme */
+const mq=matchMedia('(prefers-color-scheme: dark)');
+function applyTheme(t){
+  const eff=t==='system'?(mq.matches?'dark':'light'):t;
+  document.documentElement.dataset.eff=eff;
+  document.documentElement.dataset.theme=eff;
+  if(eff==='dark') document.documentElement.classList.add('dark');
+  else document.documentElement.classList.remove('dark');
+  try{localStorage.setItem('fm-theme',t)}catch(e){}
+  if(window.FM&&FM.applyTheme)FM.applyTheme(t);
+}
+mq.addEventListener('change',()=>{if(S.s.theme==='system')applyTheme('system')});
+try{S.s.theme=localStorage.getItem('fm-theme')||'system'}catch(e){}applyTheme(S.s.theme);
+/* views */
+const on=()=>!!S.cfg;
+const dis=()=>on()?'':'disabled';
+function banner(){return on()?'':`<div class="banner"><b>Not connected to the FinMate backend.</b> No account data is loaded and changes can’t be saved yet. Call <code>FinMateSettings.init({…})</code> with your API config. Theme changes apply on this device only until then.</div>`}
+const tog=(id,v)=>`<label class="tg"><input type="checkbox" data-k="${id}" ${v?'checked':''} ${dis()}><span></span></label>`;
+const V={
+appearance:()=>`<div class="card"><h2>Appearance</h2><p class="mute">Applies across the whole app and is restored after login and refresh.</p>
+<div class="themes">${[['light','Light Mode'],['dark','Dark Mode'],['system','System Default']].map(([v,l])=>`<label><input type="radio" name="theme" value="${v}" ${S.s.theme===v?'checked':''}>${l}</label>`).join('')}</div></div>`,
+saved:()=>LISTS.map(L=>{const d=S.lists[L.k];return `<div class="card"><h2>${L.t}</h2>
+${S.err[L.k]?`<p class="mute">${esc(S.err[L.k])}</p>`:''}
+${!on()?'<div class="empty">Connect the backend to view this data.</div>':!d?'<div class="empty">Loading…</div>':!d.length?'<div class="empty">Nothing saved yet.</div>':d.map(x=>`<div class="row"><div>${esc(x.name||x.title||x.id)}<small>${esc(x.updatedAt||x.createdAt||'')}</small></div><div class="acts">${L.a.map(a=>`<button class="btn s ${a==='delete'?'d':''}" data-act="${a}" data-l="${L.k}" data-id="${esc(x.id)}">${a[0].toUpperCase()+a.slice(1)}</button>`).join('')}</div></div>`).join('')}
+${L.clear&&d&&d.length?`<button class="btn d" style="margin-top:12px" data-act="clear" data-l="${L.k}">Clear all conversations</button>`:''}</div>`}).join(''),
+privacy:()=>`<div class="card"><h2>Change password</h2>
+<label class="f">Current password</label><input type="password" id="pw0" autocomplete="current-password" ${dis()}>
+<label class="f">New password</label><input type="password" id="pw1" autocomplete="new-password" ${dis()}>
+<label class="f">Confirm new password</label><input type="password" id="pw2" autocomplete="new-password" ${dis()}><br><br>
+<button class="btn y" data-act="pw" ${dis()}>Update password</button></div>
+<div class="card"><h2>Security</h2><p class="mute">Passwords are verified by the server. Active sessions are listed below when your backend supports it.</p>
+${S.sessions?S.sessions.map(x=>`<div class="row"><div>${esc(x.device||x.userAgent||'Session')}${x.current?' (this device)':''}<small>${esc(x.lastActive||'')}</small></div>${x.current?'':`<button class="btn s d" data-act="revoke" data-id="${esc(x.id)}">Sign out</button>`}</div>`).join(''):'<div class="empty">Session list unavailable.</div>'}</div>
+<div class="card"><h2>Privacy</h2><p class="mute">Your data is only accessible to your signed-in account. See the Privacy Policy under About for details.</p></div>
+<div class="card"><h2 style="color:var(--red)">Delete account</h2><p class="mute">Permanently removes your account and associated data according to FinMate’s data policy. This cannot be undone.</p>
+<button class="btn d" data-act="delacct" ${dis()}>Delete my account…</button></div>`,
+export:()=>`<div class="card"><h2>Data export</h2><p class="mute">Downloads your own saved information from the server: financial profile, income sources, expenses, goals and saved records.</p>
+<div class="acts"><button class="btn y" data-act="export" data-f="csv" ${dis()}>Export CSV</button><button class="btn y" data-act="export" data-f="json" ${dis()}>Export JSON</button></div></div>`,
+about:()=>{const c=S.cfg||{},l=c.links||{},sp=c.support||{};const lk=(u,t)=>u?`<a href="${esc(u)}" target="_blank" rel="noopener">${t}</a>`:`<span class="mute">${t} — not configured</span>`;
+ return `<div class="card"><h2>About FinMate</h2><p><b>FinMate</b> · Version ${esc(c.version||'—')}</p><p class="mute">FinMate helps you plan budgets, explore what-if scenarios and track saving and purchase plans.</p>
+<div class="row">${lk(l.privacy,'Privacy Policy')}</div><div class="row">${lk(l.terms,'Terms & Conditions')}</div><div class="row">${lk(l.disclaimer,'Financial Disclaimer')}</div>
+<h3>Support</h3>${sp.email||sp.url?`<p>${sp.email?`<a href="mailto:${esc(sp.email)}">${esc(sp.email)}</a>`:''} ${sp.url?lk(sp.url,'Help centre'):''}</p>`:'<p class="mute">Support contact not configured.</p>'}</div>`}};
+function render(){
+ $('#nav').innerHTML=SECTIONS.map(([k,l])=>`<a href="#${k}" class="${S.sec===k?'on':''}">${l}</a>`).join('');
+ $('#main').innerHTML=banner()+V[S.sec]();
+}
+/* modal */
+function modal(title,body,label,fn,danger){
+ const m=document.createElement('div');m.className='mask';
+ m.innerHTML=`<div class="modal" role="dialog"><h2>${title}</h2>${body}<div class="acts"><button class="btn" data-x>Cancel</button><button class="btn ${danger?'d':'y'}" data-ok>${label}</button></div></div>`;
+ document.body.appendChild(m);const close=()=>m.remove();
+ m.addEventListener('click',e=>{if(e.target===m||e.target.dataset.x!==undefined)close()});
+ $('[data-ok]',m).onclick=async()=>{try{await fn(m);close()}catch(e){toast(e.message)}};
+ const i=$('input',m);if(i)i.focus();
+}
+const L_=k=>LISTS.find(l=>l.k===k);
+async function loadList(L){try{const r=await api('GET',ep(L.k,L.p));S.lists[L.k]=Array.isArray(r)?r:(r&&r.items)||[];S.err[L.k]=''}catch(e){S.lists[L.k]=[];S.err[L.k]='Couldn’t load: '+e.message}if(S.sec==='saved')render()}
+async function loadAll(){
+ if(!on())return;
+ try{const r=await api('GET',ep('settings','/settings'));S.s={...DEF,...r,notifications:{...(r&&r.notifications)}};applyTheme(S.s.theme)}catch(e){toast('Couldn’t load settings: '+e.message)}
+ render();LISTS.forEach(loadList);
+ try{const r=await api('GET',ep('sessions','/auth/sessions'));S.sessions=Array.isArray(r)?r:r&&r.items}catch(e){S.sessions=null}
+ if(S.sec==='privacy')render();
+}
+async function saveSettings(msg){if(!on())return;try{await api('PUT',ep('settings','/settings'),S.s);toast(msg||'Saved')}catch(e){toast('Save failed: '+e.message)}}
+/* events */
+document.addEventListener('change',e=>{const t=e.target;
+ if(t.name==='theme'){S.s.theme=t.value;applyTheme(t.value);saveSettings('Theme saved')}
+ else if(t.dataset.k){const k=t.dataset.k;if(k.startsWith('n:'))S.s.notifications[k.slice(2)]=t.checked;else S.s[k]=t.checked;if(k.startsWith('n:'))saveSettings('Preference saved')}
+ else if(t.dataset.f&&t.tagName!=='BUTTON')S.s[t.dataset.f]=t.value});
+document.addEventListener('click',async e=>{const b=e.target.closest('[data-act]');if(!b)return;const a=b.dataset.act,id=b.dataset.id,L=b.dataset.l&&L_(b.dataset.l);
+ const item=L&&(S.lists[L.k]||[]).find(x=>String(x.id)===id);const nm=item&&esc(item.name||item.title||'');
+ try{
+ if(a==='logout'){try{if(on())await api('POST',ep('logout','/auth/logout'))}catch(e){}localLogout();if(!on())toast('Not connected — nothing to log out of')}
+ else if(a==='rename')modal('Rename',`<input type="text" id="nn" value="${nm}" maxlength="80">`,'Save',async m=>{const v=$('#nn',m).value.trim();if(!v)throw Error('Name required');await api('PATCH',(ep(L.k,L.p))+'/'+id,{name:v});await loadList(L)});
+ else if(a==='duplicate'){await api('POST',ep(L.k,L.p)+'/'+id+'/duplicate');toast('Duplicated');loadList(L)}
+ else if(a==='delete')modal('Delete?',`<p>Delete “${nm}”? Only this item is removed; your other financial records are untouched.</p>`,'Delete',async()=>{await api('DELETE',ep(L.k,L.p)+'/'+id);await loadList(L)},1);
+ else if(a==='load')modal('Load as current budget?',`<p>“${nm}” will replace your current budget. Other saved budgets are unchanged.</p>`,'Load budget',async()=>{await api('POST',ep(L.k,L.p)+'/'+id+'/load');toast('Budget loaded')});
+ else if(a==='clear')modal('Clear history?','<p>All Pocket CA conversations will be deleted. Nothing else is affected.</p>','Clear all',async()=>{await api('DELETE',ep(L.k,L.p));await loadList(L)},1);
+ else if(a==='pw'){const o=$('#pw0').value,n=$('#pw1').value;if(n.length<8)return toast('Use at least 8 characters');if(n!==$('#pw2').value)return toast('Passwords don’t match');await api('POST',ep('password','/auth/change-password'),{currentPassword:o,newPassword:n});['pw0','pw1','pw2'].forEach(i=>$('#'+i).value='');toast('Password updated')}
+ else if(a==='revoke'){await api('DELETE',ep('sessions','/auth/sessions')+'/'+id);const r=await api('GET',ep('sessions','/auth/sessions'));S.sessions=Array.isArray(r)?r:r.items;render()}
+ else if(a==='delacct')modal('Delete account',`<p>This permanently deletes your account, financial profile, income sources, expenses, budgets, scenarios, plans and Pocket CA history, per FinMate’s data policy.</p><label class="f">Password</label><input type="password" id="dp"><label class="f">Type DELETE to confirm</label><input type="text" id="dc">`,'Delete forever',async m=>{if($('#dc',m).value!=='DELETE')throw Error('Type DELETE to confirm');await api('DELETE',ep('account','/account'),{password:$('#dp',m).value});localLogout()},1);
+ else if(a==='export'){const f=b.dataset.f;const r=await api('GET',ep('export','/export')+'?format='+f,null,true);const bl=await r.blob();const u=URL.createObjectURL(bl);const l=document.createElement('a');l.href=u;l.download='finmate-export.'+(f==='csv'&&bl.type.includes('zip')?'zip':f);l.click();setTimeout(()=>URL.revokeObjectURL(u),2000)}
+ }catch(err){toast(err.message)}});
+function route(){const h=location.hash.slice(1);S.sec=V[h]?h:'appearance';render()}
+addEventListener('hashchange',route);
+window.FinMateSettings={init(c){S.cfg=c;route();loadAll()}};
+route();
+</script><script>
+/* Connect the Settings page to the Flask backend */
+FinMateSettings.init({
+  apiBase: '/api',
+  getToken: () => FM.token(),
+  onLogout: () => { FM.clearLocal(); try { localStorage.removeItem('token'); } catch (e) {} location.href = 'login.html'; },
+  loginUrl: 'login.html',
+  version: '1.0.0',
+  links: { privacy: 'legal.html#privacy', terms: 'legal.html#terms', disclaimer: 'legal.html#disclaimer' }
+});
+</script>
+</body></html>

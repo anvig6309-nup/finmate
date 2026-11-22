@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Your Expenses – FINMATE</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 64 64%27%3E%3Crect width=%2764%27 height=%2764%27 rx=%2712%27 fill=%27%23FACC15%27/%3E%3Ctext x=%2732%27 y=%2747%27 font-family=%27Arial,sans-serif%27 font-size=%2740%27 font-weight=%27800%27 text-anchor=%27middle%27 fill=%27%230F172A%27%3EF%3C/text%3E%3C/svg%3E">
+<meta name="theme-color" content="#ffffff">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --lemon: #FACC15; --lemon-dark: #EAB308; --lemon-100: #FEF9C3; --lemon-50: #FEFCE8;
+    --ink: #0F172A; --muted: #475569; --line: #E7E5E4; --soft: #FAFAF9; --danger: #B91C1C;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  body { margin: 0; font-family: 'Inter', system-ui, sans-serif; color: var(--ink); background: var(--soft); line-height: 1.55; -webkit-font-smoothing: antialiased; overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
+  h1, h2, h3, p { margin: 0; }
+  a { color: inherit; text-decoration: none; }
+  button, input, select { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  [hidden] { display: none !important; }
+  :focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; border-radius: 10px; }
+
+  .wrap { width: min(1120px, 100% - 2rem); margin-inline: auto; }
+  .top { background: #fff; border-bottom: 1px solid var(--line); padding-top: env(safe-area-inset-top); }
+  .top .wrap { height: 64px; display: flex; align-items: center; justify-content: space-between; }
+  .logo { display: inline-flex; align-items: center; gap: .55rem; font-weight: 800; font-size: 1.2rem; letter-spacing: .06em; min-height: 44px; }
+  .logo i { width: 34px; height: 34px; border-radius: 8px; background: var(--lemon); color: var(--ink); display: grid; place-items: center; font-style: normal; font-size: 1.2rem; letter-spacing: 0; line-height: 1; }
+  .chip { font-size: .8rem; font-weight: 700; padding: .3rem .8rem; border-radius: 999px; background: var(--lemon-100); border: 1px solid var(--lemon); }
+
+  main { padding: 1.25rem 0 9rem; }
+  .back { display: inline-flex; align-items: center; min-height: 44px; font-weight: 600; font-size: .92rem; color: var(--muted); }
+  .back:hover { color: var(--ink); }
+  h1 { font-size: clamp(1.8rem, 5.5vw, 2.5rem); font-weight: 800; letter-spacing: -.03em; line-height: 1.1; }
+  .sub { margin-top: .5rem; color: var(--muted); max-width: 44rem; }
+  .funds { margin-top: .9rem; display: inline-block; padding: .45rem .9rem; border-radius: 12px; background: var(--lemon-50); border: 1px solid var(--lemon-dark); font-weight: 700; font-size: .9rem; }
+  .cols { display: grid; gap: 1.25rem; margin-top: 1.25rem; align-items: start; }
+  @media (min-width: 980px) { .cols { grid-template-columns: minmax(0, 1fr) 460px; } .side { position: sticky; top: 1rem; max-height: calc(100vh - 2rem); overflow: auto; } }
+  .card { background: #fff; border: 1px solid var(--line); border-radius: 20px; padding: 1.1rem; }
+  .card + .card { margin-top: 1.25rem; }
+  h2 { font-size: 1.15rem; font-weight: 800; letter-spacing: -.01em; display: flex; justify-content: space-between; align-items: center; gap: .5rem; }
+  .help { margin-top: .25rem; font-size: .9rem; color: var(--muted); }
+  .count { font-size: .8rem; background: var(--ink); color: #fff; padding: .15rem .65rem; border-radius: 999px; }
+
+  details { margin-top: .6rem; border: 1px solid var(--line); border-radius: 14px; background: var(--soft); }
+  summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: .5rem; padding: .75rem 1rem; min-height: 50px; font-weight: 700; }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: '+'; font-weight: 800; font-size: 1.2rem; }
+  details[open] summary::after { content: '–'; }
+  summary .n { margin-left: auto; font-size: .75rem; padding: .1rem .6rem; border-radius: 999px; background: var(--lemon); }
+  .chips { display: flex; flex-wrap: wrap; gap: .5rem; padding: 0 1rem 1rem; }
+  .pick { min-height: 44px; padding: 0 1rem; border: 1.5px solid var(--line); border-radius: 999px; background: #fff; font-weight: 600; font-size: .9rem; transition: background .15s, border-color .15s; }
+  .pick:hover { border-color: var(--lemon-dark); }
+  .pick[aria-pressed="true"] { background: var(--lemon); border-color: var(--ink); font-weight: 800; }
+  .pick[aria-pressed="true"]::before { content: '✓ '; }
+
+  label { display: block; font-size: .8rem; font-weight: 700; color: var(--muted); margin-bottom: .3rem; }
+  .input { width: 100%; min-height: 46px; padding: 0 .9rem; border: 1.5px solid var(--line); border-radius: 12px; background: #fff; font-weight: 600; }
+  .input:focus { outline: none; border-color: var(--lemon-dark); box-shadow: 0 0 0 3px rgba(250, 204, 21, .35); }
+  input[type=number]::-webkit-inner-spin-button { display: none; }
+  .form { display: grid; gap: .8rem; margin-top: .9rem; grid-template-columns: 1fr 1fr; }
+  .form .wide { grid-column: span 2; }
+  @media (max-width: 520px) { .form { grid-template-columns: 1fr; } .form .wide { grid-column: auto; } }
+  .money { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 0 1.3rem; border-radius: 12px; border: 2px solid transparent; font-weight: 800; transition: background .2s, transform .15s; }
+  .btn:active { transform: scale(.98); }
+  .btn-dark { background: var(--ink); color: #fff; }
+  .btn-dark:hover { background: #1e293b; }
+  .btn-primary { background: var(--lemon); color: var(--ink); width: 100%; font-size: 1.05rem; }
+  .btn-primary:hover { background: var(--lemon-dark); }
+  .form-err { grid-column: 1 / -1; color: var(--danger); font-size: .88rem; font-weight: 600; min-height: 1.2rem; }
+
+  .group { margin-top: .9rem; }
+  .group h3 { font-size: .85rem; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; margin-bottom: .4rem; }
+  .entry { border: 1.5px solid var(--line); border-radius: 16px; padding: .8rem; background: #fff; margin-bottom: .6rem; }
+  .entry.err { border-color: var(--danger); background: #FEF8F8; }
+  .e-top { display: flex; gap: .5rem; align-items: center; }
+  .e-top .input { font-weight: 700; }
+  .del { flex: none; width: 44px; height: 46px; border: 1.5px solid var(--line); background: #fff; border-radius: 12px; font-weight: 800; color: var(--muted); }
+  .del:hover { border-color: var(--danger); color: var(--danger); }
+  .e-path { margin: .3rem 0 .6rem; font-size: .78rem; color: var(--muted); font-weight: 600; }
+  .e-row { display: grid; gap: .6rem; grid-template-columns: 1fr 1fr; margin-top: .5rem; }
+  .e-row.one { grid-template-columns: 1fr; }
+  .seg { display: flex; border: 1.5px solid var(--line); border-radius: 12px; overflow: hidden; background: #fff; }
+  .seg button { flex: 1; min-height: 42px; border: 0; border-right: 1px solid var(--line); background: transparent; font-weight: 600; font-size: .85rem; padding: 0 .3rem; }
+  .seg button:last-child { border-right: 0; }
+  .seg button:hover { background: var(--lemon-50); }
+  .seg button[aria-checked="true"] { background: var(--lemon); font-weight: 800; }
+  .seg button[data-val="false"][aria-checked="true"] { background: var(--ink); color: #fff; }
+  .e-err { margin-top: .5rem; font-size: .82rem; font-weight: 700; color: var(--danger); }
+  .e-err:empty { display: none; }
+  .empty { padding: 1.5rem .5rem; text-align: center; color: var(--muted); font-size: .92rem; }
+
+  .bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; background: rgba(255, 255, 255, .96); backdrop-filter: blur(14px); border-top: 1px solid var(--line); padding-bottom: env(safe-area-inset-bottom); }
+  .bar .wrap { padding: .75rem 0; display: grid; gap: .5rem; }
+  @media (min-width: 640px) { .bar .wrap { grid-template-columns: 1fr 280px; align-items: center; } .bar .btn-primary { grid-column: 2; grid-row: 1 / span 2; } }
+  .bar-info { font-weight: 700; }
+  .bar-note { font-size: .85rem; color: var(--danger); font-weight: 600; min-height: 1.1rem; }
+</style>
+<script src="api.js"></script>
+<script>FM.requireLogin();</script>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a href="index.html" class="logo" aria-label="FINMATE home"><i aria-hidden="true">F</i>FINMATE</a>
+    <span class="chip">💼 Salaried Employee</span>
+  </div>
+</header>
+
+<main class="wrap">
+  <a class="back" href="Efunds.html">← Back to funds</a>
+  <h1>Your Expenses</h1>
+  <p class="sub">Choose the expenses you have, then set a priority and say whether each is negotiable. You choose every priority yourself.</p>
+  <p class="funds" id="funds" hidden></p>
+
+  <div class="cols">
+    <div>
+      <section class="card" aria-labelledby="pick-h">
+        <h2 id="pick-h">1. Choose categories</h2>
+        <p class="help">Open a category and tap the subcategories that apply to you.</p>
+        <div id="cats"></div>
+      </section>
+
+      <section class="card" aria-labelledby="custom-h">
+        <h2 id="custom-h">2. Add a custom expense</h2>
+        <p class="help">Something not listed above? Add it here. You can add as many as you like.</p>
+        <form class="form" id="custom-form" novalidate>
+          <div class="wide"><label for="c-cat">Category</label><select class="input" id="c-cat"></select></div>
+          <div class="wide" id="c-newwrap" hidden><label for="c-new">New category name</label><input class="input" id="c-new" maxlength="40" placeholder="e.g. Pets"></div>
+          <div><label for="c-sub">Subcategory (optional)</label><input class="input" id="c-sub" maxlength="40" placeholder="e.g. Music"></div>
+          <div><label for="c-name">Expense name</label><input class="input" id="c-name" maxlength="50" placeholder="e.g. Guitar class"></div>
+          <div><label for="c-pri">Priority</label><select class="input" id="c-pri"><option value="">Select priority</option><option>High</option><option>Medium</option><option>Low</option></select></div>
+          <div><label for="c-neg">Type</label><select class="input" id="c-neg"><option value="">Select type</option><option value="true">Negotiable</option><option value="false">Non-negotiable</option></select></div>
+          <div class="wide" id="c-moneywrap" hidden>
+            <label>Tentative amount (optional)</label>
+            <div class="money"><input class="input" id="c-amt" type="number" inputmode="decimal" min="0" step="any" placeholder="₹ amount"><select class="input" id="c-period" aria-label="Period"><option>Daily</option><option>Weekly</option><option selected>Monthly</option><option>Quarterly</option><option>Yearly</option></select></div>
+          </div>
+          <p class="form-err" id="c-err" role="alert"></p>
+          <div class="wide"><button class="btn btn-dark" type="submit">Add expense</button></div>
+        </form>
+      </section>
+    </div>
+
+    <aside class="card side" aria-labelledby="list-h">
+      <h2 id="list-h">Your selected expenses <span class="count" id="count">0</span></h2>
+      <div id="list"></div>
+    </aside>
+  </div>
+</main>
+
+<footer class="bar">
+  <div class="wrap">
+    <p class="bar-info" id="bar-info">No expenses selected yet</p>
+    <p class="bar-note" id="bar-note" role="alert"></p>
+    <button class="btn btn-primary" id="continue" type="button">Continue →</button>
+  </div>
+</footer>
+
+<script>
+const PERSONA = 'salaried';
+const CATEGORIES = {
+  'Housing and Rent': ['House Rent', 'Maintenance', 'Property Tax', 'Repairs', 'Other Housing Expenses'],
+  'Groceries': ['Vegetables and Fruits', 'Monthly Groceries', 'Dairy Products', 'Household Food Supplies', 'Other Grocery Expenses'],
+  'Transportation': ['Fuel', 'Public Transport', 'Cab', 'Vehicle EMI', 'Vehicle Maintenance', 'Other Transportation'],
+  'Utilities': ['Electricity', 'Water', 'Gas', 'Internet', 'Other Utility Bills'],
+  'Healthcare': ['Medicines', 'Doctor Visits', 'Medical Tests', 'Health Insurance', 'Other Healthcare'],
+  'Personal Care': ['Skincare', 'Haircare', 'Hygiene Products', 'Cosmetics', 'Other Personal Care'],
+  'Shopping': ['Clothes', 'Footwear', 'Accessories', 'Electronics', 'Other Shopping'],
+  'Entertainment': ['Movies', 'OTT Subscriptions', 'Dining Out', 'Travel and Outings', 'Other Entertainment'],
+  'Family Expenses': ["Children's Education", "Parents' Support", 'Family Healthcare', 'Household Support', 'Other Family Expenses'],
+  'EMIs and Loans': ['Home Loan', 'Vehicle Loan', 'Personal Loan', 'Education Loan', 'Credit Card Payments', 'Other Loan Commitments'],
+  'Insurance': ['Life Insurance', 'Health Insurance', 'Vehicle Insurance', 'Other Insurance'],
+  'Investments': ['Mutual Funds', 'SIP', 'Fixed Deposits', 'Stocks', 'Other Investments'],
+  'Savings': ['Emergency Fund', 'Personal Savings', 'Retirement Savings', 'Other Savings'],
+  'Communication': ['Mobile Recharge', 'Internet', 'Phone Bills', 'Other Communication Expenses']
+};
+const PRIORITIES = ['High', 'Medium', 'Low'];
+const PERIODS = ['Daily', 'Weekly', 'Monthly', 'Quarterly', 'Yearly'];
+const PER_MONTH = { Daily: 365 / 12, Weekly: 52 / 12, Monthly: 1, Quarterly: 1 / 3, Yearly: 1 / 12 };
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const rupees = n => '₹' + Math.round(n).toLocaleString('en-IN');
+const readJSON = (key, fallback) => { try { const v = JSON.parse(localStorage.getItem(key)); return v == null ? fallback : v; } catch (e) { return fallback; } };
+const writeJSON = (key, value) => { try { localStorage.setItem(key, JSON.stringify(value)); return true; } catch (e) { return false; } };
+
+const validate = e => {
+  const problems = [];
+  if (!e.name.trim()) problems.push('Enter a name');
+  if (!e.priority) problems.push('choose a priority');
+  if (e.negotiable === null) problems.push('choose negotiable or non-negotiable');
+  return problems;
+};
+
+const toPlannerCategories = list => {
+  const rank = { High: 0, Medium: 1, Low: 2 };
+  const groups = new Map();
+  list.forEach(e => { if (!groups.has(e.category)) groups.set(e.category, []); groups.get(e.category).push(e); });
+  return [...groups].map(([category, items]) => {
+    const monthly = items.filter(e => e.negotiable === false && e.amount > 0).reduce((t, e) => t + e.amount * PER_MONTH[e.period], 0);
+    return {
+      id: category.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''),
+      name: category,
+      priority: items.map(e => e.priority).sort((a, b) => rank[a] - rank[b])[0],
+      amount: monthly > 0 ? Math.round(monthly) : null,
+      frequency: 'Monthly',
+      nonNegotiable: items.some(e => e.negotiable === false),
+      subcategories: items.map(e => e.name.trim())
+    };
+  });
+};
+
+const Store = {
+  load() {
+    const saved = readJSON('finmate_expenses', null);
+    if (!saved || saved.persona !== PERSONA || !Array.isArray(saved.entries)) return [];
+    return saved.entries.map(e => ({
+      id: e.id, category: String(e.category || ''), subcategory: String(e.subcategory || ''), name: String(e.name || ''),
+      priority: PRIORITIES.includes(e.priority) ? e.priority : null,
+      negotiable: e.negotiable === true || e.negotiable === false ? e.negotiable : null,
+      amount: e.negotiable === false && e.amount > 0 ? Number(e.amount) : null,
+      period: PERIODS.includes(e.period) ? e.period : 'Monthly', custom: !!e.custom
+    })).filter(e => e.id && e.category);
+  },
+  saveDraft(list) { const ok = writeJSON('finmate_expenses', { persona: PERSONA, entries: list }); FM.syncExpenses(list); return ok; },
+  commit(list) { const ok = this.saveDraft(list) && writeJSON('finmate_categories', toPlannerCategories(list)); FM.flush('expenses'); return ok; }
+};
+
+let entries = Store.load();
+let counter = entries.reduce((m, e) => Math.max(m, parseInt(String(e.id).replace(/\D/g, ''), 10) || 0), 0);
+let showErrors = false;
+
+const newEntry = data => ({ id: 'e' + ++counter, subcategory: '', name: '', priority: null, negotiable: null, amount: null, period: 'Monthly', custom: false, ...data });
+const draft = () => Store.saveDraft(entries);
+const findPreset = (category, sub) => entries.find(e => !e.custom && e.category === category && e.subcategory === sub);
+const allCategories = () => [...Object.keys(CATEGORIES), ...new Set(entries.map(e => e.category).filter(c => !CATEGORIES[c]))];
+
+function renderCats() {
+  const open = new Set([...document.querySelectorAll('#cats details[open]')].map(d => d.dataset.cat));
+  if (!document.querySelector('#cats details')) open.add(Object.keys(CATEGORIES)[0]);
+  $('#cats').innerHTML = Object.entries(CATEGORIES).map(([cat, subs]) => {
+    const n = entries.filter(e => e.category === cat).length;
+    return `<details data-cat="${esc(cat)}" ${open.has(cat) ? 'open' : ''}>
+      <summary>${esc(cat)}${n ? `<span class="n">${n}</span>` : ''}</summary>
+      <div class="chips">${subs.map(s => `<button type="button" class="pick" data-cat="${esc(cat)}" data-sub="${esc(s)}" aria-pressed="${!!findPreset(cat, s)}">${esc(s)}</button>`).join('')}</div>
+    </details>`;
+  }).join('');
+}
+
+function seg(field, options, current) {
+  return `<div class="seg" role="radiogroup">${options.map(([val, label]) => `<button type="button" role="radio" data-set="${field}" data-val="${val}" aria-checked="${String(current) === val}">${label}</button>`).join('')}</div>`;
+}
+
+function entryHtml(e) {
+  const money = e.negotiable === false
+    ? `<div class="e-row"><div><label>Tentative amount (optional)</label><input class="input" data-f="amount" type="number" inputmode="decimal" min="0" step="any" placeholder="Leave blank if unsure" value="${e.amount ?? ''}"></div>
+       <div><label>Period</label><select class="input" data-f="period">${PERIODS.map(p => `<option ${p === e.period ? 'selected' : ''}>${p}</option>`).join('')}</select></div></div>`
+    : '';
+  return `<div class="entry" data-id="${e.id}">
+    <div class="e-top"><input class="input" data-f="name" maxlength="50" value="${esc(e.name)}" aria-label="Expense name"><button class="del" type="button" data-del aria-label="Delete ${esc(e.name)}">✕</button></div>
+    <p class="e-path">${esc(e.category)}${e.subcategory ? ' › ' + esc(e.subcategory) : ''}</p>
+    <label>Priority</label>${seg('priority', PRIORITIES.map(p => [p, p]), e.priority)}
+    <div class="e-row one"><div><label>Type</label>${seg('negotiable', [['true', 'Negotiable'], ['false', 'Non-negotiable']], e.negotiable)}</div></div>
+    ${money}
+    <p class="e-err" data-err></p>
+  </div>`;
+}
+
+function renderList() {
+  $('#count').textContent = entries.length;
+  if (!entries.length) { $('#list').innerHTML = '<p class="empty">Nothing selected yet. Pick subcategories or add your own.</p>'; updateBar(); return; }
+  $('#list').innerHTML = allCategories().map(cat => {
+    const items = entries.filter(e => e.category === cat);
+    return items.length ? `<div class="group"><h3>${esc(cat)} · ${items.length}</h3>${items.map(entryHtml).join('')}</div>` : '';
+  }).join('');
+  markErrors();
+  updateBar();
+}
+
+function markErrors() {
+  document.querySelectorAll('#list .entry').forEach(row => {
+    const e = entries.find(x => x.id === row.dataset.id);
+    const problems = e ? validate(e) : [];
+    const bad = showErrors && problems.length > 0;
+    row.classList.toggle('err', bad);
+    const text = problems.join(', ');
+    row.querySelector('[data-err]').textContent = bad ? text.charAt(0).toUpperCase() + text.slice(1) + '.' : '';
+  });
+}
+
+function updateBar() {
+  $('#bar-info').textContent = entries.length ? `${entries.length} expense${entries.length > 1 ? 's' : ''} selected` : 'No expenses selected yet';
+}
+
+function renderCategorySelect() {
+  const current = $('#c-cat').value;
+  $('#c-cat').innerHTML = allCategories().map(c => `<option>${esc(c)}</option>`).join('') + '<option value="__new">+ New category…</option>';
+  if ([...$('#c-cat').options].some(o => o.value === current)) $('#c-cat').value = current;
+  $('#c-newwrap').hidden = $('#c-cat').value !== '__new';
+}
+
+function refreshAll() {
+  renderCats(); renderList(); renderCategorySelect(); draft();
+}
+
+$('#cats').addEventListener('click', ev => {
+  const btn = ev.target.closest('.pick');
+  if (!btn) return;
+  const existing = findPreset(btn.dataset.cat, btn.dataset.sub);
+  if (existing) entries = entries.filter(e => e !== existing);
+  else entries.push(newEntry({ category: btn.dataset.cat, subcategory: btn.dataset.sub, name: btn.dataset.sub }));
+  refreshAll();
+});
+
+$('#list').addEventListener('click', ev => {
+  const row = ev.target.closest('.entry');
+  if (!row) return;
+  const e = entries.find(x => x.id === row.dataset.id);
+  if (ev.target.closest('[data-del]')) { entries = entries.filter(x => x !== e); refreshAll(); return; }
+  const btn = ev.target.closest('[data-set]');
+  if (!btn) return;
+  if (btn.dataset.set === 'priority') e.priority = btn.dataset.val;
+  else { e.negotiable = btn.dataset.val === 'true'; if (e.negotiable) e.amount = null; }
+  renderList(); draft();
+});
+
+$('#list').addEventListener('input', ev => {
+  const field = ev.target.dataset.f;
+  if (!field || field === 'period') return;
+  const e = entries.find(x => x.id === ev.target.closest('.entry').dataset.id);
+  if (field === 'name') e.name = ev.target.value;
+  else e.amount = ev.target.value === '' ? null : Math.max(0, parseFloat(ev.target.value) || 0);
+  markErrors(); draft();
+});
+
+$('#list').addEventListener('change', ev => {
+  if (ev.target.dataset.f !== 'period') return;
+  entries.find(x => x.id === ev.target.closest('.entry').dataset.id).period = ev.target.value;
+  draft();
+});
+
+$('#c-cat').addEventListener('change', () => { $('#c-newwrap').hidden = $('#c-cat').value !== '__new'; });
+$('#c-neg').addEventListener('change', () => { $('#c-moneywrap').hidden = $('#c-neg').value !== 'false'; });
+
+$('#custom-form').addEventListener('submit', ev => {
+  ev.preventDefault();
+  const category = $('#c-cat').value === '__new' ? $('#c-new').value.trim() : $('#c-cat').value;
+  const name = $('#c-name').value.trim();
+  const priority = $('#c-pri').value;
+  const neg = $('#c-neg').value;
+  const missing = [];
+  if (!category) missing.push('category');
+  if (!name) missing.push('expense name');
+  if (!priority) missing.push('priority');
+  if (!neg) missing.push('type');
+  $('#c-err').textContent = missing.length ? `Please fill in: ${missing.join(', ')}.` : '';
+  if (missing.length) return;
+  const amount = neg === 'false' && $('#c-amt').value !== '' ? Math.max(0, parseFloat($('#c-amt').value) || 0) : null;
+  entries.push(newEntry({ category, subcategory: $('#c-sub').value.trim(), name, priority, negotiable: neg === 'true', amount: amount > 0 ? amount : null, period: $('#c-period').value, custom: true }));
+  ev.target.reset();
+  $('#c-moneywrap').hidden = true;
+  refreshAll();
+  $('#c-cat').value = category;
+  $('#c-newwrap').hidden = true;
+});
+
+$('#continue').addEventListener('click', () => {
+  const note = $('#bar-note');
+  showErrors = true;
+  markErrors();
+  if (!entries.length) { note.textContent = 'Select at least one expense to continue.'; return; }
+  const bad = entries.filter(e => validate(e).length);
+  if (bad.length) {
+    note.textContent = `${bad.length} expense${bad.length > 1 ? 's need' : ' needs'} a name, priority and type.`;
+    const row = document.querySelector('#list .entry.err');
+    if (row) row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+  if (!Store.commit(entries)) { note.textContent = 'Could not save your expenses. Check that browser storage is allowed and try again.'; return; }
+  note.textContent = '';
+  window.location.href = 'goals.html';
+});
+
+(function showFunds() {
+  const totals = (readJSON('finmate_profile', {}) || {}).totals;
+  if (totals && totals.monthly > 0) {
+    $('#funds').hidden = false;
+    $('#funds').textContent = `Your available funds: ${rupees(totals.monthly)} per month`;
+  }
+})();
+
+refreshAll();
+</script>
+</body>
+</html>

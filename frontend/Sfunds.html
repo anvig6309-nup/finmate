@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Your Available Funds – FINMATE</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 64 64%27%3E%3Crect width=%2764%27 height=%2764%27 rx=%2712%27 fill=%27%23FACC15%27/%3E%3Ctext x=%2732%27 y=%2747%27 font-family=%27Arial,sans-serif%27 font-size=%2740%27 font-weight=%27800%27 text-anchor=%27middle%27 fill=%27%230F172A%27%3EF%3C/text%3E%3C/svg%3E">
+<meta name="theme-color" content="#ffffff">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --lemon: #FACC15; --lemon-dark: #EAB308; --lemon-100: #FEF9C3; --lemon-50: #FEFCE8;
+    --ink: #0F172A; --muted: #475569; --line: #E7E5E4; --soft: #FAFAF9; --danger: #B91C1C;
+    --ease: cubic-bezier(.2, .8, .2, 1);
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  body { margin: 0; font-family: 'Inter', system-ui, sans-serif; color: var(--ink); background: var(--soft); line-height: 1.55; -webkit-font-smoothing: antialiased; overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
+  h1, h2, p { margin: 0; }
+  a { color: inherit; text-decoration: none; }
+  button, input, select { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  [hidden] { display: none !important; }
+  :focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; border-radius: 10px; }
+
+  .wrap { width: min(780px, 100% - 2rem); margin-inline: auto; }
+  .top { background: #fff; border-bottom: 1px solid var(--line); padding-top: env(safe-area-inset-top); }
+  .top .wrap { height: 64px; display: flex; align-items: center; justify-content: space-between; }
+  .logo { display: inline-flex; align-items: center; gap: .55rem; font-weight: 800; font-size: 1.2rem; letter-spacing: .06em; min-height: 44px; }
+  .logo i { width: 34px; height: 34px; border-radius: 8px; background: var(--lemon); color: var(--ink); display: grid; place-items: center; font-style: normal; font-size: 1.2rem; font-weight: 800; letter-spacing: 0; line-height: 1; }
+  .chip { font-size: .8rem; font-weight: 700; padding: .3rem .8rem; border-radius: 999px; background: var(--lemon-100); border: 1px solid var(--lemon); }
+
+  main { padding: 2rem 0 11rem; }
+  h1 { font-size: clamp(1.9rem, 6vw, 2.7rem); font-weight: 800; letter-spacing: -.03em; line-height: 1.1; }
+  .sub { margin-top: .5rem; color: var(--muted); }
+  .card { margin-top: 1.25rem; background: #fff; border: 1px solid var(--line); border-radius: 22px; padding: 1.25rem; animation: rise .5s var(--ease) backwards; }
+  .card:nth-of-type(2) { animation-delay: .08s; }
+  @keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+  h2 { font-size: 1.2rem; font-weight: 800; letter-spacing: -.01em; }
+  .help { margin-top: .25rem; font-size: .9rem; color: var(--muted); }
+
+  .grid2 { display: grid; gap: 1rem; margin-top: 1rem; }
+  @media (min-width: 640px) { .grid2 { grid-template-columns: 1fr 1fr; } }
+  label { display: block; font-size: .82rem; font-weight: 700; color: var(--muted); margin-bottom: .3rem; }
+  .field { position: relative; }
+  .field span { position: absolute; left: .9rem; top: 50%; transform: translateY(-50%); font-weight: 700; color: var(--muted); pointer-events: none; }
+  .input { width: 100%; min-height: 50px; padding: 0 .95rem; border: 1.5px solid var(--line); border-radius: 12px; background: #fff; font-weight: 600; transition: border-color .2s, box-shadow .2s, background .2s; }
+  .field .input { padding-left: 2rem; }
+  .input:focus { outline: none; border-color: var(--lemon-dark); box-shadow: 0 0 0 4px rgba(250, 204, 21, .35); }
+  .input.bad { border-color: var(--danger); }
+  input[type=number]::-webkit-inner-spin-button { display: none; }
+  .note { margin-top: .4rem; font-size: .8rem; color: var(--muted); }
+  .note.err { color: var(--danger); font-weight: 700; font-size: .9rem; }
+  .note:empty { display: none; }
+
+  .row { margin-top: .9rem; padding: .9rem; border: 1px solid var(--line); border-radius: 16px; background: var(--soft); animation: rise .3s var(--ease); }
+  .row-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: .6rem; font-weight: 700; }
+  .row-grid { display: grid; gap: .75rem; grid-template-columns: 1fr 1fr; }
+  .row-grid .wide { grid-column: span 2; }
+  @media (min-width: 640px) { .row-grid { grid-template-columns: 2fr 1fr 1fr; } .row-grid .wide { grid-column: auto; } .row-grid .dates { grid-column: span 3; display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; } }
+  .row-grid .dates { grid-column: span 2; display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+  .row-eq { margin-top: .6rem; font-size: .85rem; font-weight: 600; }
+  .err { color: var(--danger); }
+  .rm { border: 0; background: transparent; min-height: 40px; padding: 0 .6rem; border-radius: 10px; font-weight: 700; font-size: .85rem; color: var(--muted); }
+  .rm:hover { background: #fff; color: var(--danger); }
+
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: .4rem; min-height: 50px; padding: 0 1.4rem; border-radius: 14px; border: 2px solid transparent; font-weight: 800; transition: transform .2s var(--ease), background .2s, box-shadow .2s; }
+  .btn:active { transform: scale(.97); }
+  .btn-outline { margin-top: 1rem; background: #fff; border-color: var(--ink); width: 100%; }
+  .btn-outline:hover { background: var(--ink); color: #fff; }
+  @media (min-width: 640px) { .btn-outline { width: auto; } }
+  .btn-primary { background: var(--lemon); color: var(--ink); box-shadow: 0 10px 24px -10px rgba(234, 179, 8, .9); width: 100%; font-size: 1.05rem; }
+  .btn-primary:hover:not(:disabled) { background: var(--lemon-dark); transform: translateY(-2px); }
+  .btn-primary:disabled { opacity: .45; cursor: not-allowed; box-shadow: none; }
+
+  .info { margin-top: 1.25rem; padding: .9rem 1.1rem; border-radius: 16px; background: var(--lemon-50); border: 1px dashed var(--lemon-dark); font-weight: 600; font-size: .95rem; animation: rise .35s var(--ease); }
+  .ref { margin-top: 1rem; font-size: .85rem; color: var(--muted); }
+
+  .bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; background: rgba(255, 255, 255, .95); backdrop-filter: blur(14px); border-top: 1px solid var(--line); box-shadow: 0 -14px 30px -18px rgba(15, 23, 42, .4); padding-bottom: env(safe-area-inset-bottom); }
+  .bar .wrap { padding: .8rem 0; display: grid; gap: .7rem; }
+  @media (min-width: 640px) { .bar .wrap { grid-template-columns: 1fr 260px; align-items: center; } }
+  .totals { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; }
+  .totals div { padding: .5rem .8rem; border-radius: 12px; background: var(--soft); border: 1px solid var(--line); }
+  .totals div:first-child { background: var(--lemon-100); border-color: var(--lemon); }
+  .totals small { display: block; font-size: .72rem; font-weight: 700; color: var(--muted); }
+  .totals b { font-size: clamp(1.05rem, 4vw, 1.35rem); letter-spacing: -.02em; }
+  .bar-note { grid-column: 1 / -1; font-size: .8rem; color: var(--muted); min-height: 1.1rem; }
+
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
+</style>
+<script src="api.js"></script>
+<script>FM.requireLogin();</script>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a href="index.html" class="logo" aria-label="FINMATE home">
+      <i aria-hidden="true">F</i>FINMATE
+    </a>
+    <span class="chip">🎓 Student</span>
+  </div>
+</header>
+
+<main class="wrap">
+  <h1>Your Available Funds</h1>
+  <p class="sub">Tell us how much money you have. Monthly funds are required. Yearly funds are optional.</p>
+
+  <section class="card" aria-labelledby="regular-h">
+    <h2 id="regular-h">Your regular funds</h2>
+    <p class="help">Enter your regular monthly funds. If you also receive yearly money, such as an annual scholarship, add it as yearly funds. Don't repeat your monthly funds there, because yearly funds are added on top (a yearly amount equal to monthly × 12 is ignored).</p>
+    <div class="grid2">
+      <div>
+        <label for="monthly">Monthly funds (required)</label>
+        <div class="field"><span>₹</span><input id="monthly" class="input" type="number" inputmode="decimal" min="0" step="any" placeholder="0"></div>
+      </div>
+      <div>
+        <label for="yearly">Yearly funds (optional)</label>
+        <div class="field"><span>₹</span><input id="yearly" class="input" type="number" inputmode="decimal" min="0" step="any" placeholder="0"></div>
+      </div>
+    </div>
+    <p class="note" id="base-note"></p>
+    <p class="note err" id="base-error" role="alert"></p>
+    <p class="ref">Minimum for students: ₹15,000 per month. Yearly funds and additional income do not count toward this minimum.</p>
+  </section>
+
+  <section class="card" aria-labelledby="extra-h">
+    <h2 id="extra-h">Additional income sources</h2>
+    <p class="help">Scholarship, part-time job, freelancing, family support, or anything else. This is optional.</p>
+    <div id="rows"></div>
+    <button class="btn btn-outline" id="add" type="button">+ Add income source</button>
+  </section>
+
+</main>
+
+<footer class="bar">
+  <div class="wrap">
+    <div class="totals" aria-live="polite">
+      <div><small>Total per month</small><b id="t-month">₹0</b></div>
+      <div><small>Total per year</small><b id="t-year">₹0</b></div>
+    </div>
+    <button class="btn btn-primary" id="continue" type="button" disabled>Continue →</button>
+    <p class="bar-note" id="bar-note"></p>
+  </div>
+</footer>
+
+<script>
+const MIN_MONTHLY = 15000;
+const FREQUENCIES = ['Daily', 'Weekly', 'Monthly', 'Yearly', 'One-time'];
+const PER_YEAR = { Daily: 365, Weekly: 52, Monthly: 12, Yearly: 1 };
+
+const toNumber = v => Math.max(0, parseFloat(v) || 0);
+const round2 = n => Math.round(n * 100) / 100;
+const rupees = n => '₹' + Math.round(n).toLocaleString('en-IN');
+
+const yearlyOf = s => s.frequency === 'One-time' ? s.amount : s.amount * PER_YEAR[s.frequency];
+const datesInvalid = s => s.frequency === 'One-time' && s.start && s.end && s.end < s.start;
+const belowMinimum = m => m > 0 && m < MIN_MONTHLY;
+const acceptedMonthly = m => belowMinimum(m) ? 0 : m;
+const repeatsMonthly = (m, y) => m > 0 && y > 0 && Math.abs(y - m * 12) <= m * 12 * 0.02;
+const countedYearly = (m, y) => repeatsMonthly(m, y) ? 0 : y;
+const totalYearly = (m, y, list) => acceptedMonthly(m) * 12 + countedYearly(m, y) + list.reduce((t, s) => t + yearlyOf(s), 0);
+
+const monthly = document.getElementById('monthly');
+const yearly = document.getElementById('yearly');
+const rows = document.getElementById('rows');
+const baseNote = document.getElementById('base-note');
+const baseError = document.getElementById('base-error');
+const barNote = document.getElementById('bar-note');
+const continueBtn = document.getElementById('continue');
+
+let monthlyValue = 0;
+let yearlyValue = 0;
+let monthlyTouched = false;
+let sources = [];
+let nextId = 1;
+
+function readStorage(key) {
+  try { return JSON.parse(localStorage.getItem(key)) || {}; } catch (e) { return {}; }
+}
+
+monthly.addEventListener('input', () => { monthlyValue = toNumber(monthly.value); update(); });
+yearly.addEventListener('input', () => { yearlyValue = toNumber(yearly.value); update(); });
+monthly.addEventListener('change', () => { monthlyTouched = true; update(); });
+
+function rowHtml(s, i) {
+  const options = FREQUENCIES.map(f => `<option ${f === s.frequency ? 'selected' : ''}>${f}</option>`).join('');
+  return `<div class="row" data-id="${s.id}">
+    <div class="row-head"><span>Source ${i + 1}</span><button class="rm" type="button" data-remove>Remove</button></div>
+    <div class="row-grid">
+      <div class="wide"><label>Income source name</label><input class="input" data-field="name" maxlength="50" placeholder="e.g. Scholarship" value="${s.name.replace(/"/g, '&quot;')}"></div>
+      <div><label>Amount</label><div class="field"><span>₹</span><input class="input" data-field="amount" type="number" inputmode="decimal" min="0" step="any" placeholder="0" value="${s.amount || ''}"></div></div>
+      <div><label>Frequency</label><select class="input" data-field="frequency">${options}</select></div>
+      <div class="dates" ${s.frequency === 'One-time' ? '' : 'hidden'}>
+        <div><label>Start date</label><input class="input" data-field="start" type="date" value="${s.start}"></div>
+        <div><label>End date</label><input class="input" data-field="end" type="date" value="${s.end}"></div>
+      </div>
+    </div>
+    <p class="row-eq" data-eq></p>
+  </div>`;
+}
+
+function renderRows() {
+  rows.innerHTML = sources.map(rowHtml).join('');
+  update();
+}
+
+function addSource(data) {
+  sources.push({ id: nextId++, name: '', amount: 0, frequency: 'Monthly', start: '', end: '', ...data });
+}
+
+document.getElementById('add').addEventListener('click', () => {
+  addSource();
+  renderRows();
+  rows.querySelector('.row:last-child [data-field="name"]').focus();
+});
+
+rows.addEventListener('click', e => {
+  if (!e.target.closest('[data-remove]')) return;
+  const id = Number(e.target.closest('.row').dataset.id);
+  sources = sources.filter(s => s.id !== id);
+  renderRows();
+});
+
+function onFieldChange(e) {
+  const field = e.target.dataset.field;
+  if (!field) return;
+  const s = sources.find(x => x.id === Number(e.target.closest('.row').dataset.id));
+  s[field] = field === 'amount' ? toNumber(e.target.value) : e.target.value;
+  if (field === 'frequency') {
+    e.target.closest('.row').querySelector('.dates').hidden = s.frequency !== 'One-time';
+    if (s.frequency !== 'One-time') { s.start = ''; s.end = ''; }
+  }
+  update();
+}
+rows.addEventListener('input', onFieldChange);
+rows.addEventListener('change', onFieldChange);
+
+function update() {
+  const yearTotal = totalYearly(monthlyValue, yearlyValue, sources);
+  document.getElementById('t-month').textContent = rupees(yearTotal / 12);
+  document.getElementById('t-year').textContent = rupees(yearTotal);
+
+  let anyInvalid = false;
+  sources.forEach(s => {
+    const row = rows.querySelector(`[data-id="${s.id}"]`);
+    if (!row) return;
+    const bad = datesInvalid(s);
+    anyInvalid = anyInvalid || bad;
+    row.querySelectorAll('[data-field="end"], [data-field="start"]').forEach(i => i.classList.toggle('bad', bad));
+    const eq = row.querySelector('[data-eq]');
+    eq.classList.toggle('err', bad);
+    eq.textContent = bad ? 'The end date must be on or after the start date.'
+      : s.amount > 0 ? (s.frequency === 'One-time'
+        ? `Counted once: about ${rupees(s.amount / 12)} per month averaged over the year.`
+        : `Counts as about ${rupees(yearlyOf(s) / 12)} per month and ${rupees(yearlyOf(s))} per year.`)
+      : '';
+  });
+
+  const below = belowMinimum(monthlyValue);
+  const showError = below && monthlyTouched;
+  baseError.textContent = showError ? 'Monthly funds must be at least ₹15,000, so this amount is not accepted.' : '';
+  monthly.classList.toggle('bad', showError);
+
+  if (repeatsMonthly(monthlyValue, yearlyValue)) baseNote.textContent = 'Your yearly funds match your monthly funds × 12, so they are not added again.';
+  else if (monthlyValue >= MIN_MONTHLY) baseNote.textContent = `Monthly funds count as ${rupees(monthlyValue * 12)} per year${yearlyValue > 0 ? `, plus ${rupees(yearlyValue)} of yearly funds on top` : ''}.`;
+  else baseNote.textContent = '';
+
+  const hasMonthly = monthlyValue >= MIN_MONTHLY;
+  continueBtn.disabled = !hasMonthly || anyInvalid;
+  barNote.textContent = below ? 'Enter at least ₹15,000 per month to continue.'
+    : !hasMonthly ? 'Enter your monthly funds to continue.'
+    : anyInvalid ? 'Fix the highlighted dates to continue.' : '';
+}
+
+function saveAndContinue() {
+  if (monthlyValue < MIN_MONTHLY) return;
+  const list = sources.filter(s => s.amount > 0).map(s => ({
+    id: 'src' + s.id,
+    name: s.name.trim() || 'Additional income',
+    amount: s.amount,
+    frequency: s.frequency,
+    startDate: s.start || null,
+    endDate: s.end || null
+  }));
+  if (countedYearly(monthlyValue, yearlyValue) > 0) {
+    list.unshift({ id: 'yearly-funds', name: 'Yearly funds', amount: countedYearly(monthlyValue, yearlyValue), frequency: 'Yearly', startDate: null, endDate: null });
+  }
+  const yearTotal = totalYearly(monthlyValue, yearlyValue, sources);
+  const profile = {
+    ...readStorage('finmate_profile'),
+    persona: 'student',
+    incomeType: 'monthly',
+    income: { monthly: monthlyValue, yearly: null },
+    extraSources: list,
+    totals: { monthly: round2(yearTotal / 12), yearly: round2(yearTotal) },
+    minimumFloor: MIN_MONTHLY
+  };
+  try { localStorage.setItem('finmate_profile', JSON.stringify(profile)); } catch (e) {}
+  FM.syncFunds(profile, 'finmate_profile');
+  window.location.href = 'student_category.html';
+}
+continueBtn.addEventListener('click', () => { if (!continueBtn.disabled) saveAndContinue(); });
+
+function restore() {
+  const p = readStorage('finmate_profile');
+  if (p.persona !== 'student') return;
+  const inc = p.income || {};
+  if (toNumber(inc.monthly) > 0) { monthly.value = inc.monthly; monthlyValue = toNumber(inc.monthly); }
+  else if (toNumber(inc.yearly) > 0) { yearly.value = inc.yearly; yearlyValue = toNumber(inc.yearly); }
+  (p.extraSources || []).forEach(s => {
+    if (s.id === 'yearly-funds') { yearly.value = s.amount; yearlyValue = toNumber(s.amount); return; }
+    addSource({
+      name: s.name || '', amount: toNumber(s.amount),
+      frequency: FREQUENCIES.includes(s.frequency) ? s.frequency : 'Monthly',
+      start: s.startDate || '', end: s.endDate || ''
+    });
+  });
+}
+
+restore();
+monthlyTouched = belowMinimum(monthlyValue);
+renderRows();
+</script>
+</body>
+</html>

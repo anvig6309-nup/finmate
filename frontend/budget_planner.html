@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Smart Budget Planner – FINMATE</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 64 64%27%3E%3Crect width=%2764%27 height=%2764%27 rx=%2712%27 fill=%27%23FACC15%27/%3E%3Ctext x=%2732%27 y=%2747%27 font-family=%27Arial,sans-serif%27 font-size=%2740%27 font-weight=%27800%27 text-anchor=%27middle%27 fill=%27%230F172A%27%3EF%3C/text%3E%3C/svg%3E">
+<meta name="theme-color" content="#ffffff">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<link rel="stylesheet" href="theme.css">
+<style>
+  :root{--lemon:#FACC15;--lemon-dark:#EAB308;--lemon-100:#FEF9C3;--lemon-50:#FEFCE8;--ink:#0F172A;--muted:#475569;--line:#E7E5E4;--soft:#FAFAF9;--white:#FFF;--danger:#B91C1C;--ok:#166534;--radius:20px;--shadow:0 10px 30px -14px rgba(15,23,42,.25);--ease:cubic-bezier(.2,.8,.2,1);--wire:#CBD5E1}
+  *,*::before,*::after{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;font-family:'Inter',system-ui,sans-serif;color:var(--ink);background:var(--soft);line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden;-webkit-tap-highlight-color:transparent}
+  h1,h2,h3,h4,p{margin:0} a{color:inherit;text-decoration:none} button{font:inherit;cursor:pointer} input,select{font:inherit;color:inherit}
+  .wrap{width:min(1180px,100% - 2rem);margin-inline:auto}
+  :focus-visible{outline:3px solid var(--ink);outline-offset:2px;border-radius:10px}
+  .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:.4rem;min-height:46px;padding:0 1.1rem;border-radius:12px;border:2px solid transparent;font-weight:700;transition:transform .2s var(--ease),background .2s,border-color .2s;white-space:nowrap}
+  .btn:active{transform:scale(.97)} .btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+  .btn-primary{background:var(--lemon);color:var(--ink)} .btn-primary:hover:not(:disabled){background:var(--lemon-dark)}
+  .btn-outline{background:#fff;border-color:var(--ink)} .btn-outline:hover:not(:disabled){background:var(--ink);color:#fff}
+  .btn-dark{background:var(--ink);color:#fff} .btn-ghost{background:transparent;border-color:var(--line)} .btn-ghost:hover{background:var(--lemon-100)}
+  .btn-sm{min-height:38px;padding:0 .8rem;font-size:.88rem;border-radius:10px}
+  .input{width:100%;min-height:46px;padding:0 .9rem;border:1.5px solid var(--line);border-radius:12px;background:#fff;font-weight:600}
+  .input:focus{outline:none;border-color:var(--lemon-dark);box-shadow:0 0 0 3px rgba(250,204,21,.4)}
+  .lbl{display:block;font-size:.78rem;font-weight:700;color:var(--muted);margin-bottom:.3rem}
+  input[type=number]::-webkit-inner-spin-button{display:none}
+  .top{position:sticky;top:0;z-index:40;background:rgba(255,255,255,.9);backdrop-filter:blur(14px);border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top)}
+  .top-in{height:64px;display:flex;align-items:center;justify-content:space-between;gap:1rem}
+  .logo{display:inline-flex;align-items:center;gap:.55rem;font-weight:800;font-size:1.2rem;letter-spacing:.06em;min-height:44px}
+  .logo-mark{width:34px;height:34px;border-radius:8px;background:var(--lemon);color:var(--ink);display:grid;place-items:center;font-size:1.2rem;font-weight:800;letter-spacing:0;line-height:1}
+  .crumb{color:var(--muted);font-weight:600;font-size:.9rem;display:none} @media(min-width:700px){.crumb{display:block}}
+  main{padding:1.5rem 0 4rem}
+  .page-head h1{font-size:clamp(1.7rem,5vw,2.5rem);font-weight:800;letter-spacing:-.03em;line-height:1.1}
+  .page-head p{color:var(--muted);margin-top:.4rem;max-width:42rem}
+  section{margin-top:2rem}
+  .sec-head{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:.75rem;margin-bottom:1rem}
+  .sec-head h2{font-size:1.35rem;font-weight:800;letter-spacing:-.02em} .sec-head p{color:var(--muted);font-size:.95rem}
+  .card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:1.2rem}
+  .banner{border-radius:16px;padding:.85rem 1rem;font-weight:600;font-size:.93rem;display:flex;gap:.6rem;align-items:flex-start;margin-top:.75rem;animation:in .35s var(--ease)}
+  .banner.warn{background:#FEF2F2;border:1px solid #FECACA;color:var(--danger)} .banner.info{background:var(--lemon-50);border:1px dashed var(--lemon-dark)} .banner.ok{background:#F0FDF4;border:1px solid #BBF7D0;color:var(--ok)}
+  @keyframes in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .period{display:grid;gap:.75rem;grid-template-columns:1fr 1fr;margin-top:1rem;max-width:34rem}
+  .opt{position:relative;text-align:left;border:2px solid var(--line);background:#fff;border-radius:16px;padding:.9rem 1rem;min-height:64px;transition:border-color .2s,box-shadow .2s,background .2s}
+  .opt:hover{border-color:var(--lemon-dark)} .opt b{display:block} .opt span{font-size:.82rem;color:var(--muted)}
+  .opt[aria-checked=true]{border-color:var(--ink);background:var(--lemon-50);box-shadow:0 0 0 3px var(--lemon)}
+  .cards{display:grid;gap:.75rem;grid-template-columns:repeat(2,minmax(0,1fr))}
+  @media(min-width:900px){.cards{grid-template-columns:repeat(5,minmax(0,1fr))}}
+  .sum{padding:1rem;border-radius:18px;background:#fff;border:1px solid var(--line);transition:transform .25s var(--ease),box-shadow .25s}
+  .sum:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
+  .sum small{display:block;color:var(--muted);font-weight:600;font-size:.78rem} .sum b{font-size:clamp(1.15rem,3.5vw,1.55rem);font-weight:800;letter-spacing:-.02em;display:block;word-break:break-word}
+  .sum.hl{background:var(--lemon-100);border-color:var(--lemon)} .sum.dark{background:var(--ink);color:#fff;border-color:var(--ink)} .sum.dark small{color:#cbd5e1}
+  .sum.bump b{animation:bump .35s ease} @keyframes bump{50%{transform:scale(1.07)}}
+  .sum:last-child{grid-column:span 2} @media(min-width:900px){.sum:last-child{grid-column:auto}}
+  .two{display:grid;gap:1rem} @media(min-width:960px){.two{grid-template-columns:1.35fr 1fr}}
+  .total{display:flex;justify-content:space-between;align-items:baseline;padding:.9rem 1rem;border-radius:14px;background:var(--ink);color:#fff;margin-top:.8rem}
+  .total b{font-size:1.5rem;letter-spacing:-.02em}
+  .calc{display:grid;gap:.4rem;margin-top:.9rem} .calc div{display:flex;justify-content:space-between;padding:.45rem 0;border-bottom:1px dashed var(--line)} .calc div:last-child{border:0;font-weight:800}
+  [hidden]{display:none!important}
+  .fetched{display:flex;flex-wrap:wrap;align-items:center;gap:.6rem 1rem;padding:.85rem 1rem;border-radius:16px;background:var(--lemon-50);border:1px solid var(--lemon-dark)}
+  .fetched>div{flex:1 1 9rem} .fetched small{display:block;font-size:.76rem;font-weight:700;color:var(--muted)} .fetched b{font-size:1.5rem;letter-spacing:-.02em}
+  .srcrow{display:flex;justify-content:space-between;gap:.6rem;flex-wrap:wrap;padding:.6rem .8rem;border:1px solid var(--line);border-radius:12px;background:var(--soft);font-size:.9rem}
+  .hint{font-size:.82rem;color:var(--muted);margin-top:.4rem} .hint.bad{color:var(--danger);font-weight:600}
+  .layout{display:grid;gap:1rem;grid-template-columns:minmax(0,1fr)}
+  .layout>*,.two>*{min-width:0} @media(min-width:1100px){.layout{grid-template-columns:minmax(0,1fr) 400px;align-items:start}}
+  .tree-scroll{overflow:auto;padding:1.5rem 1.25rem;border:1px solid var(--line);border-radius:var(--radius);background:#fff radial-gradient(circle,#E2E8F0 1px,transparent 1px) 0 0/22px 22px;min-height:340px;max-height:80vh}
+  .tree{display:inline-flex;align-items:center;min-width:max-content}
+  .branch{display:flex;align-items:center}
+  .children{display:flex;flex-direction:column;margin-left:28px;position:relative}
+  .children::before{content:"";position:absolute;left:-28px;top:50%;width:28px;border-top:2px solid var(--wire)}
+  .child{position:relative;padding:6px 0 6px 28px}
+  .child::before{content:"";position:absolute;left:0;top:50%;width:28px;border-top:2px solid var(--wire)}
+  .child::after{content:"";position:absolute;left:0;top:0;bottom:0;border-left:2px solid var(--wire)}
+  .child:first-child::after{top:50%} .child:last-child::after{bottom:50%} .child:only-child::after{display:none}
+  .node{position:relative;width:236px;background:#fff;border:1.5px solid var(--line);border-radius:16px;padding:.7rem .85rem;text-align:left;box-shadow:0 2px 6px -3px rgba(15,23,42,.2);transition:border-color .2s,transform .2s var(--ease),box-shadow .2s;animation:in .4s var(--ease) backwards}
+  .node small{display:block;font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+  .node .amt{font-size:1.15rem;font-weight:800;letter-spacing:-.02em}
+  .node .nm{font-weight:800;line-height:1.25;padding-right:1.6rem;overflow-wrap:anywhere}
+  .node.root{background:var(--ink);color:#fff;border-color:var(--ink);width:200px} .node.root small{color:#cbd5e1}
+  .node.prot{background:var(--lemon-100);border-color:var(--lemon-dark);width:200px}
+  .node.spend{border:2px solid var(--ink);width:200px}
+  .node.level{background:var(--lemon-50);border-color:var(--lemon-dark);width:190px}
+  .node.sub{width:184px;padding:.5rem .7rem;font-size:.85rem;border-style:dashed}
+  .node.cat{cursor:pointer} .node.cat:hover{border-color:var(--lemon-dark);transform:translateY(-2px);box-shadow:var(--shadow)}
+  .node.sel{border-color:var(--ink)!important;box-shadow:0 0 0 3px var(--lemon)!important}
+  .row2{display:flex;justify-content:space-between;align-items:baseline;gap:.5rem;margin-top:.15rem}
+  .est{font-size:.76rem;color:var(--muted);font-weight:600}
+  .chips{display:flex;flex-wrap:wrap;gap:.3rem;margin-top:.45rem}
+  .chip{font-size:.68rem;font-weight:800;padding:.15rem .5rem;border-radius:999px;border:1px solid var(--line);background:var(--soft);white-space:nowrap}
+  .chip.nn{background:var(--ink);color:#fff;border-color:var(--ink)} .chip.lv{background:var(--lemon);border-color:var(--lemon-dark)}
+  .chip.full{background:#DCFCE7;border-color:#86EFAC;color:var(--ok)} .chip.partial{background:var(--lemon-100);border-color:var(--lemon-dark)} .chip.none{background:#F1F5F9} .chip.short{background:#FEE2E2;border-color:#FCA5A5;color:var(--danger)} .chip.goal{background:#fff;border-color:var(--ink)}
+  .bar{height:6px;border-radius:99px;background:#EEF2F6;margin-top:.5rem;overflow:hidden} .bar i{display:block;height:100%;background:var(--ink);border-radius:99px;transition:width .5s var(--ease)}
+  .tgl{position:absolute;top:.3rem;right:.3rem;width:40px;height:40px;border-radius:8px;border:1.5px solid var(--line);background:#fff;font-size:.7rem;font-weight:800;display:grid;place-items:center} .tgl:hover{border-color:var(--ink)}
+  .tools{display:flex;gap:.5rem;flex-wrap:wrap}
+  .legend{display:flex;flex-wrap:wrap;gap:.4rem 1rem;font-size:.82rem;color:var(--muted);margin-top:.6rem}
+  .scrim{position:fixed;inset:0;background:rgba(15,23,42,.5);z-index:59;opacity:0;visibility:hidden;transition:opacity .25s,visibility .25s} .scrim.on{opacity:1;visibility:visible}
+  .panel{position:fixed;left:0;right:0;bottom:0;z-index:60;max-height:88vh;overflow:auto;background:#fff;border-radius:24px 24px 0 0;box-shadow:0 -20px 50px -20px rgba(15,23,42,.5);transform:translateY(105%);transition:transform .35s var(--ease);padding:1.1rem 1.1rem calc(1.2rem + env(safe-area-inset-bottom))}
+  .panel.open{transform:none}
+  @media(min-width:1100px){.panel{position:sticky;top:80px;z-index:1;max-height:calc(100vh - 100px);border:1px solid var(--line);border-radius:var(--radius);box-shadow:none;transform:none;padding:1.1rem}.scrim{display:none}}
+  .p-head{display:flex;justify-content:space-between;gap:.75rem;align-items:flex-start}
+  .p-head h3{font-size:1.3rem;font-weight:800;letter-spacing:-.02em}
+  .x{width:44px;height:44px;border:0;border-radius:12px;background:var(--soft);font-weight:800;flex:none} .x:hover{background:var(--lemon-100)}
+  .empty{text-align:center;padding:2.2rem 1rem;color:var(--muted)} .empty b{display:block;color:var(--ink);font-size:1.1rem;margin-bottom:.3rem}
+  .tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.3rem;background:var(--soft);padding:.25rem;border-radius:14px;margin:.9rem 0}
+  .tab{border:0;background:transparent;border-radius:11px;min-height:42px;font-weight:700;font-size:.85rem;color:var(--muted)} .tab[aria-selected=true]{background:#fff;color:var(--ink);box-shadow:0 2px 6px -2px rgba(15,23,42,.25)}
+  .kv{display:grid;grid-template-columns:1fr 1fr;gap:.5rem} .kv div{background:var(--soft);border-radius:12px;padding:.55rem .7rem} .kv small{display:block;font-size:.72rem;color:var(--muted);font-weight:700} .kv b{font-size:.98rem}
+  .edit{margin-top:.9rem;display:grid;gap:.6rem;grid-template-columns:1fr 1fr;padding:.8rem;border:1px solid var(--line);border-radius:14px} .edit .full{grid-column:span 2}
+  .chk{display:flex;align-items:center;gap:.6rem;min-height:44px;font-weight:600;font-size:.9rem} .chk input{width:20px;height:20px;accent-color:var(--ink)}
+  .chatlog{display:grid;gap:.5rem;max-height:280px;overflow:auto;padding:.2rem} .msg{max-width:92%;padding:.6rem .8rem;border-radius:14px;font-size:.9rem;animation:in .25s var(--ease);white-space:pre-line}
+  .msg.u{justify-self:end;background:var(--ink);color:#fff;border-bottom-right-radius:4px} .msg.a{justify-self:start;background:var(--soft);border:1px solid var(--line);border-bottom-left-radius:4px}
+  .qchips{display:flex;flex-wrap:wrap;gap:.4rem;margin:.7rem 0} .qchips button{border:1.5px solid var(--line);background:#fff;border-radius:99px;padding:.4rem .75rem;font-size:.8rem;font-weight:600;min-height:36px} .qchips button:hover{border-color:var(--lemon-dark);background:var(--lemon-50)}
+  .chatform{display:flex;gap:.5rem}
+  .res{margin-top:.9rem;border:1px solid var(--line);border-radius:16px;padding:.9rem;background:var(--soft);animation:in .3s var(--ease)}
+  .res .kv{margin-bottom:.6rem} .res ul{margin:.3rem 0 .6rem;padding-left:1.1rem;font-size:.88rem} .res h4{font-size:.85rem;margin-top:.5rem}
+  .up{color:var(--ok);font-weight:700} .down{color:var(--danger);font-weight:700}
+  .btnrow{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-top:.8rem}
+  .ins{display:grid;gap:.75rem;grid-template-columns:repeat(2,minmax(0,1fr))} @media(min-width:900px){.ins{grid-template-columns:repeat(3,minmax(0,1fr))}}
+  .ins .card{padding:1rem} .ins b,.ins p{overflow-wrap:anywhere}
+  .ins small{color:var(--muted);font-weight:700;font-size:.76rem;display:block} .ins b{font-size:1.1rem;display:block} .ins p{font-size:.84rem;color:var(--muted)}
+  .charts{display:grid;gap:.75rem;margin-top:.75rem;grid-template-columns:minmax(0,1fr)}
+  .charts>*{min-width:0} @media(min-width:900px){.charts{grid-template-columns:repeat(3,minmax(0,1fr))}}
+  .cv{height:250px;position:relative;min-width:0} .cv canvas{max-width:100%} .charts h3{font-size:.95rem;font-weight:800;margin-bottom:.5rem}
+  .goals{display:grid;gap:.75rem} @media(min-width:760px){.goals{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  .goal h3{font-size:1.05rem;font-weight:800;display:flex;justify-content:space-between;gap:.5rem}
+  .goal .kv{margin-top:.7rem} .pg{height:10px;border-radius:99px;background:#EEF2F6;margin-top:.8rem;overflow:hidden} .pg i{display:block;height:100%;background:var(--lemon-dark);border-radius:99px;transition:width .6s var(--ease)}
+  .toast{position:fixed;left:50%;bottom:calc(1.2rem + env(safe-area-inset-bottom));transform:translate(-50%,20px);z-index:100;background:var(--ink);color:#fff;padding:.75rem 1.2rem;border-radius:14px;font-weight:600;opacity:0;pointer-events:none;transition:opacity .3s,transform .3s var(--ease);max-width:calc(100% - 2rem)} .toast.show{opacity:1;transform:translate(-50%,0)}
+  @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}html{scroll-behavior:auto}}
+</style>
+<script src="api.js"></script>
+</head>
+<body>
+<header class="top"><div class="wrap top-in">
+  <a href="dashboard.html" class="logo" aria-label="FINMATE dashboard"><span class="logo-mark" aria-hidden="true">F</span>FINMATE</a>
+  <span class="crumb">Smart Budget Planner</span>
+  <button class="btn btn-ghost btn-sm" id="reset" type="button">Reset plan settings</button>
+</div></header>
+
+<main class="wrap">
+  <div class="page-head"><h1>Smart Budget Planner</h1>
+    <p>Your funds, expenses and goals come from your saved FinMate data. Click any category in the tree to review it, ask Pocket CA, or test a change. Nothing here edits your saved expenses.</p></div>
+  <div id="nodata"><div class="banner info" style="display:block">Loading your saved data…</div></div>
+
+  <section aria-labelledby="period-h">
+    <div class="sec-head"><div><h2 id="period-h">How would you like to plan your finances?</h2></div></div>
+    <div class="period" role="radiogroup" aria-label="Budget period">
+      <button type="button" class="opt" role="radio" data-period="monthly"><b>Monthly Budget</b><span>Plan one month at a time</span></button>
+      <button type="button" class="opt" role="radio" data-period="yearly"><b>Yearly Budget</b><span>Plan the whole year</span></button>
+    </div>
+  </section>
+  <div id="alerts"></div>
+  <section aria-label="Budget overview"><div class="cards" id="cards"></div></section>
+
+  <section class="two">
+    <div class="card" aria-labelledby="funds-h">
+      <div class="sec-head" style="margin-bottom:.6rem"><div><h2 id="funds-h">Total available funds</h2><p id="funds-sub"></p></div><a class="btn btn-ghost btn-sm" href="profile.html" id="edit-profile">Edit in Profile</a></div>
+      <div id="fund-fetched"></div>
+      <p class="hint" id="primary-hint"></p>
+      <h3 style="margin:1.1rem 0 .5rem;font-size:1rem">Additional income sources</h3>
+      <div id="sources" style="display:grid;gap:.6rem"></div>
+      <div class="total"><span>TOTAL FUNDS</span><b id="total-funds">₹0</b></div>
+    </div>
+    <div class="card" aria-labelledby="prot-h">
+      <h2 id="prot-h" style="font-size:1.35rem;font-weight:800;letter-spacing:-.02em">Protect your financial cushion</h2>
+      <p class="hint" style="margin-bottom:.8rem">Money you want to keep untouched. It is never given to a category.</p>
+      <label class="lbl" for="protect">Protected funds (₹)</label>
+      <input id="protect" class="input" type="number" inputmode="numeric" min="0" step="500" placeholder="0">
+      <p class="hint" id="protect-hint"></p>
+      <div class="calc" aria-live="polite"><div><span>Total funds</span><span id="c-total">₹0</span></div><div><span>Protected funds</span><span id="c-prot">₹0</span></div><div><span>Spendable funds</span><span id="c-spend">₹0</span></div></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="tree-h">
+    <div class="sec-head"><div><h2 id="tree-h">Financial priority tree</h2><p>Click a category to open details, ask Pocket CA, or test a change.</p></div>
+      <div class="tools"><button class="btn btn-ghost btn-sm" id="expand" type="button">Expand all</button><button class="btn btn-ghost btn-sm" id="collapse" type="button">Collapse all</button></div></div>
+    <div class="layout">
+      <div><div class="tree-scroll" id="tree-scroll" tabindex="0" aria-label="Financial priority tree, scrolls sideways"><div class="tree" id="tree"></div></div>
+        <div class="legend"><span><span class="chip nn">ESSENTIAL</span> funded first</span><span><span class="chip full">Fully funded</span></span><span><span class="chip partial">Partial</span></span><span><span class="chip short">Shortage</span></span><span>Dashed boxes are subcategories. Levels with no categories are hidden.</span></div></div>
+      <aside class="panel" id="panel" aria-label="Category details"></aside>
+    </div>
+  </section>
+
+  <section aria-labelledby="ins-h">
+    <div class="sec-head"><div><h2 id="ins-h">Financial insights</h2></div></div>
+    <div class="ins" id="insights"></div>
+    <div class="charts">
+      <div class="card"><h3>Category distribution</h3><div class="cv"><canvas id="ch-cat" role="img" aria-label="Category distribution chart"></canvas></div></div>
+      <div class="card"><h3>Priority distribution</h3><div class="cv"><canvas id="ch-pri" role="img" aria-label="Priority distribution chart"></canvas></div></div>
+      <div class="card"><h3>Protected vs spendable</h3><div class="cv"><canvas id="ch-prot" role="img" aria-label="Protected versus spendable funds chart"></canvas></div></div>
+    </div>
+    <p class="hint" id="chart-note"></p>
+  </section>
+
+  <section aria-labelledby="goal-h">
+    <div class="sec-head"><div><h2 id="goal-h">Saving goals</h2><p>Contributions are planned allocations, not money already spent.</p></div></div>
+    <div id="goal-summary"></div><div class="goals" id="goals"></div>
+  </section>
+</main>
+<div class="scrim" id="scrim"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function () {
+'use strict';
+/* All data comes from your existing FinMate backend. Nothing is read from or stored in localStorage.
+   Reads : GET /api/funds, /api/expenses, /api/goals (same routes as your Profile page)
+           GET /api/budget/settings -> { period, protected_amount, items:{ "<id>":{estM,lockM,priority,nn} } }  (404 = no saved settings yet)
+   Writes: PUT /api/budget/settings (plan settings only; your saved expenses and goals are never changed), DELETE /api/budget/settings
+   AI    : POST /api/pocket-ca/chat (the Flask backend adds your financial context). */
+const CONFIG = {
+  API_BASES: ['', 'http://localhost:5000', 'http://127.0.0.1:5000', 'http://localhost:3000', 'http://localhost:8000'],
+  E: { funds: '/api/funds', profile: '/api/profile', expenses: '/api/expenses', goals: '/api/goals', settings: '/api/budget/settings', chat: '/api/pocket-ca/chat' },
+  TOKEN_KEYS: ['token', 'authToken', 'finmate_token'], LOGIN_PAGE: 'login.html', SETUP_PAGE: 'persona.html', GOALS_PAGE: 'goals.html'
+};
+const FREQS = ['Daily', 'Weekly', 'Monthly', 'Quarterly', 'Yearly', 'One-time'];
+const PER_YEAR = { Daily: 365, Weekly: 52, Monthly: 12, Quarterly: 4, Yearly: 1 };
+const LEVELS = { 1: 'Highest', 2: 'High', 3: 'Medium', 4: 'Low', 5: 'Lowest' };
+const clamp = (n, a, b) => Math.min(b, Math.max(a, n));
+const num = v => Math.max(0, Number(v) || 0);
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const fmt = n => (n < 0 ? '-' : '') + '₹' + Math.round(Math.abs(n)).toLocaleString('en-IN');
+const pctOf = (a, b) => b > 0 ? a / b * 100 : 0;
+const pctTxt = p => (p < 1 && p > 0 ? p.toFixed(1) : Math.round(p)) + '%';
+const has = v => v !== null && v !== undefined && v !== '';
+const pick = (o, ...k) => { for (const x of k) if (o && has(o[x])) return o[x]; return null; };
+
+/* ---------- API layer (same pattern as your other pages) ---------- */
+let apiBase = null;
+const getToken = () => { for (const st of [localStorage, sessionStorage]) for (const k of CONFIG.TOKEN_KEYS) { const v = st.getItem(k); if (v) return v.replace(/^"|"$/g, ''); } return null; };
+const call = (b, p, o = {}) => { const t = getToken(); return fetch(b + p, { method: o.method || 'GET', body: o.body, credentials: 'include', headers: { Accept: 'application/json', ...(o.body ? { 'Content-Type': 'application/json' } : {}), ...(t ? { Authorization: 'Bearer ' + t } : {}) } }); };
+async function api(path, o = {}) {
+  let res;
+  if (apiBase !== null) res = await call(apiBase, path, o).catch(() => { throw new Error('Cannot reach the server'); });
+  else { for (const b of CONFIG.API_BASES) { try { const r = await call(b, path, o); if (r.status === 404 && !(r.headers.get('content-type') || '').includes('json')) continue; res = r; apiBase = b; break; } catch (e) {} } if (!res) throw new Error('Cannot reach the backend'); }
+  if (res.status === 401) { location.href = CONFIG.LOGIN_PAGE; throw new Error('Signed out'); }
+  if (res.status === 404 && !o.method) return null;
+  if (!res.ok) { let j = {}; try { j = await res.clone().json(); } catch (e) {} const er = new Error(j.message || j.error || 'Server returned ' + res.status); er.code = j.code; throw er; }
+  return res.status === 204 ? null : res.json().catch(() => null);
+}
+
+/* ---------- Deterministic calculations ---------- */
+const Calc = {
+  scale: period => period === 'yearly' ? 12 : 1,
+  toPeriod(amount, freq, period) { amount = num(amount); if (freq === 'One-time') return amount; const y = amount * (PER_YEAR[freq] || 12); return period === 'yearly' ? y : y / 12; },
+  primary(income, period) { const v = num(income[period]); if (v > 0) return { amount: v, derived: false }; const o = period === 'monthly' ? num(income.yearly) / 12 : num(income.monthly) * 12; return o > 0 ? { amount: o, derived: true } : { amount: 0, missing: true }; },
+  funds(income, sources, period) { const primary = this.primary(income, period), extras = sources.reduce((t, s) => t + this.toPeriod(s.amount, s.frequency, period), 0); return { primary, extras, total: primary.amount + extras }; },
+  monthsLeft(d, now = new Date()) { if (!d) return 12; const t = new Date(String(d).slice(0, 10) + 'T00:00:00'); return isNaN(t) ? 12 : Math.max(1, Math.ceil((t - now) / (1000 * 60 * 60 * 24 * 30.4375))); }
+};
+const priOf = (p, kind) => { if (typeof p === 'number') return clamp(Math.round(p), 1, 5); return ({ high: kind === 'goal' ? 2 : 1, medium: 3, low: kind === 'goal' ? 4 : 5 })[String(p || '').toLowerCase()] || 3; };
+
+const Engine = {
+  allocate(spendable, items) {
+    let rem = Math.max(0, Math.floor(spendable));
+    const rows = {}; items.forEach(i => rows[i.id] = { alloc: 0, need: Math.round(i.lock != null ? i.lock : i.estimate) });
+    const take = (i, w) => { const a = Math.max(0, Math.min(Math.floor(w), rem)); rows[i.id].alloc += a; rem -= a; };
+    const byPri = (a, b) => a.priority - b.priority;
+    items.filter(i => i.nn).sort(byPri).forEach(i => take(i, rows[i.id].need));
+    items.filter(i => !i.nn && i.lock != null).sort(byPri).forEach(i => take(i, i.lock));
+    let done = false;
+    for (let lv = 1; lv <= 5 && !done; lv++) {
+      const g = items.filter(i => !i.nn && i.lock == null && i.priority === lv && i.estimate > 0), need = g.reduce((t, i) => t + i.estimate, 0);
+      if (!need) continue;
+      if (need <= rem) g.forEach(i => take(i, i.estimate)); else { const r0 = rem; g.forEach(i => take(i, r0 * i.estimate / need)); done = true; }
+    }
+    const allocated = items.reduce((t, i) => t + rows[i.id].alloc, 0);
+    return { rows, allocated, remaining: rem, nnShortage: items.filter(i => i.nn).reduce((t, i) => t + Math.max(0, rows[i.id].need - rows[i.id].alloc), 0), unmet: items.reduce((t, i) => t + Math.max(0, rows[i.id].need - rows[i.id].alloc), 0) };
+  },
+  status(item, row) { if (row.need <= 0) return 'noest'; if (row.alloc >= row.need) return 'full'; return item.nn ? 'short' : (row.alloc > 0 ? 'partial' : 'none'); }
+};
+const Planner = {
+  items(state, data) {
+    const sc = Calc.scale(state.period), ov = state.items || {}, out = [];
+    data.categories.forEach(c => {
+      const o = ov['c:' + c.id] || {}, pr = o.priority ?? c.priority;
+      const amt = o.estM != null ? o.estM * sc : (c.amount > 0 ? Calc.toPeriod(c.amount, 'Monthly', state.period) : null);
+      out.push({ id: 'c:' + c.id, kind: 'category', name: c.name, priority: pr, nn: o.nn ?? c.nn, estimate: amt != null ? Math.round(amt) : 0, source: amt != null ? 'user' : 'none', lock: o.lockM != null ? o.lockM * sc : null, subs: c.subs });
+    });
+    data.goals.forEach(g => {
+      const remaining = Math.max(0, g.target - g.saved); if (!remaining) return;
+      const o = ov['g:' + g.id] || {}, monthly = remaining / Calc.monthsLeft(g.date);
+      out.push({ id: 'g:' + g.id, kind: 'goal', name: g.name, priority: o.priority ?? g.priority, nn: false, estimate: Math.round(monthly * sc / 10) * 10, source: 'goal', category: g.category, lock: o.lockM != null ? o.lockM * sc : null, subs: [], goal: g, monthly });
+    });
+    return out;
+  },
+  compute(state, data) {
+    const funds = Calc.funds(data.income, data.sources, state.period), prot = clamp(num(state.protected), 0, funds.total), spendable = Math.max(0, funds.total - prot), items = this.items(state, data);
+    return { state, data, funds, prot, spendable, items, scale: Calc.scale(state.period), result: Engine.allocate(spendable, items) };
+  },
+  simulate(ctx, changes) {
+    const items = ctx.items.map(i => changes[i.id] !== undefined ? { ...i, lock: changes[i.id] } : i), after = Engine.allocate(ctx.spendable, items);
+    return { before: ctx.result, after, diffs: ctx.items.map(i => ({ item: i, d: after.rows[i.id].alloc - ctx.result.rows[i.id].alloc })).filter(x => x.d !== 0) };
+  },
+  maxSafe(ctx, id, from) { for (let v = from; v >= 0; v -= 100) if (Planner.simulate(ctx, { [id]: v }).after.nnShortage <= ctx.result.nnShortage) return v; return 0; }
+};
+
+/* ---------- Turn backend rows into planner data ---------- */
+const normFreq = f => ({ daily: 'Daily', weekly: 'Weekly', monthly: 'Monthly', quarterly: 'Quarterly', yearly: 'Yearly', annual: 'Yearly', annually: 'Yearly', onetime: 'One-time', once: 'One-time' })[String(f || 'monthly').toLowerCase().replace(/[^a-z]/g, '')] || 'Monthly';
+const rowsOf = d => Array.isArray(d) ? d : (d && (d.items || d.expenses || d.goals || d.data)) || [];
+function buildData(funds, profile, expenses, goals) {
+  const src = funds || profile || {}, u = (src.user || src);
+  const income = { monthly: num(pick(u, 'available_monthly_funds', 'monthly_funds', 'monthly')) || null, yearly: num(pick(u, 'available_yearly_funds', 'yearly_funds', 'yearly')) || null };
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  const sources = (pick(u, 'additional_income', 'additional_income_sources', 'income_sources') || []).filter(s => {
+    const st = pick(s, 'start_date', 'startDate'), en = pick(s, 'end_date', 'endDate');
+    return !(st && new Date(st) > today) && !(en && new Date(en) < today);   // temporary income only counts between its dates
+  }).map((s, i) => ({ id: s.id ?? 'i' + i, name: pick(s, 'name', 'source', 'title') || 'Income', amount: num(s.amount), frequency: normFreq(pick(s, 'frequency', 'period')), end: pick(s, 'end_date', 'endDate') }));
+  const map = new Map();
+  rowsOf(expenses).forEach(e => {
+    const cat = pick(e, 'category') || 'Uncategorised';
+    if (!map.has(cat)) map.set(cat, { id: String(cat), name: cat, amount: 0, nn: false, pri: [], subs: new Map() });
+    const c = map.get(cat), amt = num(pick(e, 'tentative_amount', 'amount')), monthly = Calc.toPeriod(amt, normFreq(pick(e, 'period', 'frequency')), 'monthly');
+    c.amount += monthly; if (/non/i.test(pick(e, 'negotiability', 'type') || '')) c.nn = true; c.pri.push(priOf(pick(e, 'priority'), 'cat'));
+    const sub = pick(e, 'subcategory', 'expense_name', 'name'); if (sub) c.subs.set(sub, (c.subs.get(sub) || 0) + monthly);
+  });
+  const categories = [...map.values()].map(c => ({ id: c.id, name: c.name, amount: c.amount, nn: c.nn, priority: c.pri.length ? Math.min(...c.pri) : 3, subs: [...c.subs].map(([name, a]) => ({ name, amount: a > 0 ? a : null })) }));
+  const gl = rowsOf(goals).map(g => ({ id: g.id ?? g.name, name: g.name, category: pick(g, 'category', 'goal_category') || '', target: num(pick(g, 'target_amount', 'target')), saved: num(pick(g, 'saved_amount', 'saved')), date: pick(g, 'deadline', 'target_date', 'date'), priority: priOf(pick(g, 'priority'), 'goal') }));
+  return { income, sources, categories, goals: gl };
+}
+
+/* ---------- State ---------- */
+let data = null, state = { period: 'monthly', protected: 0, items: {} };
+const ui = { selected: null, tab: 'advice', collapsed: new Set(), sim: null, chats: {}, convs: {}, busy: false };
+let saveTimer = null;
+function save() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => api(CONFIG.E.settings, { method: 'PUT', body: JSON.stringify({ period: state.period, protected_amount: state.protected, items: state.items }) }).catch(e => App.toast('Couldn’t save your plan settings: ' + e.message)), 600);
+}
+
+/* ---------- Tree, panel, charts, goals ---------- */
+const Tree = {
+  statusChip(item, row) { return ({ full: '<span class="chip full">Fully funded</span>', partial: '<span class="chip partial">Partial</span>', none: '<span class="chip none">Not funded</span>', short: '<span class="chip short">Shortage</span>', noest: '<span class="chip none">No estimate</span>' })[Engine.status(item, row)]; },
+  branch(node, kids) { return `<div class="branch">${node}${kids && kids.length ? `<div class="children">${kids.map(k => `<div class="child">${k}</div>`).join('')}</div>` : ''}</div>`; },
+  subAllocs(item, alloc) { if (!item.subs.length) return []; const all = item.subs.every(s => s.amount), tot = item.subs.reduce((t, s) => t + (s.amount || 0), 0); return item.subs.map(s => ({ name: s.name, alloc: Math.floor(all && tot ? alloc * s.amount / tot : alloc / item.subs.length) })); },
+  catNode(item, ctx, n) {
+    const row = ctx.result.rows[item.id], open = !ui.collapsed.has(item.id), hasSubs = item.subs.length > 0;
+    const node = `<div class="node cat ${ui.selected === item.id ? 'sel' : ''}" role="button" tabindex="0" data-node="${esc(item.id)}" style="animation-delay:${n * 35}ms" aria-label="${esc(item.name)}, ${fmt(row.alloc)} allocated. Open details">
+      ${hasSubs ? `<button class="tgl" type="button" data-toggle="${esc(item.id)}" aria-expanded="${open}" aria-label="${open ? 'Collapse' : 'Expand'} subcategories of ${esc(item.name)}">${open ? '–' : '+' + item.subs.length}</button>` : ''}
+      <div class="nm">${esc(item.name)}</div><div class="row2"><span class="amt">${fmt(row.alloc)}</span><span class="est">est. ${fmt(row.need)}</span></div>
+      <div class="bar"><i style="width:${clamp(pctOf(row.alloc, row.need), 0, 100)}%"></i></div>
+      <div class="chips"><span class="chip lv">L${item.priority}</span>${item.kind === 'goal' ? '<span class="chip goal">Goal</span>' : ''}${item.nn ? '<span class="chip nn">ESSENTIAL</span>' : ''}${this.statusChip(item, row)}${item.lock != null ? '<span class="chip">Manual</span>' : ''}</div></div>`;
+    const subs = hasSubs && open ? this.subAllocs(item, row.alloc).map(s => `<div class="node sub"><div class="nm" style="font-size:.85rem">${esc(s.name)}</div><div class="amt" style="font-size:.95rem">${fmt(s.alloc)}</div></div>`) : [];
+    return this.branch(node, subs);
+  },
+  render(ctx) {
+    const { items, result } = ctx; let n = 0;
+    const lvls = [1, 2, 3, 4, 5].filter(l => items.some(i => i.priority === l)).map(l => {
+      const g = items.filter(i => i.priority === l).sort((a, b) => a.name.localeCompare(b.name)), sum = g.reduce((t, i) => t + result.rows[i.id].alloc, 0);
+      return this.branch(`<div class="node level"><small>Priority level ${l}</small><div class="nm">${LEVELS[l]}</div><div class="row2"><span class="amt">${fmt(sum)}</span><span class="est">${g.length} item${g.length > 1 ? 's' : ''}</span></div></div>`, g.map(i => this.catNode(i, ctx, n++)));
+    });
+    const protN = `<div class="node prot"><small>Protected funds</small><div class="amt">${fmt(ctx.prot)}</div><div class="est">Kept untouched</div></div>`;
+    const spendN = `<div class="node spend"><small>Spendable funds</small><div class="amt">${fmt(ctx.spendable)}</div><div class="est">${fmt(result.remaining)} unallocated</div></div>`;
+    const root = `<div class="node root"><small>Total funds</small><div class="amt">${fmt(ctx.funds.total)}</div><div class="est" style="color:#cbd5e1">${ctx.state.period === 'yearly' ? 'Yearly' : 'Monthly'} budget</div></div>`;
+    $('#tree').innerHTML = ctx.funds.total <= 0 || !items.length ? `<div class="empty"><b>Your tree will appear here</b>${ctx.funds.total <= 0 ? 'Add your funds in your profile to begin.' : 'No expense categories found yet.'}</div>` : this.branch(root, [protN, this.branch(spendN, lvls)]);
+  }
+};
+
+const Panel = {
+  find(ctx) { return ctx.items.find(i => i.id === ui.selected); },
+  open() { $('#panel').classList.add('open'); $('#scrim').classList.add('on'); },
+  close() { ui.selected = null; ui.sim = null; $('#panel').classList.remove('open'); $('#scrim').classList.remove('on'); App.render(); },
+  render(ctx) {
+    const el = $('#panel'), item = ui.selected && this.find(ctx);
+    if (!item) { ui.selected = null; el.innerHTML = '<div class="empty"><b>Select a category</b>Click any category node in the tree to see its numbers, ask Pocket CA, and test changes.</div>'; return; }
+    const row = ctx.result.rows[item.id], pct = pctOf(row.alloc, ctx.spendable);
+    el.innerHTML = `<div class="p-head"><div><h3>${esc(item.name)}</h3><div class="chips"><span class="chip lv">Level ${item.priority} · ${LEVELS[item.priority]}</span>${item.nn ? '<span class="chip nn">ESSENTIAL</span>' : '<span class="chip">Flexible</span>'}${Tree.statusChip(item, row)}</div></div><button class="x" id="p-close" type="button" aria-label="Close panel">✕</button></div>
+      <div class="tabs" role="tablist">${[['advice', 'Details'], ['chat', 'Ask Pocket CA'], ['whatif', 'What-if']].map(([k, l]) => `<button class="tab" role="tab" type="button" data-tab="${k}" aria-selected="${ui.tab === k}">${l}</button>`).join('')}</div><div id="tab-body"></div>`;
+    this.tab(ctx, item, row, pct);
+  },
+  tab(ctx, item, row, pct) {
+    const b = $('#tab-body'), per = ctx.state.period === 'yearly' ? 'year' : 'month';
+    if (ui.tab === 'advice') {
+      b.innerHTML = `<div class="kv"><div><small>Current allocation</small><b>${fmt(row.alloc)}</b></div><div><small>Estimated need</small><b>${item.source === 'none' ? 'None saved' : fmt(row.need)}</b></div>
+        <div><small>Share of spendable funds</small><b>${pctTxt(pct)}</b></div><div><small>Priority</small><b>Level ${item.priority}</b></div>
+        <div style="grid-column:span 2"><small>Subcategories</small><b style="font-size:.9rem">${item.subs.length ? item.subs.map(s => esc(s.name)).join(', ') : 'None saved'}</b></div></div>
+        <button class="btn btn-dark btn-sm" id="ai-run" type="button" style="margin-top:.8rem" ${ui.busy ? 'disabled' : ''}>Ask Pocket CA to review this</button>
+        <div class="edit"><p class="hint full">These adjust this plan only. Your saved expenses and goals are not changed.</p>
+          ${item.kind === 'category' ? `<div class="full"><label class="lbl" for="e-est">Planned amount per ${per} (₹)</label><input id="e-est" class="input" type="number" min="0" step="100" value="${item.estimate || ''}"></div>` : '<p class="hint full">Goal contributions come from the target, saved amount and date in your goal.</p>'}
+          <div><label class="lbl" for="e-pri">Priority level</label><select id="e-pri" class="input">${[1, 2, 3, 4, 5].map(l => `<option value="${l}" ${l === item.priority ? 'selected' : ''}>${l} · ${LEVELS[l]}</option>`).join('')}</select></div>
+          ${item.kind === 'category' ? `<label class="chk"><input id="e-nn" type="checkbox" ${item.nn ? 'checked' : ''}> Essential (non-negotiable)</label>` : '<span></span>'}
+          ${item.lock != null ? `<button class="btn btn-ghost btn-sm full" id="e-unlock" type="button">Clear manual allocation (${fmt(item.lock)})</button>` : ''}</div>`;
+    } else if (ui.tab === 'chat') {
+      const log = ui.chats[item.id] || [];
+      b.innerHTML = `<div class="qchips">${['Am I spending too much on this?', 'How can I reduce this expense?', 'What if I increase this budget by ₹500?', 'How will this affect my savings goals?', 'Is this category essential?'].map(q => `<button type="button" data-q="${esc(q)}" ${ui.busy ? 'disabled' : ''}>${esc(q)}</button>`).join('')}</div>
+        <div class="chatlog" id="chatlog" aria-live="polite">${log.length ? '' : `<p class="hint">Ask about ${esc(item.name)}. Pocket CA answers from your saved finances. It can’t change anything.</p>`}${log.map(m => `<div class="msg ${m.r}">${esc(m.t)}</div>`).join('')}${ui.busy ? '<div class="msg a">Pocket CA is thinking…</div>' : ''}</div>
+        <form class="chatform" id="chatform" style="margin-top:.7rem"><label class="sr-only" for="chat-in">Your question</label><input id="chat-in" class="input" placeholder="Type a question…" autocomplete="off"><button class="btn btn-dark" type="submit" ${ui.busy ? 'disabled' : ''}>Send</button></form>`;
+      const cl = $('#chatlog'); cl.scrollTop = cl.scrollHeight;
+    } else {
+      b.innerHTML = `<div class="kv"><div><small>Current allocation</small><b>${fmt(row.alloc)}</b></div><div><small>Unallocated now</small><b>${fmt(ctx.result.remaining)}</b></div></div>
+        <label class="lbl" for="wi-in" style="margin-top:.8rem">Proposed allocation per ${per} (₹)</label><input id="wi-in" class="input" type="number" min="0" step="100" value="${ui.sim && ui.sim.id === item.id ? ui.sim.proposed : row.alloc}">
+        <div class="btnrow"><button class="btn btn-outline" id="wi-sim" type="button">SIMULATE</button><button class="btn btn-primary" id="wi-apply" type="button" disabled>APPLY CHANGES</button></div><div id="wi-out" aria-live="polite"></div>`;
+      if (ui.sim && ui.sim.id === item.id) { $('#wi-out').innerHTML = this.simHtml(ctx, item); $('#wi-apply').disabled = false; }
+    }
+  },
+  simulate(ctx, item) { const proposed = num($('#wi-in').value), sim = Planner.simulate(ctx, { [item.id]: proposed }); ui.sim = { id: item.id, proposed, data: sim }; $('#wi-out').innerHTML = this.simHtml(ctx, item); $('#wi-apply').disabled = false; },
+  simHtml(ctx, item) {
+    const { proposed, data: s } = ui.sim, prev = s.before.rows[item.id].alloc, got = s.after.rows[item.id].alloc, diff = got - prev;
+    const others = s.diffs.filter(x => x.item.id !== item.id && x.item.kind === 'category').sort((a, b) => Math.abs(b.d) - Math.abs(a.d)), goals = s.diffs.filter(x => x.item.id !== item.id && x.item.kind === 'goal'), worse = s.after.nnShortage > ctx.result.nnShortage;
+    let warn = '';
+    if (worse) { const safe = Planner.maxSafe(ctx, item.id, proposed), low = ctx.items.filter(i => !i.nn && i.id !== item.id && ctx.result.rows[i.id].alloc > 0).sort((a, b) => b.priority - a.priority).slice(0, 2).map(i => i.name);
+      warn = `<div class="banner warn">⚠ This change leaves essential expenses ${fmt(s.after.nnShortage - ctx.result.nnShortage)} short. Alternatives: use ${fmt(safe)} instead${low.length ? `, trim lower-priority categories first (${low.map(esc).join(', ')})` : ''}, or reduce your protected funds (not recommended).</div>`; }
+    else if (got < proposed) warn = `<div class="banner info">Only ${fmt(got)} of the proposed ${fmt(proposed)} can be funded with your spendable funds.</div>`;
+    if (item.nn && proposed < ctx.result.rows[item.id].need) warn += `<div class="banner warn">⚠ You are lowering an essential category below its estimate.</div>`;
+    return `<div class="res"><div class="kv"><div><small>Previous allocation</small><b>${fmt(prev)}</b></div><div><small>Proposed allocation</small><b>${fmt(proposed)}</b></div><div><small>Difference</small><b class="${diff >= 0 ? 'up' : 'down'}">${diff >= 0 ? '+' : ''}${fmt(diff)}</b></div><div><small>Remaining spendable</small><b>${fmt(s.after.remaining)}</b></div></div>
+      <h4>Impact on other categories</h4>${others.length ? `<ul>${others.slice(0, 5).map(x => `<li>${esc(x.item.name)}: <span class="${x.d > 0 ? 'up' : 'down'}">${x.d > 0 ? '+' : ''}${fmt(x.d)}</span></li>`).join('')}</ul>` : '<ul><li>No other category changes.</li></ul>'}
+      <h4>Impact on saving goals</h4>${ctx.items.some(i => i.kind === 'goal') ? (goals.length ? `<ul>${goals.map(x => `<li>${esc(x.item.name)}: ${fmt(s.before.rows[x.item.id].alloc)} → ${fmt(s.after.rows[x.item.id].alloc)} (<span class="${x.d > 0 ? 'up' : 'down'}">${x.d > 0 ? '+' : ''}${fmt(x.d)}</span>)</li>`).join('')}</ul>` : '<ul><li>No change to your goals.</li></ul>') : '<ul><li>You have no goals yet.</li></ul>'}
+      ${warn}<div id="wi-confirm"></div></div>`;
+  },
+  confirmApply(ctx, item) { $('#wi-confirm').innerHTML = `<div class="banner info" style="display:block">Apply ${fmt(ui.sim.proposed)} to <b>${esc(item.name)}</b> in this plan? Your saved expenses are not changed.<div class="btnrow"><button class="btn btn-dark btn-sm" id="wi-yes" type="button">Yes, apply</button><button class="btn btn-ghost btn-sm" id="wi-no" type="button">Cancel</button></div></div>`; }
+};
+
+const PALETTE = ['#0F172A', '#FACC15', '#475569', '#EAB308', '#94A3B8', '#FDE047', '#1E293B', '#CA8A04', '#CBD5E1', '#FEF08A', '#64748B', '#A16207'];
+const charts = {};
+function chart(key, id, cfg) { if (typeof Chart === 'undefined') return false; if (charts[key]) { charts[key].data = cfg.data; charts[key].update(); } else charts[key] = new Chart($('#' + id), cfg); return true; }
+const Insights = {
+  render(ctx) {
+    const { items, result } = ctx, funded = items.filter(i => result.rows[i.id].alloc > 0).sort((a, b) => result.rows[b.id].alloc - result.rows[a.id].alloc);
+    const nn = items.filter(i => i.nn), nnA = nn.reduce((t, i) => t + result.rows[i.id].alloc, 0), nnN = nn.reduce((t, i) => t + result.rows[i.id].need, 0);
+    const byLevel = [1, 2, 3, 4, 5].map(l => items.filter(i => i.priority === l).reduce((t, i) => t + result.rows[i.id].alloc, 0));
+    const card = (l, v, p) => `<div class="card"><small>${l}</small><b>${v}</b><p>${p}</p></div>`, hi = funded[0], lo = funded[funded.length - 1];
+    $('#insights').innerHTML = [
+      card('Highest allocation', hi ? esc(hi.name) : '—', hi ? fmt(result.rows[hi.id].alloc) : 'Nothing allocated yet'),
+      card('Lowest allocation', lo ? esc(lo.name) : '—', lo ? fmt(result.rows[lo.id].alloc) : 'Nothing allocated yet'),
+      card('Non-negotiable expenses', fmt(nnA), `${nn.length} essential item${nn.length === 1 ? '' : 's'}, need ${fmt(nnN)}`),
+      card('Priority-wise distribution', byLevel.map((v, i) => v ? `L${i + 1}: ${fmt(v)}` : '').filter(Boolean).join(' · ') || '—', 'Allocated per priority level'),
+      card('Unallocated funds', fmt(result.remaining), result.unmet > 0 ? `${fmt(result.unmet)} of saved needs is still unfunded` : 'All saved needs are funded')].join('');
+    const ok = [
+      chart('cat', 'ch-cat', { type: 'doughnut', data: { labels: [...funded.map(i => i.name), 'Unallocated'], datasets: [{ data: [...funded.map(i => result.rows[i.id].alloc), result.remaining], backgroundColor: [...PALETTE, '#E2E8F0'], borderWidth: 2 }] }, options: { maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 11 } } } } } }),
+      chart('pri', 'ch-pri', { type: 'bar', data: { labels: [1, 2, 3, 4, 5].map(l => 'L' + l), datasets: [{ label: 'Allocated (₹)', data: byLevel, backgroundColor: '#FACC15', borderColor: '#0F172A', borderWidth: 1.5, borderRadius: 8 }] }, options: { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } } }),
+      chart('prot', 'ch-prot', { type: 'doughnut', data: { labels: ['Protected', 'Spendable'], datasets: [{ data: [ctx.prot, ctx.spendable], backgroundColor: ['#FACC15', '#0F172A'], borderWidth: 2 }] }, options: { maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } } })];
+    $('#chart-note').textContent = ok.every(Boolean) ? '' : 'Charts could not load (Chart.js needs an internet connection). All other numbers still work.';
+  }
+};
+const Goals = {
+  render(ctx) {
+    const goals = ctx.data.goals, per = ctx.state.period === 'yearly' ? 'year' : 'month';
+    if (!goals.length) { $('#goal-summary').innerHTML = ''; $('#goals').innerHTML = `<div class="card" style="grid-column:1/-1"><b>No saving goals yet.</b><p class="hint">Your budget works without goals. Adding one lets the planner set aside a monthly contribution for it. <a href="${CONFIG.GOALS_PAGE}" style="text-decoration:underline;font-weight:700">Add a goal</a></p></div>`; return; }
+    const gi = ctx.items.filter(i => i.kind === 'goal'), need = gi.reduce((t, i) => t + i.estimate, 0), got = gi.reduce((t, i) => t + ctx.result.rows[i.id].alloc, 0), high = gi.filter(i => i.priority <= 2).map(i => esc(i.name));
+    $('#goal-summary').innerHTML = !gi.length ? '' : `<div class="banner ${got >= need * 0.999 ? 'ok' : 'info'}" style="display:block">${got >= need * 0.999 ? `Your current plan covers the ${fmt(need)} per ${per} your goals need. This depends on the funds and expenses you saved and is not a guarantee.` : `Your plan funds ${fmt(got)} of the ${fmt(need)} per ${per} your goals need (${pctTxt(pctOf(got, need))}). ${high.length ? `Higher-priority goals are funded first: ${high.join(', ')}. ` : ''}Consider a longer timeline for lower-priority goals, or freeing money from expenses you marked negotiable.`}</div>`;
+    $('#goals').innerHTML = goals.map(g => {
+      const rem = Math.max(0, g.target - g.saved), months = Calc.monthsLeft(g.date), it = ctx.items.find(i => i.id === 'g:' + g.id), row = it && ctx.result.rows[it.id], planM = row ? row.alloc / ctx.scale : 0, pace = !rem ? 'Done' : planM > 0 ? Math.ceil(rem / planM) + ' months' : 'Not funded';
+      return `<div class="card goal"><h3><span>${esc(g.name)}</span><span class="chip lv">L${g.priority}</span></h3>${g.category ? `<p class="hint">${esc(g.category)}</p>` : ''}
+        <div class="pg" role="progressbar" aria-valuenow="${Math.round(pctOf(g.saved, g.target))}" aria-valuemin="0" aria-valuemax="100"><i style="width:${clamp(pctOf(g.saved, g.target), 0, 100)}%"></i></div>
+        <div class="kv"><div><small>Target</small><b>${fmt(g.target)}</b></div><div><small>Saved so far (actual)</small><b>${fmt(g.saved)}</b></div><div><small>Remaining</small><b>${fmt(rem)}</b></div><div><small>Time left</small><b>${months} month${months > 1 ? 's' : ''}</b></div>
+        <div><small>Needed per ${per}</small><b>${it ? fmt(it.estimate) : '—'}</b></div><div><small>Planned this ${per}</small><b>${row ? fmt(row.alloc) : '—'}</b></div><div style="grid-column:span 2"><small>Time to finish at the planned amount</small><b>${pace}</b></div></div></div>`;
+    }).join('');
+  }
+};
+
+/* ---------- App ---------- */
+const App = {
+  ctx: null, prev: [],
+  render(structural) {
+    if (!data) return;
+    const ctx = this.ctx = Planner.compute(state, data), f = ctx.funds, r = ctx.result, per = state.period, other = per === 'monthly' ? 'yearly' : 'monthly';
+    $$('[data-period]').forEach(b => b.setAttribute('aria-checked', String(b.dataset.period === per)));
+    $('#nodata').innerHTML = data.categories.length || !f.primary.missing ? '' : `<div class="banner info" style="display:block"><b>Your budget is built from your saved funds and expenses.</b> None were found yet, so there is nothing to plan. <a href="${CONFIG.SETUP_PAGE}" class="btn btn-primary btn-sm" style="margin-left:.4rem">Get started</a></div>`;
+    $('#funds-sub').textContent = `Showing ${per} totals, read from your profile`;
+    $('#fund-fetched').innerHTML = f.primary.missing ? '' : `<div class="fetched"><div><small>Primary ${per} funds</small><b>${fmt(f.primary.amount)}</b></div><span class="chip full">${f.primary.derived ? `Converted from your ${other} funds` : 'From your profile'}</span></div>`;
+    $('#primary-hint').textContent = f.primary.missing ? `No ${per} funds are saved yet. Add them in your profile.` : f.primary.derived ? `Your ${other} funds were converted automatically and are not added on top.` : (data.income.monthly && data.income.yearly ? 'Both monthly and yearly funds are saved. Only the selected period is used, never both together.' : '');
+    $('#primary-hint').className = 'hint' + (f.primary.missing ? ' bad' : '');
+    $('#sources').innerHTML = data.sources.length ? data.sources.map(s => `<div class="srcrow"><b>${esc(s.name)}</b><span>${fmt(s.amount)} · ${s.frequency}${s.end ? ' · ends ' + esc(String(s.end).slice(0, 10)) : ''}</span></div>`).join('') : '<p class="hint">No active additional income sources.</p>';
+    $('#total-funds').textContent = fmt(f.total);
+    if (structural) $('#protect').value = state.protected || '';
+    $('#protect-hint').textContent = num(state.protected) > f.total ? `Capped at your total funds (${fmt(f.total)}).` : ''; $('#protect-hint').className = 'hint bad';
+    $('#c-total').textContent = fmt(f.total); $('#c-prot').textContent = '− ' + fmt(ctx.prot); $('#c-spend').textContent = fmt(ctx.spendable);
+    const cards = [['Total funds', f.total, 'dark'], ['Protected funds', ctx.prot, ''], ['Spendable funds', ctx.spendable, ''], ['Total allocated', r.allocated, 'hl'], ['Remaining funds', r.remaining, '']];
+    $('#cards').innerHTML = cards.map(([l, v, c], i) => `<div class="sum ${c} ${this.prev[i] !== undefined && this.prev[i] !== v ? 'bump' : ''}"><small>${l}</small><b>${fmt(v)}</b></div>`).join(''); this.prev = cards.map(c => c[1]);
+    const al = [];
+    if (r.nnShortage > 0) al.push(`<div class="banner warn">⚠ Budget shortage: essential expenses need ${fmt(r.nnShortage)} more than your spendable funds. The planner has not reduced them. Consider adding income, lowering protected funds, or revisiting your expense amounts.</div>`);
+    else if (r.unmet > 0 && ctx.items.length) al.push(`<div class="banner info">Spendable funds cover your essentials, but ${fmt(r.unmet)} of lower-priority needs is not fully funded.</div>`);
+    else if (r.remaining > 0 && ctx.items.length) al.push(`<div class="banner ok">${fmt(r.remaining)} is unallocated. You could add it to a goal or your protected funds.</div>`);
+    $('#alerts').innerHTML = al.join('');
+    Tree.render(ctx); Panel.render(ctx); Insights.render(ctx); Goals.render(ctx);
+  },
+  toast(msg) { const t = $('#toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(this.tt); this.tt = setTimeout(() => t.classList.remove('show'), 3000); },
+  select(id) { ui.selected = id; ui.sim = null; this.render(); Panel.open(); },
+  edit(fn, msg) { fn(); ui.sim = null; save(); this.render(); if (msg) this.toast(msg); },
+  prompt(q, item) {
+    const row = this.ctx.result.rows[item.id], per = state.period;
+    return `[Smart Budget Planner · ${per} budget · ${item.kind === 'goal' ? 'goal' : 'category'}: "${item.name}" · currently ${fmt(row.alloc)} planned, ${pctTxt(pctOf(row.alloc, this.ctx.spendable))} of spendable funds · priority level ${item.priority}${item.nn ? ' · essential' : ''}] ${q}`;
+  },
+  async ask(q) {
+    const id = ui.selected, item = Panel.find(this.ctx); if (!item || ui.busy) return;
+    const log = ui.chats[id] || (ui.chats[id] = []); log.push({ r: 'u', t: q }); ui.tab = 'chat'; ui.busy = true; Panel.render(this.ctx);
+    try {
+      const r = await api(CONFIG.E.chat, { method: 'POST', body: JSON.stringify({ conversation_id: ui.convs[id] || null, message: this.prompt(q, item) }) });
+      if (r && r.conversation && r.conversation.id) ui.convs[id] = r.conversation.id;
+      log.push({ r: 'a', t: (r && r.message && r.message.content) || 'Pocket CA returned an empty reply.' });
+    } catch (e) { log.push({ r: 'a', t: e.code === 'AI_NOT_CONFIGURED' ? 'Pocket CA’s AI service isn’t configured on the server yet.' : 'Couldn’t reach Pocket CA: ' + e.message + '.' }); }
+    ui.busy = false; if (ui.selected === id && ui.tab === 'chat') Panel.render(this.ctx);
+  },
+  bind() {
+    document.addEventListener('click', e => {
+      const t = e.target; let b;
+      if ((b = t.closest('[data-period]'))) this.edit(() => { state.period = b.dataset.period; }, null);
+      else if ((b = t.closest('[data-toggle]'))) { const id = b.dataset.toggle; ui.collapsed.has(id) ? ui.collapsed.delete(id) : ui.collapsed.add(id); this.render(); e.stopPropagation(); }
+      else if ((b = t.closest('[data-node]'))) this.select(b.dataset.node);
+      else if (t.closest('#expand')) { ui.collapsed.clear(); this.render(); }
+      else if (t.closest('#collapse')) { this.ctx.items.forEach(i => i.subs.length && ui.collapsed.add(i.id)); this.render(); }
+      else if (t.closest('#p-close') || t.closest('#scrim')) Panel.close();
+      else if ((b = t.closest('[data-tab]'))) { ui.tab = b.dataset.tab; this.render(); }
+      else if ((b = t.closest('[data-q]'))) this.ask(b.dataset.q);
+      else if (t.closest('#ai-run')) this.ask('Please review this and suggest practical improvements. Do not change any saved data.');
+      else if (t.closest('#e-unlock')) this.edit(() => { delete state.items[ui.selected].lockM; }, 'Manual allocation cleared');
+      else if (t.closest('#wi-sim')) Panel.simulate(this.ctx, Panel.find(this.ctx));
+      else if (t.closest('#wi-apply')) Panel.confirmApply(this.ctx, Panel.find(this.ctx));
+      else if (t.closest('#wi-no')) $('#wi-confirm').innerHTML = '';
+      else if (t.closest('#wi-yes')) this.edit(() => { const o = state.items[ui.selected] = state.items[ui.selected] || {}; o.lockM = ui.sim.proposed / this.ctx.scale; }, 'Allocation updated');
+      else if (t.closest('#reset')) { if (confirm('Reset your plan settings (period, protected amount and category edits)? Your saved funds, expenses and goals are not touched.')) api(CONFIG.E.settings, { method: 'DELETE' }).then(() => { state = { period: state.period, protected: 0, items: {} }; ui.selected = null; ui.sim = null; ui.chats = {}; ui.convs = {}; this.render(true); this.toast('Plan settings reset'); }).catch(er => this.toast('Couldn’t reset: ' + er.message)); }
+    });
+    document.addEventListener('keydown', e => { const n = e.target.closest && e.target.closest('[data-node]'); if (n && e.target === n && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); this.select(n.dataset.node); } if (e.key === 'Escape' && ui.selected) Panel.close(); });
+    document.addEventListener('input', e => {
+      const t = e.target;
+      if (t.id === 'protect') { state.protected = num(t.value); save(); this.render(); }
+      else if (t.id === 'wi-in') { ui.sim = null; $('#wi-apply').disabled = true; $('#wi-out').innerHTML = ''; }
+    });
+    document.addEventListener('change', e => {
+      const t = e.target, id = ui.selected;
+      if (t.id === 'protect') t.value = this.ctx.prot || '';
+      else if (id && ['e-est', 'e-pri', 'e-nn'].includes(t.id)) this.edit(() => { const o = state.items[id] = state.items[id] || {}; if (t.id === 'e-est') o.estM = num(t.value) / this.ctx.scale; else if (t.id === 'e-pri') o.priority = Number(t.value); else o.nn = t.checked; }, 'Plan updated');
+    });
+    document.addEventListener('submit', e => { if (e.target.id === 'chatform') { e.preventDefault(); const i = $('#chat-in'), q = i.value.trim(); if (q) { i.value = ''; this.ask(q); } } });
+  },
+  async load() {
+    $('#nodata').innerHTML = '<div class="banner info" style="display:block">Loading your saved data…</div>';
+    try {
+      const [fu, pr, ex, go, se] = await Promise.all([api(CONFIG.E.funds), api(CONFIG.E.profile), api(CONFIG.E.expenses), api(CONFIG.E.goals), api(CONFIG.E.settings)]);
+      data = buildData(fu, pr, ex, go);
+      const s = se || {};
+      state = { period: s.period === 'yearly' || s.period === 'monthly' ? s.period : (data.income.monthly || !data.income.yearly ? 'monthly' : 'yearly'), protected: num(s.protected_amount), items: s.items && typeof s.items === 'object' ? s.items : {} };
+      this.render(true);
+    } catch (e) { $('#nodata').innerHTML = `<div class="banner warn" style="display:block">Couldn’t load your saved data: ${esc(e.message)}. <button class="btn btn-outline btn-sm" id="retry" type="button" style="margin-left:.4rem">Retry</button></div>`; $('#retry').onclick = () => this.load(); }
+  }
+};
+App.bind(); App.load();
+})();
+</script>
+</body>
+</html>

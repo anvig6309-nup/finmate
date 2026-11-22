@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sign In | FinMate</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Sora:wght@700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="theme.css">
+<style>
+:root { --yellow:#FFD43B; --yellow-deep:#F5B800; --yellow-pale:#FFF6CC; --white:#FFFFFF; --ink:#1F1A08; --muted:#6F6840; --error:#1F1A08;
+  --font-head:"Sora","Segoe UI",sans-serif; --font-body:"DM Sans","Segoe UI",sans-serif; }
+:root[data-eff="dark"] { --white:#1c202c; --ink:#f3f5fa; --muted:#9ba3b8; --yellow-pale:#2d2610; }
+* { box-sizing:border-box; margin:0; padding:0; }
+body { font-family:var(--font-body); color:var(--ink); background:var(--white); min-height:100vh; display:grid; place-items:center; padding:1.5rem; position:relative; overflow-x:hidden; }
+:focus-visible { outline:3px solid var(--ink); outline-offset:3px; }
+.glow { position:fixed; border-radius:50%; filter:blur(70px); opacity:.55; pointer-events:none; }
+.g1 { width:380px; height:380px; background:var(--yellow); top:-120px; right:-100px; animation:d1 14s ease-in-out infinite alternate; }
+.g2 { width:320px; height:320px; background:var(--yellow-pale); bottom:-100px; left:-80px; animation:d2 16s ease-in-out infinite alternate; }
+@keyframes d1 { to { transform:translate(-70px,80px) scale(1.15); } }
+@keyframes d2 { to { transform:translate(90px,-60px) scale(1.2); } }
+.card { position:relative; z-index:1; width:min(440px,100%); background:var(--white); border:2px solid var(--ink); border-radius:28px; padding:2rem; box-shadow:8px 8px 0 var(--yellow); animation:in .7s cubic-bezier(.2,.8,.2,1) backwards; }
+@keyframes in { from { opacity:0; transform:translateY(30px) scale(.97); } }
+.logo { display:inline-flex; align-items:center; gap:.5rem; font:800 1.15rem var(--font-head); color:var(--ink); text-decoration:none; margin-bottom:1.2rem; }
+.logo-mark { width:30px; height:30px; border-radius:9px; background:var(--yellow); color:#1F1A08; display:grid; place-items:center; }
+h1 { font:800 1.9rem/1.15 var(--font-head); letter-spacing:-.02em; }
+.sub { color:var(--muted); margin:.3rem 0 1.4rem; }
+.field { margin-bottom:1rem; }
+.field label { display:block; font-weight:700; font-size:.9rem; margin-bottom:.3rem; }
+.input-wrap { position:relative; }
+.field input { width:100%; padding:.8rem 1rem; border:2px solid var(--ink); border-radius:14px; font:inherit; background:var(--white); color:inherit; transition:background .2s, box-shadow .2s; }
+.field input:focus { outline:none; background:var(--yellow-pale); box-shadow:0 0 0 4px var(--yellow); }
+.field input.bad { background:var(--yellow-pale); border-style:dashed; animation:shake .35s; }
+@keyframes shake { 25% { transform:translateX(-5px); } 75% { transform:translateX(5px); } }
+.toggle { position:absolute; right:.6rem; top:50%; transform:translateY(-50%); border:none; background:none; font:700 .8rem var(--font-body); cursor:pointer; padding:.3rem .5rem; border-radius:8px; color:inherit; }
+.toggle:hover { background:var(--yellow); color:#1F1A08; }
+.msg { min-height:1.3rem; font-size:.88rem; font-weight:700; margin-bottom:.4rem; color:var(--ink); }
+.btn { width:100%; font:700 1rem var(--font-body); padding:.9rem 1rem; border-radius:999px; border:2px solid var(--ink); cursor:pointer; color:var(--ink); display:flex; justify-content:center; align-items:center; gap:.6rem; transition:transform .2s, box-shadow .2s, background .2s; }
+.btn:hover { transform:translateY(-3px); box-shadow:0 5px 0 var(--ink); }
+.btn:active { transform:none; box-shadow:none; }
+.btn-yellow { background:var(--yellow); color:#1F1A08; } .btn-yellow:hover { background:var(--yellow-deep); }
+.btn-white { background:var(--white); color:var(--ink); } .btn-white:hover { background:var(--yellow-pale); }
+.g-icon { width:22px; height:22px; border-radius:50%; background:var(--ink); color:var(--yellow); display:grid; place-items:center; font:800 .8rem var(--font-head); }
+.or { display:flex; align-items:center; gap:.8rem; color:var(--muted); font-size:.85rem; margin:1rem 0; }
+.or::before, .or::after { content:""; flex:1; height:2px; background:var(--yellow); border-radius:2px; }
+.switch { text-align:center; margin-top:1.2rem; font-size:.95rem; }
+.switch a { font-weight:700; color:var(--ink); background:linear-gradient(transparent 60%, var(--yellow) 60%); text-decoration:none; }
+.note { font-size:.78rem; color:var(--muted); text-align:center; margin-top:1rem; }
+.forgot { text-align:right; margin:-.4rem 0 .8rem; font-size:.9rem; }
+.forgot a { font-weight:700; color:var(--ink); text-decoration:none; }
+.modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.6); display:none; place-items:center; z-index:99; padding:1rem; }
+.modal-box { background:var(--white); border:2px solid var(--ink); border-radius:24px; padding:1.8rem; max-width:480px; width:100%; box-shadow:6px 6px 0 var(--yellow); }
+@media (prefers-reduced-motion:reduce) { *, *::before { animation:none !important; transition:none !important; } }
+</style>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="api.js"></script>
+</head>
+<body>
+<div class="glow g1"></div><div class="glow g2"></div>
+
+<main class="card">
+  <a href="index.html" class="logo"><span class="logo-mark">F</span>FinMate</a>
+  <h1>Welcome back.</h1>
+  <p class="sub">Log in to pick up where you left off.</p>
+
+  <form id="authForm" novalidate>
+    <div class="field"><label for="email">Email</label><input type="email" id="email" autocomplete="email"></div>
+    <div class="field"><label for="password">Password</label>
+      <div class="input-wrap"><input type="password" id="password" autocomplete="current-password"><button type="button" class="toggle" data-target="password">Show</button></div>
+    </div>
+    <p class="forgot"><a href="forgot.html">Forgot password?</a></p>
+    <p class="msg" id="msg" role="alert"></p>
+    <button type="submit" class="btn btn-yellow">Sign In</button>
+  </form>
+
+  <div class="or">or</div>
+  <button type="button" class="btn btn-white" id="magicLinkBtn" style="margin-bottom:.6rem"><span style="font-size:1.15rem">✉️</span> Sign In with Gmail Link / Code</button>
+  <button type="button" class="btn btn-white" id="googleBtn"><span class="g-icon" aria-hidden="true">G</span>Continue with Google</button>
+  <div id="googleButtonContainer" style="margin-top:10px;display:none"></div>
+
+  <div id="mainOtpArea" style="display:none;margin-top:.8rem;padding:.85rem;background:var(--yellow-pale);border:1.5px solid var(--ink);border-radius:14px">
+    <b style="font-size:.85rem;display:block;margin-bottom:.35rem">Enter 6-Digit Authentication Code:</b>
+    <div style="display:flex;gap:.5rem">
+      <input type="text" id="mainOtpInput" maxlength="6" placeholder="123456" style="flex:1;padding:.5rem .7rem;border:1.5px solid var(--ink);border-radius:10px;font-size:.95rem;font-weight:700;letter-spacing:3px;text-align:center;background:var(--white);color:var(--ink)">
+      <button type="button" class="btn btn-yellow" id="mainVerifyOtpBtn" style="padding:.5rem .9rem;font-size:.85rem;white-space:nowrap">Sign In</button>
+    </div>
+    <div style="margin-top:.45rem;text-align:center">
+      <a id="mainDirectLink" href="#" style="font-size:.82rem;font-weight:700;color:var(--ink);text-decoration:underline">Or click here to sign in with one click</a>
+    </div>
+  </div>
+
+  <p class="switch">New to FinMate? <a href="signup.html">Sign Up</a></p>
+  <p class="note">Your account is stored securely by the FinMate server.</p>
+</main>
+
+<div class="modal-overlay" id="googleModal">
+  <div class="modal-box">
+    <h2 style="font:800 1.35rem var(--font-head);margin-bottom:.6rem">Sign in with Google or Gmail</h2>
+    <p style="font-size:.9rem;color:var(--muted);margin-bottom:1rem">
+      Choose how you want to authenticate with your Gmail:
+    </p>
+
+    <div style="background:var(--yellow-pale);border:1.5px solid var(--ink);border-radius:14px;padding:.85rem;margin-bottom:1rem">
+      <b style="font-size:.85rem;display:block;margin-bottom:.35rem">✉️ Option 1: Direct Authentication Link &amp; 6-Digit Code</b>
+      <p style="font-size:.78rem;color:var(--muted);margin-bottom:.5rem">
+        FinMate will create a 6-digit code and direct link (sent directly to your Gmail inbox when SMTP is configured):
+      </p>
+      <div style="display:flex;gap:.5rem">
+        <input type="email" id="modalGmailInput" placeholder="yourname@gmail.com" style="flex:1;padding:.5rem .7rem;border:1.5px solid var(--ink);border-radius:10px;font-size:.82rem;background:var(--white);color:var(--ink)">
+        <button type="button" class="btn btn-yellow" id="modalSendGmailBtn" style="padding:.5rem .9rem;font-size:.85rem;white-space:nowrap">Send Link &amp; Code</button>
+      </div>
+      <p id="modalGmailStatus" style="font-size:.8rem;margin-top:.4rem;color:var(--ink);min-height:1.1rem;margin-bottom:0"></p>
+
+      <div id="modalVerifyArea" style="display:none;margin-top:.75rem;padding-top:.75rem;border-top:1px dashed var(--ink)">
+        <label for="modalCodeInput" style="font-size:.82rem;font-weight:700;display:block;margin-bottom:.3rem">Enter 6-Digit Authentication Code:</label>
+        <div style="display:flex;gap:.5rem;margin-bottom:.4rem">
+          <input type="text" id="modalCodeInput" maxlength="6" placeholder="123456" style="flex:1;padding:.5rem .7rem;border:1.5px solid var(--ink);border-radius:10px;font-size:.95rem;font-weight:700;letter-spacing:3px;text-align:center;background:var(--white);color:var(--ink)">
+          <button type="button" class="btn btn-yellow" id="modalVerifyCodeBtn" style="padding:.5rem .9rem;font-size:.85rem;white-space:nowrap">Verify &amp; Sign In</button>
+        </div>
+        <div style="text-align:center">
+          <a id="modalDirectLink" href="#" style="font-size:.82rem;font-weight:700;color:var(--ink);text-decoration:underline">Or click here to sign in with one click</a>
+        </div>
+      </div>
+    </div>
+
+    <details style="margin-bottom:1rem;font-size:.85rem">
+      <summary style="font-weight:700;cursor:pointer;padding:.4rem 0;color:var(--ink)">⚙️ Option 2: Configure Google OAuth Client ID (for official popup)</summary>
+      <div style="border:1px dashed var(--muted);border-radius:12px;padding:.75rem .9rem;font-size:.82rem;margin-top:.6rem;line-height:1.45;color:var(--muted)">
+        <label for="cfgGoogleClientId" style="font-size:.82rem;font-weight:700;display:block;margin-bottom:.35rem;color:var(--ink)">Google Client ID:</label>
+        <div style="display:flex;gap:.5rem;margin-bottom:.5rem">
+          <input type="text" id="cfgGoogleClientId" placeholder="xxxx.apps.googleusercontent.com" style="flex:1;padding:.4rem .6rem;border:1.5px solid var(--ink);border-radius:8px;font-size:.8rem;background:var(--white);color:var(--ink)">
+          <button type="button" class="btn btn-yellow" id="saveClientIdBtn" style="padding:.4rem .7rem;font-size:.8rem;white-space:nowrap">Save</button>
+        </div>
+        <p id="cfgStatus" style="font-size:.78rem;min-height:1rem;margin-bottom:.4rem"></p>
+        <b style="color:var(--ink)">Authorized Origins:</b> Make sure <code>http://localhost:5000</code> and <code>http://127.0.0.1:5000</code> are added under <i>Authorized JavaScript origins</i> in Google Cloud Console.
+      </div>
+    </details>
+
+    <div style="display:flex;flex-direction:column;gap:.6rem">
+      <button type="button" class="btn btn-yellow" id="demoGoogleBtn">⚡ Test with Google Demo Account (Offline/Dev)</button>
+      <button type="button" class="btn btn-white" onclick="document.getElementById('googleModal').style.display='none'">Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* Pages */
+const NEXT_PAGE = "persona.html";        // new users personalise first
+const DASHBOARD_PAGE = "dashboard.html"; // returning users
+
+const form = document.getElementById("authForm");
+const msg = document.getElementById("msg");
+
+function showError(input, text) {
+  msg.style.color = "#c0392b";
+  msg.textContent = text;
+  if (input) { input.classList.add("bad"); input.focus(); setTimeout(() => input.classList.remove("bad"), 400); }
+}
+
+// Check for magic token from email link (#magicToken=...)
+(function checkMagicLink() {
+  const hash = location.hash.slice(1);
+  if (!hash) return;
+  const params = new URLSearchParams(hash);
+  const token = params.get("magicToken");
+  if (token) {
+    history.replaceState(null, "", location.pathname);
+    msg.style.color = "var(--ink)";
+    msg.textContent = "Verifying sign-in link from your Gmail...";
+    fetch("/api/auth/magic-login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token })
+    })
+    .then(r => r.json().then(d => ({ ok: r.ok, data: d })))
+    .then(({ ok, data }) => {
+      if (ok) {
+        FM.clearLocal();
+        localStorage.setItem("token", data.token);
+        try { FM.hydrate(); } catch (e) {}
+        window.location.href = data.has_profile ? DASHBOARD_PAGE : NEXT_PAGE;
+      } else {
+        showError(null, data.error || "This sign-in link is invalid or has expired. Please request a new one.");
+      }
+    })
+    .catch(() => showError(null, "Could not reach the server. Is FinMate running?"));
+  }
+})();
+
+async function sendMagicLink(targetEmail, statusEl, codeAreaEl) {
+  const email = (targetEmail || "").trim().toLowerCase();
+  if (!/^\S+@\S+\.\S+$/.test(email)) {
+    if (statusEl) {
+      statusEl.style.color = "#c0392b";
+      statusEl.textContent = "Please enter a valid email address (e.g. name@gmail.com).";
+    }
+    return false;
+  }
+  if (statusEl) {
+    statusEl.style.color = "var(--ink)";
+    statusEl.textContent = "Generating authentication code & link...";
+  }
+  try {
+    const res = await fetch("/api/auth/magic-link", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: email })
+    });
+    const d = await res.json().catch(() => ({}));
+    if (res.ok) {
+      if (statusEl) {
+        statusEl.style.color = "#27ae60";
+        if (d.mode === "smtp") {
+          statusEl.innerHTML = `✉️ A 6-digit code and direct link have been sent to <b>${email}</b>! Check your Gmail inbox or enter the code below.`;
+        } else {
+          statusEl.innerHTML = `Code generated: <b style="font-size:1.1rem;letter-spacing:2px;color:var(--ink);background:var(--yellow);padding:2px 8px;border-radius:6px">${d.code}</b><br><span style="font-size:.76rem;color:var(--muted)">FinMate is in local mode (SMTP not yet configured in .env). Use this code or click the direct link below.</span>`;
+        }
+      }
+      if (codeAreaEl) {
+        codeAreaEl.style.display = "block";
+        const codeInput = codeAreaEl.querySelector("input[maxlength='6']");
+        if (codeInput && d.code) {
+          codeInput.value = d.code;
+          codeInput.focus();
+        }
+        const directLink = codeAreaEl.querySelector("a");
+        if (directLink && d.link) {
+          directLink.href = d.link;
+        }
+      }
+      return d;
+    } else {
+      if (statusEl) {
+        statusEl.style.color = "#c0392b";
+        statusEl.textContent = d.error || "Could not generate authentication code.";
+      }
+      return false;
+    }
+  } catch (err) {
+    if (statusEl) {
+      statusEl.style.color = "#c0392b";
+      statusEl.textContent = "Could not reach the server.";
+    }
+    return false;
+  }
+}
+
+async function verifyCode(codeVal, statusEl) {
+  const code = (codeVal || "").trim();
+  if (!code) {
+    if (statusEl) {
+      statusEl.style.color = "#c0392b";
+      statusEl.textContent = "Please enter the 6-digit code.";
+    }
+    return;
+  }
+  if (statusEl) {
+    statusEl.style.color = "var(--ink)";
+    statusEl.textContent = "Verifying authentication code...";
+  }
+  try {
+    const res = await fetch("/api/auth/magic-login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code: code })
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      if (statusEl) {
+        statusEl.style.color = "#c0392b";
+        statusEl.textContent = data.error || "Invalid or expired code.";
+      }
+      return;
+    }
+    FM.clearLocal();
+    localStorage.setItem("token", data.token);
+    try { await FM.hydrate(); } catch (e) {}
+    window.location.href = data.has_profile ? DASHBOARD_PAGE : NEXT_PAGE;
+  } catch (err) {
+    if (statusEl) {
+      statusEl.style.color = "#c0392b";
+      statusEl.textContent = "Cannot reach server. Is FinMate running?";
+    }
+  }
+}
+
+const magicLinkBtn = document.getElementById("magicLinkBtn");
+if (magicLinkBtn) {
+  magicLinkBtn.addEventListener("click", async () => {
+    const emailInp = document.getElementById("email");
+    const email = emailInp.value.trim();
+    if (!email) {
+      showError(emailInp, "Enter your Gmail address above to receive your direct link and code.");
+      emailInp.focus();
+      return;
+    }
+    await sendMagicLink(email, msg, document.getElementById("mainOtpArea"));
+  });
+}
+
+const mainVerifyOtpBtn = document.getElementById("mainVerifyOtpBtn");
+if (mainVerifyOtpBtn) {
+  mainVerifyOtpBtn.addEventListener("click", () => {
+    const val = document.getElementById("mainOtpInput").value;
+    verifyCode(val, msg);
+  });
+}
+
+const modalSendGmailBtn = document.getElementById("modalSendGmailBtn");
+if (modalSendGmailBtn) {
+  modalSendGmailBtn.addEventListener("click", async () => {
+    const inp = document.getElementById("modalGmailInput");
+    const st = document.getElementById("modalGmailStatus");
+    const verifyArea = document.getElementById("modalVerifyArea");
+    await sendMagicLink(inp ? inp.value : "", st, verifyArea);
+  });
+}
+
+const modalVerifyCodeBtn = document.getElementById("modalVerifyCodeBtn");
+if (modalVerifyCodeBtn) {
+  modalVerifyCodeBtn.addEventListener("click", () => {
+    const val = document.getElementById("modalCodeInput").value;
+    const st = document.getElementById("modalGmailStatus");
+    verifyCode(val, st);
+  });
+}
+
+/* Show / hide password buttons */
+document.querySelectorAll(".toggle").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    const input = document.getElementById(btn.dataset.target);
+    const show = input.type === "password";
+    input.type = show ? "text" : "password";
+    btn.textContent = show ? "Hide" : "Show";
+  });
+});
+
+/* Google Sign-In Integration */
+let googleClientId = null;
+
+async function initGoogle() {
+  try {
+    const r = await fetch("/api/auth/google/config");
+    const d = await r.json().catch(() => ({}));
+    if (d && d.client_id) {
+      googleClientId = d.client_id;
+      const checkGsi = setInterval(() => {
+        if (window.google && google.accounts && google.accounts.id) {
+          clearInterval(checkGsi);
+          google.accounts.id.initialize({
+            client_id: googleClientId,
+            callback: handleGoogleCredentialResponse,
+            auto_select: false
+          });
+          const container = document.getElementById("googleButtonContainer");
+          container.style.display = "block";
+          google.accounts.id.renderButton(container, {
+            theme: "outline",
+            size: "large",
+            width: 360,
+            text: "continue_with"
+          });
+          document.getElementById("googleBtn").style.display = "none";
+        }
+      }, 100);
+      setTimeout(() => clearInterval(checkGsi), 4000);
+    }
+  } catch (e) {}
+}
+
+async function handleGoogleCredentialResponse(response) {
+  if (!response || !response.credential) return;
+  msg.textContent = "Verifying with Google...";
+  try {
+    const res = await fetch("/api/auth/google", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ credential: response.credential })
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) return showError(null, data.error || "Google sign-in failed.");
+    FM.clearLocal();
+    localStorage.setItem("token", data.token);
+    try { await FM.hydrate(); } catch (e) {}
+    window.location.href = data.has_profile ? DASHBOARD_PAGE : NEXT_PAGE;
+  } catch (err) {
+    showError(null, "Could not reach server.");
+  }
+}
+
+document.getElementById("googleBtn").addEventListener("click", () => {
+  const emailInp = document.getElementById("email");
+  const emailVal = emailInp ? emailInp.value.trim() : "";
+  if (emailVal && document.getElementById("modalGmailInput")) {
+    document.getElementById("modalGmailInput").value = emailVal;
+  }
+  if (googleClientId && window.google && google.accounts && google.accounts.id) {
+    try {
+      google.accounts.id.prompt((notification) => {
+        if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+          document.getElementById("googleModal").style.display = "grid";
+        }
+      });
+    } catch (e) {
+      document.getElementById("googleModal").style.display = "grid";
+    }
+  } else {
+    document.getElementById("googleModal").style.display = "grid";
+  }
+});
+
+document.getElementById("demoGoogleBtn").addEventListener("click", async () => {
+  document.getElementById("googleModal").style.display = "none";
+  msg.textContent = "Signing in with Google Demo Account...";
+  try {
+    const res = await fetch("/api/auth/google", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ credential: "demo-google-token", email: "anvi.gupta@gmail.com", name: "Anvi Gupta" })
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) return showError(null, data.error || "Google test sign-in failed.");
+    FM.clearLocal();
+    localStorage.setItem("token", data.token);
+    try { await FM.hydrate(); } catch (e) {}
+    window.location.href = data.has_profile ? DASHBOARD_PAGE : NEXT_PAGE;
+  } catch (e) {
+    showError(null, "Could not reach the server.");
+  }
+});
+
+const saveClientIdBtn = document.getElementById("saveClientIdBtn");
+if (saveClientIdBtn) {
+  saveClientIdBtn.addEventListener("click", async () => {
+    const inp = document.getElementById("cfgGoogleClientId");
+    const st = document.getElementById("cfgStatus");
+    const val = inp ? inp.value.trim() : "";
+    if (!val) {
+      if (st) { st.style.color = "#c0392b"; st.textContent = "Please paste your Client ID first."; }
+      return;
+    }
+    if (st) { st.style.color = "var(--ink)"; st.textContent = "Connecting Client ID..."; }
+    try {
+      const res = await fetch("/api/auth/google/config", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ client_id: val })
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        if (st) { st.style.color = "#c0392b"; st.textContent = data.error || "Could not save Client ID."; }
+        return;
+      }
+      if (st) { st.style.color = "#27ae60"; st.textContent = "Connected! Rendering Google Sign-In..."; }
+      await initGoogle();
+      setTimeout(() => {
+        document.getElementById("googleModal").style.display = "none";
+      }, 1000);
+    } catch (e) {
+      if (st) { st.style.color = "#c0392b"; st.textContent = "Could not reach server."; }
+    }
+  });
+}
+
+initGoogle();
+
+/* Sign In: talks to the Flask backend (POST /api/auth/login) */
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const email = document.getElementById("email");
+  const password = document.getElementById("password");
+  if (!/^\S+@\S+\.\S+$/.test(email.value.trim())) return showError(email, "Enter a valid email, like name@example.com.");
+  if (password.value === "") return showError(password, "Enter your password.");
+  msg.textContent = "";
+  try {
+    const res = await fetch("/api/auth/login", { method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: email.value.trim(), password: password.value }) });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) return showError(res.status === 401 ? password : email, data.error || "Could not sign in.");
+    FM.clearLocal();
+    localStorage.setItem("token", data.token);
+    try { await FM.hydrate(); } catch (e) { console.warn("Could not load saved data", e); }
+    window.location.href = data.has_profile ? DASHBOARD_PAGE : NEXT_PAGE;
+  } catch (err) { showError(null, "Cannot reach the server. Is the Flask app running?"); }
+});
+</script>
+</body>
+</html>
