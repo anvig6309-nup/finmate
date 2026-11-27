@@ -83,7 +83,7 @@ flowchart TD
     B <-->|Render Data| API
     C <-->|Query Scenarios| G
     API <-->|SQLAlchemy ORM| I
-    I <-->|Store / Query| H
+     I <-->|Store / Query| H
 | `POST` | `/auth/login` | Authenticate and obtain JWT access token |
 | `GET` | `/me` | Get current user profile and onboarding status |
 | `POST` | `/onboarding` | Save monthly income & baseline starting funds |
